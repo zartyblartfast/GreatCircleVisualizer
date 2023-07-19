@@ -1,0 +1,40 @@
+.panels-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 1em;
+}
+
+.panel-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.panel-header {
+    text-decoration: none;
+    font-family: sans-serif;
+    font-weight: 600;
+    font-size: 1em;
+    text-align: center;
+    width: 100%;
+    margin-top: 3px;
+    margin-bottom: 1px;
+}
+
+.panel {
+    border: 1px solid black;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+}
+
+#projection-selector {
+    width: 200px;  /* Adjust this value to your preference */
+    margin: 0 auto;
+}

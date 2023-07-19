@@ -1,0 +1,20 @@
+{
+  "airportSearch.js": [
+    "main.js"
+  ],
+  "collapsible.js": [],
+  "dropdown.js": [
+    "airportSearch.js",
+    "main.js"
+  ],
+  "locationPair.js": [
+    "airportSearch.js",
+    "locationPairClass.js",
+    "main.js"
+  ],
+  "locationPairClass.js": [],
+  "main.js": [],
+  "suggestion_pairs.js": [
+    "locationPairClass.js"
+  ]
+}

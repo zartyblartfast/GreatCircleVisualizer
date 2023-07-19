@@ -1,0 +1,101 @@
+.location-pair-tags-container { grid-area: location-pair-tags-container; }
+
+
+.tag[data-suggested="true"] { background-color: lightblue; }
+
+
+.tag {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /*background-color: #6593f5;*/
+  background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);
+  /*background-color: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027); */
+  /*background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027); */
+  color: #fff;
+  margin: 5px 5px 5px 0;
+  border-radius: 5px;
+  /*position: relative;*/
+  width: var(--tag-width);
+  padding: 5px 10px;
+  max-height: 30px; 
+  overflow: hidden;
+  /* transition: all 0.8s ease-in-out; */
+  transition: max-height 0.8s ease-in-out;
+}
+
+.tag .main-content {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Change this from center to flex-start */
+}
+
+.tag .main-content .iata-codes {
+  display: block;
+}
+
+.tag .tag-delete button {
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: flex-start; /* Add this property */
+  justify-content: center;
+  font-size: 1em; /* Adjust this as needed */
+  line-height: 1; /* Adjust this as needed */
+}
+
+.tag .delete-button-wrapper button {
+  margin: 0;
+  padding: 0 5px; /* Add 5px of padding to the left and right */
+}
+
+.tag .additional-info {
+  display: none;
+}
+
+.tag.expanded {
+     max-height: 500px; 
+  }
+
+.tag.expanded .tag-delete {
+  order: 2;
+}
+
+.tag.expanded .additional-info {
+  display: block;
+  order: 1;
+}
+
+.tag.suggested {
+  /* background-color: grey; */
+  /* background: linear-gradient(45deg, darkgrey, grey); */
+  background: linear-gradient(45deg, lightgrey 5%, darkgrey, grey);
+}
+
+.tag-content .header {
+    /* Add styles for the header within the additional info */
+    font-weight: bold;
+    /* color: #b3ccdd; */
+}
+
+.tag-content .airport-info {
+    /* Add styles for the airport info within the additional info */
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.tag-content .airport-info p {
+    margin: 0;
+    padding: 1px 0;
+    border-top: none; /* Add this line to remove the border */
+    border-bottom: none; /* Add this line to remove the border */
+}
+
+.tag-content .separator {
+    /* Add styles for the separator within the additional info */
+    height: 1px;
+    background-color: #ddd;
+    margin: 10px 0;
+}

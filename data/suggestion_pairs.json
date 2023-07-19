@@ -1,0 +1,26 @@
+[
+    {
+        "airportAName": "Los Angeles International Airport",
+        "airportACode": "LAX",
+        "airportACountry": "US",
+        "airportALat": 33.9416,
+        "airportALon": -118.4085,
+        "airportBName": "Tokyo Haneda Airport",
+        "airportBCode": "HND",
+        "airportBCountry": "JP",
+        "airportBLat": 35.5494,
+        "airportBLon": 139.7798
+    },
+    {
+        "airportAName": "Utirik Airport",
+        "airportACode": "UTK",
+        "airportACountry": "MH",
+        "airportALat": 11.222,
+        "airportALon": 169.852005,
+        "airportBName": "Ocean Reef Club Airport",
+        "airportBCode": "OCA",
+        "airportBCountry": "US",
+        "airportBLat": 25.325399398804,
+        "airportBLon": -80.274803161621
+    }
+  ]

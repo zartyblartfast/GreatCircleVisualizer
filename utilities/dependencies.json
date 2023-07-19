@@ -1,0 +1,79 @@
+{
+  "airportSearch.js": {
+    "./main.js": [
+      {
+        "name": "getAirportList",
+        "type": "named"
+      },
+      {
+        "name": "fetchAirportData",
+        "type": "named"
+      },
+      {
+        "name": "setAirportList",
+        "type": "named"
+      }
+    ]
+  },
+  "collapsible.js": {},
+  "dropdown.js": {
+    "./main.js": [
+      {
+        "name": "fetchCountryData",
+        "type": "named"
+      }
+    ],
+    "./airportSearch.js": [
+      {
+        "name": "setSelectedAirportACode",
+        "type": "named"
+      },
+      {
+        "name": "setSelectedAirportBCode",
+        "type": "named"
+      }
+    ]
+  },
+  "locationPair.js": {
+    "./main.js": [
+      {
+        "name": "getAirportList",
+        "type": "named"
+      }
+    ],
+    "./airportSearch.js": [
+      {
+        "name": "setSelectedAirportACode",
+        "type": "named"
+      },
+      {
+        "name": "setSelectedAirportBCode",
+        "type": "named"
+      },
+      {
+        "name": "getSelectedAirportACode",
+        "type": "named"
+      },
+      {
+        "name": "getSelectedAirportBCode",
+        "type": "named"
+      }
+    ],
+    "./locationPairClass.js": [
+      {
+        "name": "locationPair",
+        "type": "named"
+      }
+    ]
+  },
+  "locationPairClass.js": {},
+  "main.js": {},
+  "suggestion_pairs.js": {
+    "./locationPairClass.js": [
+      {
+        "name": "locationPair",
+        "type": "named"
+      }
+    ]
+  }
+}

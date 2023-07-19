@@ -1,0 +1,29 @@
+.location-a-label,
+.location-b-label {
+  margin-bottom: 0px;
+}
+
+.location-a-label img,
+.location-b-label img {
+  width: 30px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-right: 10px; /* Adjust this as necessary */
+}
+
+.location-text {
+    display: inline-block;
+    vertical-align: bottom;
+    line-height: 0.5; /* Adjust this value as needed */
+  }
+
+.location-image {
+    width: 30px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: bottom;
+    margin-right: 10px;
+    margin-bottom: 0px;
+}
+  

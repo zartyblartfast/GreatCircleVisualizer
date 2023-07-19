@@ -1,0 +1,12 @@
+/* mapStyles.css */
+
+/* Style for the SVG (ocean) */
+#panel-1 svg {
+    fill: #ADD8E6; /* Light blue */
+}
+
+/* Style for the paths (countries) */
+#panel-1 path {
+    fill: #008000; /* Green */
+    stroke: #000000; /* Black */
+}

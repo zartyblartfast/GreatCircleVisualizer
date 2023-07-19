@@ -1,0 +1,187 @@
+.main-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.grid-wrapper {
+  width: auto; /* Adjust this value as needed */
+}
+
+:root {
+  --column-width: 150px; 
+  --field-width: 145px; 
+  --field-height: 25px;
+  --tag-width: calc(var(--field-width) * 2 - 20 );
+}
+
+.container {
+  display: grid;
+  grid-template-columns: var(--column-width) var(--column-width);
+  grid-template-rows: auto auto auto auto auto auto auto auto; 
+  gap: 2px 2px;
+  grid-auto-flow: row;
+  justify-items: stretch;
+  grid-template-areas:
+    "location-a-label location-b-label"
+    "country-a-dropdown country-b-dropdown"
+    "airport-a-filter-search airport-b-filter-search"
+    "airport-a-code airport-b-code"
+    "add-button-container suggestions-button-container"
+    "make-maps-button-container make-maps-button-container"
+    "info-message-container info-message-container"
+    "location-pair-tags-container location-pair-tags-container";
+}
+
+.location-a-label,
+.location-b-label {
+  text-decoration: none;
+  font-family: sans-serif;
+  font-weight: 600;
+  font-size: 1em;
+  position: relative;
+  top: -3px;
+}
+
+.country-a-dropdown { grid-area: country-a-dropdown; }
+.country-b-dropdown { grid-area: country-b-dropdown; }
+
+.country-a-dropdown select,
+.country-b-dropdown select {
+  width: var(--field-width);
+  height: var(--field-height);
+  margin-top: 1px;
+  margin-bottom: 5px;
+}
+
+.airport-a-filter-search { grid-area: airport-a-filter-search; }
+.airport-a-filter-search input {
+  width: var(--field-width);
+  height: var(--field-height); 
+}
+.airport-b-filter-search { grid-area: airport-b-filter-search; }
+.airport-b-filter-search input {
+  width: var(--field-width);
+  height: var(--field-height); 
+}
+
+.awesomplete ul {
+  position: relative;
+  width: 125%!important;
+  z-index: 9999;
+}
+
+.add-button-container { 
+  grid-area: add-button-container; 
+  width: var(--field-width); 
+}
+.suggestions-button-container { 
+  grid-area: suggestions-button-container; 
+  width: var(--field-width); 
+}
+.make-maps-button-container {
+  grid-area: make-maps-button-container; 
+  /*width: var(--tag-width); */
+  width: 296px;
+  grid-column: span 2;
+}
+.info-message-container { 
+  grid-area: info-message-container; 
+  width: 100%; 
+}
+#info-message { color: red; margin-top: 10px; }
+
+.location-pair-tags-container { 
+  grid-area: location-pair-tags-container; 
+}
+
+body {
+  text-decoration: none;
+  font-family: sans-serif;
+}
+
+header {
+  text-align: center;
+  background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);
+  padding: 25px 20px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+header h1 { margin: 0 0 10px 0; }
+header p { margin: 0; }
+#input-area { width: 30%; padding: 20px; box-sizing: border-box; }
+#map-area { width: 70%; }
+.title { text-align: center; border: 1px solid #000; padding: 5px; }
+.subtitle { text-align: center; border: 1px solid #000; padding: 5px; }
+
+input {
+  height: 30px;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+input:disabled {
+  background-color: #eee;
+  color: #aaa;
+}
+
+button {
+  display: block;
+  margin-top: 20px;
+  width: 100%;
+}
+
+table { width: 100%; border-collapse: collapse; }
+td, th { border: 1px solid #000; }
+
+.collapsed {
+  display: none;
+}
+
+.collapsible {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid #6593f5;
+  outline: none;
+  width: 100%;
+  background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);
+  color: white;
+  margin-bottom: 2.5px;
+  text-align: left;
+  font-size: 16px;
+  padding: 9px 15px;
+}
+
+.collapsible .icon {
+  font-size: 21px;
+  position: absolute;
+  right: 15px;
+  top: 6px;
+  line-height: 1;
+}
+
+.collapsible .icon:after {
+  content: "+";
+}
+
+.collapsible.active .icon:after {
+  content: "-";
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1.0s ease-out;
+}
+
+.collapsible.active .collapsible-content {
+  max-height: 1000px; /* Set to a large pixel value */
+}
+
+.collapsible .icon:after { content: "+"; }
+.collapsible.active .icon:after { content: "-"; }
+
+#contact-us-button {
+  margin-top: 5px; /* Adjust this value as needed */
+}

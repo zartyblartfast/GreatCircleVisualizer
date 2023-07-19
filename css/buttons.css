@@ -1,0 +1,79 @@
+/* https://codepen.io/lukemeyrick/pen/YzEqOwe */
+.button {
+    display: inline-block;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    text-decoration: none;
+    font-family: sans-serif;
+    font-weight: 600;
+    font-size: 0.75em;
+    padding: 0.3em 0.45em;
+    border-radius: calc(0.75em + 0.5em + 0.15em);
+    transition: 4s;
+    margin-top: 0.5em;
+}
+
+.button:before, .button:after {
+    content: "";
+    position: absolute;
+    /*position: relative;*/
+    top: -1.5em;
+    /*z-index: -1;*/
+    width: 200%;
+    aspect-ratio: 1;
+    border: none;
+    border-radius: 40%;
+    transition: 4s;
+}
+
+.button:before {
+    left: -80%;
+    transform: translate3d(0, 5em, 0) rotate(-340deg);
+}
+
+.button:after {
+    right: -80%;
+    transform: translate3d(0, 5em, 0) rotate(390deg);
+}
+
+.button:hover, .button:focus {
+    color: white;
+}
+
+.button:hover:before, .button:hover:after, .button:focus:before, .button:focus:after {
+    transform: none;
+}
+
+/* Add the color-specific classes */
+.button-light {
+    color: #b3ccdd;
+    border: 0.15em solid #b3ccdd;
+}
+
+.button-light:before, .button-light:after {
+    background-color: rgba(179, 204, 221, 0.25);
+}
+
+.button-light:hover:before, .button-light:hover:after, .button-light:focus:before, .button-light:focus:after {
+    background-color: rgba(179, 204, 221, 0.75);
+}
+
+.button-dark {
+    color: #0f2027;
+    border: 0.15em solid #0f2027;
+}
+
+.button-dark:before, .button-dark:after {
+    background-color: rgba(15, 32, 39, 0.25);
+}
+
+.button-dark:hover:before, .button-dark:hover:after, .button-dark:focus:before, .button-dark:focus:after {
+    background-color: rgba(15, 32, 39, 0.75);
+}
+
+.button:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
+  
