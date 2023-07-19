@@ -16,6 +16,97 @@ var chart = root.container.children.push(am5map.MapChart.new(root, {
     projection: am5map.geoMercator()
 }));
 
+/*
+function createSlider() {
+    // Create a container for the switch button
+    var cont = chart.children.push(am5.Container.new(root, {
+        layout: root.horizontalLayout,
+        x: 20,
+        y: 40
+    }));
+
+    // Add labels and controls
+    cont.children.push(am5.Label.new(root, {
+        centerY: am5.p50,
+        text: "Map"
+    }));
+
+    var switchButton = cont.children.push(am5.Button.new(root, {
+        themeTags: ["switch"],
+        centerY: am5.p50,
+        icon: am5.Circle.new(root, {
+            themeTags: ["icon"]
+        })
+    }));
+
+    switchButton.on("active", function() {
+        if (!switchButton.get("active")) {
+            chart.set("projection", am5map.geoMercator());
+            chart.set("panY", "translateY");
+            chart.set("rotationY", 0);
+            backgroundSeries.mapPolygons.template.set("fillOpacity", 0);
+        } else {
+            chart.set("projection", am5map.geoOrthographic());
+            chart.set("panY", "rotateY")
+            backgroundSeries.mapPolygons.template.set("fillOpacity", 0.1);
+        }
+    });
+
+    cont.children.push(
+        am5.Label.new(root, {
+            centerY: am5.p50,
+            text: "Globe"
+        })
+    );
+}
+*/
+function createSlider() {
+    // Create a container for the switch button
+    var cont = chart.children.push(am5.Container.new(root, {
+        layout: root.horizontalLayout,
+        x: 20,
+        y: 40
+    }));
+
+    // Add labels and controls
+    cont.children.push(am5.Label.new(root, {
+        centerY: am5.p50,
+        text: "Map"
+    }));
+
+    var switchButton = cont.children.push(am5.Button.new(root, {
+        themeTags: ["switch"],
+        centerY: am5.p50,
+        icon: am5.Circle.new(root, {
+            themeTags: ["icon"]
+        })
+    }));
+
+    switchButton.on("active", function() {
+        if (!switchButton.get("active")) {
+            chart.set("projection", am5map.geoMercator());
+            chart.set("panY", "translateY");  // Disable vertical rotation for 2D map
+            chart.set("rotationY", 0);
+            backgroundSeries.mapPolygons.template.set("fillOpacity", 0);
+        } else {
+            chart.set("projection", am5map.geoOrthographic());
+            chart.set("panY", "rotateY");  // Enable vertical rotation for globe
+            backgroundSeries.mapPolygons.template.set("fillOpacity", 0.1);
+        }
+    });
+
+    cont.children.push(
+        am5.Label.new(root, {
+            centerY: am5.p50,
+            text: "Globe"
+        })
+    );
+}
+
+
+// Call the function when the page is loaded
+createSlider();
+
 // Create series for background fill
 var backgroundSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {}));
 backgroundSeries.mapPolygons.template.setAll({
@@ -96,20 +187,17 @@ function addCity(coords, title) {
     });
 }
 
-globalLocationPair.locationPairs.forEach(pair => {
-    var city1 = addCity({ latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName);
-    var city2 = addCity({ latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName);
-    
+function addLineAndPlane(city1, city2) {
     var lineDataItem = lineSeries.pushDataItem({
         pointsToConnect: [city1, city2]
     });
-    
+
     var planeDataItem = planeSeries.pushDataItem({
         lineDataItem: lineDataItem,
         positionOnLine: 0,
         autoRotate: true
     });
-    
+
     planeDataItem.animate({
         key: "positionOnLine",
         to: 1,
@@ -117,7 +205,7 @@ globalLocationPair.locationPairs.forEach(pair => {
         loops: Infinity,
         easing: am5.ease.yoyo(am5.ease.linear)
     });
-    
+
     planeDataItem.on("positionOnLine", function (value) {
         if (value >= 0.99) {
             plane.set("rotation", 180);
@@ -126,10 +214,36 @@ globalLocationPair.locationPairs.forEach(pair => {
             plane.set("rotation", 0);
         }
     });
+}
+
+globalLocationPair.locationPairs.forEach(pair => {
+    var city1 = addCity({ latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName);
+    var city2 = addCity({ latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName);
+    addLineAndPlane(city1, city2);
 });
 
 // Event listener for the "Make maps" button
 document.getElementById('make-maps-button').addEventListener('click', function() {
+
+    console.log("globalLocationPair after make-maps-button click: ", globalLocationPair)
+
+    // Stop animations and clear the data from the series
+    for (let i = 0; i < planeSeries.dataItems.length; i++) {
+        let dataItem = planeSeries.dataItems[i];
+        if (dataItem.bullet) {
+            let sprite = dataItem.bullet.get("sprite");
+            if (sprite && sprite.animations) {
+                sprite.animations.each(function(animation) {
+                    animation.stop();
+                });
+            }
+        }
+    }
+
+    pointSeries.data.setAll([]);
+    lineSeries.data.setAll([]);
+    planeSeries.data.setAll([]);
+
     // Ensure all references to the old chart are removed
     if (chart) {
         // Dispose of the existing chart
@@ -148,6 +262,9 @@ document.getElementById('make-maps-button').addEventListener('click', function()
         panY: "rotateY",
         projection: am5map.geoMercator()
     }));
+
+    // Call the function to create the slider
+    createSlider();
 
     // Create series for background fill
     backgroundSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {}));
@@ -212,33 +329,7 @@ document.getElementById('make-maps-button').addEventListener('click', function()
     globalLocationPair.locationPairs.forEach(pair => {
         var city1 = addCity({ latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName);
         var city2 = addCity({ latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName);
-        
-        var lineDataItem = lineSeries.pushDataItem({
-            pointsToConnect: [city1, city2]
-        });
-        
-        var planeDataItem = planeSeries.pushDataItem({
-            lineDataItem: lineDataItem,
-            positionOnLine: 0,
-            autoRotate: true
-        });
-        
-        planeDataItem.animate({
-            key: "positionOnLine",
-            to: 1,
-            duration: 10000,
-            loops: Infinity,
-            easing: am5.ease.yoyo(am5.ease.linear)
-        });
-        
-        planeDataItem.on("positionOnLine", function (value) {
-            if (value >= 0.99) {
-                plane.set("rotation", 180);
-            }
-            else if (value <= 0.01) {
-                plane.set("rotation", 0);
-            }
-        });
+        addLineAndPlane(city1, city2);
     });
 
     // Make stuff animate on load

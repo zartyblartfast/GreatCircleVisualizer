@@ -34,6 +34,9 @@ export class LocationPair {
 
       this.displayLocationPairs(this.locationPairs);
 
+      // Update window.globalLocationPair
+      window.globalLocationPair.locationPairs = this.locationPairs;
+
       // Dispatch the event
       console.log('Dispatching locationPairsChanged event');
       window.dispatchEvent(new CustomEvent('locationPairsChanged'));
@@ -65,6 +68,9 @@ export class LocationPair {
           this.displayLocationPairs(this.locationPairs);
       }
   
+      // Update window.globalLocationPair
+      window.globalLocationPair.locationPairs = this.locationPairs;
+
       // Dispatch the event
       window.dispatchEvent(new CustomEvent('locationPairsChanged'));
     }
