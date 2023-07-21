@@ -1,3 +1,18 @@
+import { 
+    haversineDistance, 
+    addCity, 
+    addLineAndPlane, 
+    createSlider, 
+    createPointSeries, 
+    stopAnimationsAndClearData, 
+    rhumbDistance, 
+    calculateRhumbLinePoints, 
+    toRad, 
+    toDeg,
+    updateProjection
+} from './mapUtilities.js';
+
+
 "use strict";
 
 // Access the global instance
@@ -12,9 +27,15 @@ root.setThemes([am5themes_Animated.new(root)]);
 // Create the map chart
 var chart = root.container.children.push(am5map.MapChart.new(root, {
     panX: "rotateX",
-    panY: "rotateY",
-    projection: am5map.geoMercator()
+    panY: "translateY", // Changed from "rotateY" to "translateY"
+    rotationY: 0,
+    //projection: am5map.geoMercator()
+    projection: d3.geoMercator()
 }));
+
+//global scope required for these objects
+var planeSeriesArray = [];
+var pointSeries;
 
 // Create series for background fill
 var backgroundSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {}));
@@ -28,6 +49,10 @@ backgroundSeries.mapPolygons.template.setAll({
 backgroundSeries.data.push({
     geometry: am5map.getGeoRectangle(90, 180, -90, -180)
 });
+
+// Call the function when the page is loaded
+// Call createSlider and pass backgroundSeries as an argument
+createSlider(root, chart, backgroundSeries);
 
 // Create main polygon series for countries
 var polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
@@ -48,88 +73,65 @@ lineSeries.mapLines.template.setAll({
     strokeOpacity: 0.3
 });
 
+let rhumbLineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
+rhumbLineSeries.mapLines.template.setAll({
+    stroke: am5.color(0xff0000),
+    strokeWidth: 2,
+    strokeOpacity: 0.7
+});
+
 // Create point series for markers
-var pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
-pointSeries.bullets.push(function () {
-    var circle = am5.Circle.new(root, {
-        radius: 7,
-        tooltipText: "Drag me!",
-        cursorOverStyle: "pointer",
-        tooltipY: 0,
-        fill: am5.color(0xffba00),
-        stroke: root.interfaceColors.get("background"),
-        strokeWidth: 2,
-        draggable: true
-    });
-    circle.events.on("dragged", function (event) {
-        var dataItem = event.target.dataItem;
-        var projection = chart.get("projection");
-        var geoPoint = chart.invert({ x: circle.x(), y: circle.y() });
-        dataItem.setAll({
-            longitude: geoPoint.longitude,
-            latitude: geoPoint.latitude
-        });
-    });
-    return am5.Bullet.new(root, {
-        sprite: circle
-    });
-});
-
-var planeSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
-var plane = am5.Graphics.new(root, {
-    svgPath: "m2,106h28l24,30h72l-44,-133h35l80,132h98c21,0 21,34 0,34l-98,0 -80,134h-35l43,-133h-71l-24,30h-28l15,-47",
-    scale: 0.06,
-    centerY: am5.p50,
-    centerX: am5.p50,
-    fill: am5.color(0x000000)
-});
-planeSeries.bullets.push(function () {
-    var container = am5.Container.new(root, {});
-    container.children.push(plane);
-    return am5.Bullet.new(root, { sprite: container });
-});
-
-function addCity(coords, title) {
-    return pointSeries.pushDataItem({
-        latitude: coords.latitude,
-        longitude: coords.longitude
-    });
-}
+pointSeries = createPointSeries(root, chart);
 
 globalLocationPair.locationPairs.forEach(pair => {
-    var city1 = addCity({ latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName);
-    var city2 = addCity({ latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName);
-    
-    var lineDataItem = lineSeries.pushDataItem({
-        pointsToConnect: [city1, city2]
-    });
-    
-    var planeDataItem = planeSeries.pushDataItem({
-        lineDataItem: lineDataItem,
-        positionOnLine: 0,
-        autoRotate: true
-    });
-    
-    planeDataItem.animate({
-        key: "positionOnLine",
-        to: 1,
-        duration: 10000,
-        loops: Infinity,
-        easing: am5.ease.yoyo(am5.ease.linear)
-    });
-    
-    planeDataItem.on("positionOnLine", function (value) {
-        if (value >= 0.99) {
-            plane.set("rotation", 180);
-        }
-        else if (value <= 0.01) {
-            plane.set("rotation", 0);
-        }
-    });
+    console.log("Inside forEach Pair (body), calling addLineAndPlane.  Pair: ", pair)
+    var city1 = addCity(root, chart, pointSeries,{ latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName, pair.airportACode, pair.airportACountry);
+   
+    console.log("Inside forEach Pair (body). Pair.airportAName: ", pair.airportAName)
+    console.log("Inside forEach Pair (body). Pair.countryA: ", pair.countryA)
+
+    var city2 = addCity(root, chart, pointSeries, { latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName, pair.airportBCode, pair.airportBCountry);
+
+    console.log("Inside forEach Pair (body). Pair.airportBName: ", pair.airportBName)
+
+    console.log("City1 object: ", city1);
+    console.log("City2 object: ", city2);
+
+    addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2);
+
 });
 
 // Event listener for the "Make maps" button
 document.getElementById('make-maps-button').addEventListener('click', function() {
+
+    console.log("globalLocationPair after make-maps-button click: ", globalLocationPair)
+
+    // Stop animations and clear the data from each series in the planeSeriesArray
+    /*
+    for (let i = 0; i < planeSeriesArray.length; i++) {
+        let planeSeries = planeSeriesArray[i];
+        for (let j = 0; j < planeSeries.dataItems.length; j++) {
+            let dataItem = planeSeries.dataItems[j];
+            if (dataItem.bullet) {
+                let sprite = dataItem.bullet.get("sprite");
+                if (sprite && sprite.animations) {
+                    sprite.animations.each(function(animation) {
+                        animation.stop();
+                    });
+                }
+            }
+        }
+    planeSeries.data.setAll([]);
+    }
+    */
+    stopAnimationsAndClearData(planeSeriesArray);
+
+    // Clear the planeSeriesArray
+    planeSeriesArray = [];
+
+    pointSeries.data.setAll([]);
+    lineSeries.data.setAll([]);
+
     // Ensure all references to the old chart are removed
     if (chart) {
         // Dispose of the existing chart
@@ -148,6 +150,9 @@ document.getElementById('make-maps-button').addEventListener('click', function()
         panY: "rotateY",
         projection: am5map.geoMercator()
     }));
+
+    // Call the function to create the slider
+    createSlider(root, chart);
 
     // Create series for background fill
     backgroundSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {}));
@@ -182,65 +187,57 @@ document.getElementById('make-maps-button').addEventListener('click', function()
     });
 
     // Create point series for markers
-    pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
-    pointSeries.bullets.push(function () {
-        var circle = am5.Circle.new(root, {
-            radius: 7,
-            tooltipText: "Drag me!",
-            cursorOverStyle: "pointer",
-            tooltipY: 0,
-            fill: am5.color(0xffba00),
-            stroke: root.interfaceColors.get("background"),
-            strokeWidth: 2,
-            draggable: true
-        });
-        circle.events.on("dragged", function (event) {
-            var dataItem = event.target.dataItem;
-            var projection = chart.get("projection");
-            var geoPoint = chart.invert({ x: circle.x(), y: circle.y() });
-            dataItem.setAll({
-                longitude: geoPoint.longitude,
-                latitude: geoPoint.latitude
-            });
-        });
-        return am5.Bullet.new(root, {
-            sprite: circle
-        });
-    });
+    pointSeries = createPointSeries(root, chart);
 
     // Add new data
     globalLocationPair.locationPairs.forEach(pair => {
-        var city1 = addCity({ latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName);
-        var city2 = addCity({ latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName);
-        
-        var lineDataItem = lineSeries.pushDataItem({
-            pointsToConnect: [city1, city2]
-        });
-        
-        var planeDataItem = planeSeries.pushDataItem({
-            lineDataItem: lineDataItem,
-            positionOnLine: 0,
-            autoRotate: true
-        });
-        
-        planeDataItem.animate({
-            key: "positionOnLine",
-            to: 1,
-            duration: 10000,
-            loops: Infinity,
-            easing: am5.ease.yoyo(am5.ease.linear)
-        });
-        
-        planeDataItem.on("positionOnLine", function (value) {
-            if (value >= 0.99) {
-                plane.set("rotation", 180);
-            }
-            else if (value <= 0.01) {
-                plane.set("rotation", 0);
-            }
-        });
+        console.log("Inside forEach Pair (click function), calling addLineAndPlane.  Pair: ", pair)
+        var city1 = addCity(root, chart, pointSeries, { latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName, pair.airportACode, pair.airportACountry);
+
+        console.log("Inside forEach Pair (click function). Pair.airportAName: ", pair.airportAName)
+
+        var city2 = addCity(root, chart, pointSeries, { latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName, pair.airportBCode, pair.airportBCountry);
+        console.log("Inside forEach Pair (click function). Pair.airportBName: ", pair.airportBName)
+
+        console.log("City1 object: ", city1);
+        console.log("City2 object: ", city2);
+
+        addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2);
+
     });
 
     // Make stuff animate on load
     chart.appear(1000, 100);
 });
+// Event listener for the projection dropdown
+var projectionSelect = document.getElementById('projectionSelect');
+
+// Fetch the JSON data from the file
+fetch('./data/projections.json')
+    .then(response => response.json())
+    .then(data => {
+        // Loop through the data and create an option for each item
+        for (var i = 0; i < data.length; i++) {
+            var option = document.createElement("option");
+            option.text = data[i].name;
+            option.value = data[i].projection;
+
+            // Set the default selection to "geoMercator"
+            if (data[i].projection === 'd3.geoMercator()') {
+                option.selected = true;
+            }
+
+            projectionSelect.add(option);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+
+projectionSelect.addEventListener('change', function() {
+    const selectedProjection = projectionSelect.value;
+    updateProjection(chart, selectedProjection); // Update the map projection
+});
+
+
+
+
+
