@@ -61,7 +61,7 @@
             <button id="suggestions-button" class="button button-light">Suggestions</button>
           </div>
           <div class="make-maps-button-container">
-            <button id="make-maps-button" class="button button-dark">Display Flight Paths</button>
+            <button id="make-maps-button" class="button button-dark">Update Flight Paths</button>
           </div>
           <div class="info-message-container">
             <div id="info-message"></div>
@@ -76,20 +76,26 @@
         <div class="tabs">
           <div role="tablist" aria-label="Map Examples">
             <button role="tab" aria-selected="true" id="animations">
-              Animations Along Lines
+              Map Projection vs Globe
             </button>
             <button role="tab" aria-selected="false" id="projections">
-              Map Using D3 Projections
+              From Globe to Maps - Learning Path
             </button>
           </div>
           <div role="tabpanel" aria-labelledby="animations">
-            <div id="chartdiv1"></div> <!-- Placeholder for amCharts example 1 -->
+            <div id="chartdiv1">
+                <select id="projectionSelect">
+                    <!-- Options will be added dynamically from JavaScript -->
+                </select>
+            </div>
+          </div>
           </div>
           <div role="tabpanel" aria-labelledby="projections" hidden>
             <div id="chartdiv2"></div> <!-- Placeholder for amCharts example 2 -->
           </div>
         </div>
       </div>
+      
 
     </div>
       
@@ -159,10 +165,12 @@
     <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://d3js.org/d3-array.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 
     <script type="module" src="./js/map_animations_along_lines.js" defer></script>
     <script type="module" src="./js/mapUtilities.js"></script>
-    <script type="module" src="./js/mapMain.js"></script>
     <script type="module" src="./js/tabs.js"></script>
   
 </body>
