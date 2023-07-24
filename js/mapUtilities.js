@@ -1,4 +1,6 @@
 // mapUtilities.js
+//import { currentProjectionName } from './mapProjection.js';
+import { currentProjectionName, updateProjection } from './mapProjection.js';
 
 export function haversineDistance(coords1, coords2, isMiles = false) {
     function toRad(x) {
@@ -41,131 +43,6 @@ export function addCity(root, chart, pointSeries, coords, title, code, country) 
     return dataItem;
 }
 
-/*
-export function addLineAndPlane(root, chart, lineSeries, planeSeriesArray, city1, city2) {
-
-    console.log("Inside addLineAndPlane. City1.airportAName: ", city1.airportName)
-    console.log("Inside addLineAndPlane. City1.latitude: ", city1.latitude)
-    console.log("Inside addLineAndPlane. City1.longitude: ", city1.longitude)
-    console.log("Inside addLineAndPlane. City2.airportAName: ", city2.airportName)
-    console.log("Inside addLineAndPlane. City2.latitude: ", city2.latitude)
-    console.log("Inside addLineAndPlane. City2.longitude: ", city2.longitude)
-
-
-    var lineDataItem = lineSeries.pushDataItem({
-        pointsToConnect: [city1, city2]
-    });
-
-    var planeSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
-    planeSeriesArray.push(planeSeries);  // Add the new planeSeries to the array
-
-    var plane = am5.Graphics.new(root, {
-        svgPath: "m2,106h28l24,30h72l-44,-133h35l80,132h98c21,0 21,34 0,34l-98,0 -80,134h-35l43,-133h-71l-24,30h-28l15,-47",
-        scale: 0.06,
-        centerY: am5.p50,
-        centerX: am5.p50,
-        fill: am5.color(0x000000)
-    });
-
-    planeSeries.bullets.push(function () {
-        var container = am5.Container.new(root, {});
-        container.children.push(plane);
-        return am5.Bullet.new(root, { sprite: container });
-    });
-
-    var planeDataItem = planeSeries.pushDataItem({
-        lineDataItem: lineDataItem,
-        positionOnLine: 0,
-        autoRotate: true
-    });
-
-    //These two console.log statement prevent more than one airport pair from being plotted
-    console.log(">>> animate method: airport A ", city1.airportName)
-    console.log(">>> animate method: airport B ", city2.airportName)
-
-    planeDataItem.animate({
-        key: "positionOnLine",
-        to: 1,
-        duration: 10000,
-        loops: Infinity,
-        easing: am5.ease.yoyo(am5.ease.linear)
-    });
-
-    planeDataItem.on("positionOnLine", function (value) {
-        //console.log("Updating position for plane from " + city1.airportName + " to " + city2.airportName);
-        if (value >= 0.99) {
-            plane.set("rotation", 180);
-        }
-        else if (value <= 0.01) {
-            plane.set("rotation", 0);
-        }
-    });
-}
-
-export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2) {
-
-    console.log("Inside addLineAndPlane. City1.airportAName: ", city1.airportName)
-    console.log("Inside addLineAndPlane. City1.latitude: ", city1.latitude)
-    console.log("Inside addLineAndPlane. City1.longitude: ", city1.longitude)
-    console.log("Inside addLineAndPlane. City2.airportAName: ", city2.airportName)
-    console.log("Inside addLineAndPlane. City2.latitude: ", city2.latitude)
-    console.log("Inside addLineAndPlane. City2.longitude: ", city2.longitude)
-
-    var lineDataItem = lineSeries.pushDataItem({
-        pointsToConnect: [city1, city2]
-    });
-
-    // Add a new data item to the rhumbLineSeries for each pair of cities
-    rhumbLineSeries.pushDataItem({
-        multiGeoLine: [rhumbLinePoints]
-    });
-
-    var planeSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
-    planeSeriesArray.push(planeSeries);  // Add the new planeSeries to the array
-
-    var plane = am5.Graphics.new(root, {
-        svgPath: "m2,106h28l24,30h72l-44,-133h35l80,132h98c21,0 21,34 0,34l-98,0 -80,134h-35l43,-133h-71l-24,30h-28l15,-47",
-        scale: 0.06,
-        centerY: am5.p50,
-        centerX: am5.p50,
-        fill: am5.color(0x000000)
-    });
-
-    planeSeries.bullets.push(function () {
-        var container = am5.Container.new(root, {});
-        container.children.push(plane);
-        return am5.Bullet.new(root, { sprite: container });
-    });
-
-    var planeDataItem = planeSeries.pushDataItem({
-        lineDataItem: lineDataItem,
-        positionOnLine: 0,
-        autoRotate: true
-    });
-
-    //These two console.log statement prevent more than one airport pair from being plotted
-    console.log(">>> animate method: airport A ", city1.airportName)
-    console.log(">>> animate method: airport B ", city2.airportName)
-
-    planeDataItem.animate({
-        key: "positionOnLine",
-        to: 1,
-        duration: 10000,
-        loops: Infinity,
-        easing: am5.ease.yoyo(am5.ease.linear)
-    });
-
-    planeDataItem.on("positionOnLine", function (value) {
-        //console.log("Updating position for plane from " + city1.airportName + " to " + city2.airportName);
-        if (value >= 0.99) {
-            plane.set("rotation", 180);
-        }
-        else if (value <= 0.01) {
-            plane.set("rotation", 0);
-        }
-    });
-}
-*/
 export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2) {
 
     console.log("Inside addLineAndPlane. City1.airportAName: ", city1.get("airportName"))
@@ -174,7 +51,6 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     console.log("Inside addLineAndPlane. City2.airportAName: ", city2.get("airportName"))
     console.log("Inside addLineAndPlane. City2.latitude: ", city2.get("latitude"))
     console.log("Inside addLineAndPlane. City2.longitude: ", city2.get("longitude"))
-
 
     var lineDataItem = lineSeries.pushDataItem({
         pointsToConnect: [city1, city2]
@@ -186,7 +62,7 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
         { latitude: city2.get("latitude"), longitude: city2.get("longitude") }
     );
 
-    //console.log(rhumbLinePoints)
+    console.log("rhumbLinePoints: ",rhumbLinePoints)
 
     // Add a new data item to the rhumbLineSeries for each pair of cities
     
@@ -207,14 +83,18 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     });
     */
    // Add a new data item to the rhumbLineSeries for each pair of cities
+    //rhumbLineSeries.data.push({
+    //    multiGeoLine: [rhumbLinePoints.map(point => [point.longitude, point.latitude])]
+    //});
     rhumbLineSeries.data.push({
-        multiGeoLine: [rhumbLinePoints.map(point => [point.longitude, point.latitude])]
+        multiGeoLine: [rhumbLinePoints.map(point => ({ longitude: point.longitude, latitude: point.latitude }))]
     });
+    
 
     //chart.series.push(rhumbLineSeries);
 
     //console.log(rhumbLineSeries.dataItems[0]._settings.multiGeoLine);
-    console.log(rhumbLineSeries.dataItems);
+    console.log("rhumbLineSeries.dataItems",rhumbLineSeries.dataItems);
 
 
     var planeSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
@@ -262,52 +142,11 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
         }
     });
 }
-/*
-export function createSlider(root, chart, backgroundSeries) {
-    // Create a container for the switch button
-    var cont = chart.children.push(am5.Container.new(root, {
-        layout: root.horizontalLayout,
-        x: 20,
-        y: 40
-    }));
 
-    // Add labels and controls
-    cont.children.push(am5.Label.new(root, {
-        centerY: am5.p50,
-        text: "Map"
-    }));
+export function createSlider(root, chart, backgroundSeries, projectionFunction) {
 
-    var switchButton = cont.children.push(am5.Button.new(root, {
-        themeTags: ["switch"],
-        centerY: am5.p50,
-        icon: am5.Circle.new(root, {
-            themeTags: ["icon"]
-        })
-    }));
+    //console.log("createSlider, projectionFunction: ", projectionFunction)
 
-    switchButton.on("active", function() {
-        console.log("backgroundSeries: ", backgroundSeries);
-        if (!switchButton.get("active")) {
-            chart.set("projection", am5map.geoMercator());
-            chart.set("panY", "translateY"); // Ensure this is set to "translateY" for the 2D map view
-            chart.set("rotationY", 0); // Reset the vertical rotation
-            backgroundSeries.mapPolygons.template.set("fillOpacity", 0);
-        } else {
-            chart.set("projection", am5map.geoOrthographic());
-            chart.set("panY", "rotateY")
-            backgroundSeries.mapPolygons.template.set("fillOpacity", 0.1);
-        }
-    });
-
-    cont.children.push(
-        am5.Label.new(root, {
-            centerY: am5.p50,
-            text: "Globe"
-        })
-    );
-}
-*/
-export function createSlider(root, chart, backgroundSeries) {
     // Create a container for the switch button
     var cont = chart.children.push(am5.Container.new(root, {
         layout: root.horizontalLayout,
@@ -335,16 +174,55 @@ export function createSlider(root, chart, backgroundSeries) {
     switchButton.on("active", function() {
         if (!switchButton.get("active")) {
             // Set the chart's projection back to the stored value
+
+            console.log("1. createSlider currentProjection: ",currentProjection)
+            console.log("1. createSlider currentProjectionName: ",currentProjectionName)
+
             chart.set("projection", currentProjection);
-            chart.set("panY", "translateY"); // Ensure this is set to "translateY" for the 2D map view
-            chart.set("rotationY", 0); // Reset the vertical rotation
             backgroundSeries.mapPolygons.template.set("fillOpacity", 0);
+            
+            if (currentProjectionName === "geoAzimuthalEquidistant") {
+
+                console.log("2. createSlider currentProjection: ",currentProjection)
+                console.log("2. createSlider currentProjectionName: ",currentProjectionName)
+                // Get the projection function from the D3 object
+                //let projectionFunction = d3[projectionFunctionName];
+                //let projectionFunction = d3[projectionFunction];
+
+                //console.log('projectionFunctionName:', projectionFunctionName);
+                //console.log('projectionFunction:', projectionFunction);
+
+                //console.log("inside switchButton, geoAzimuthalEquidistant")
+                //chart.set("projection", projectionFunction().rotate([0, -90]));
+                chart.set("panX", "rotateX");
+                chart.set("panY", "rotateY");
+                chart.set("rotationY", 1);
+            } else {
+
+                //console.log("inside switchButton, not geoAzimuthalEquidistant")    
+                console.log("3. createSlider currentProjection: ",currentProjection)  
+                console.log("3. createSlider currentProjectionName: ",currentProjectionName)
+
+                chart.set("panX", "rotateX");
+                chart.set("panY", "translateY");
+                chart.set("rotationY", 0);
+            }
+            
+            //chart.set("panX", "rotateX");
+            //chart.set("panY", "translateY");
+            //chart.set("rotationY", 0);
         } else {
             // Store the current projection before switching to the "globe" view
+            console.log("4. createSlider currentProjection: ",currentProjection)        
+            console.log("4. createSlider currentProjectionName: ",currentProjectionName)
+
             currentProjection = chart.get("projection");
             chart.set("projection", am5map.geoOrthographic());
             chart.set("panY", "rotateY")
             backgroundSeries.mapPolygons.template.set("fillOpacity", 0.1);
+
+            console.log("5. createSlider currentProjection: ",currentProjection) 
+            console.log("5. createSlider currentProjectionName: ",currentProjectionName)
         }
     });
 }
@@ -470,71 +348,3 @@ export function toRad(x) {
 export function toDeg(x) {
     return x * 180 / Math.PI;
 }
-
-/*
-// Function to update the map projection
-export function updateProjection(chart, projectionName) {
-    try {
-        // Prepend "am5map." to the projectionName
-        let fullProjectionName = `am5map.${projectionName}`;
-
-        // Create the projection function from the fullProjectionName
-        let projectionFunction = eval(fullProjectionName);
-
-        // Set the chart's projection to the created projection
-        chart.set("projection", projectionFunction());
-
-    } catch (error) {
-        console.error(`Failed to update projection: ${error}`);
-    }
-}
-
-export function updateProjection(chart, projectionName) {
-    try {
-        // Remove "d3." from the start of the projectionName and the parentheses at the end
-        let projectionFunctionName = projectionName.slice(3, -2);
-
-        // Get the projection function from the D3 object
-        let projectionFunction = d3[projectionFunctionName];
-
-        // Check if the projection function exists
-        if (projectionFunction) {
-            // Set the chart's projection to the created projection
-            chart.set("projection", projectionFunction());
-        } else {
-            console.error(`Failed to update projection: No projection function found for ${projectionName}`);
-        }
-    } catch (error) {
-        console.error(`Failed to update projection: ${error}`);
-    }
-}
-*/
- // Function to update the map projection
- export function updateProjection(chart, projectionName) {
-    try {
-        // Remove "d3." from the start of the projectionName and the parentheses at the end
-        let projectionFunctionName = projectionName.slice(3, -2);
-
-        // Get the projection function from the D3 object
-        let projectionFunction = d3[projectionFunctionName];
-
-        // Check if the projection function exists
-        if (projectionFunction) {
-            // Special case for geoAzimuthalEquidistant projection
-            if (projectionFunctionName === 'geoAzimuthalEquidistant') {
-                // Set the center of the projection to the North Pole
-                chart.set("projection", projectionFunction().rotate([0, -90]));
-            } else {
-                // Set the chart's projection to the created projection
-                chart.set("projection", projectionFunction());
-            }
-        } else {
-            console.error(`Failed to update projection: No projection function found for ${projectionName}`);
-        }
-    } catch (error) {
-        console.error(`Failed to update projection: ${error}`);
-    }
-}
-
-  
-
