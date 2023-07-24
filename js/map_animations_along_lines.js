@@ -141,8 +141,8 @@ document.getElementById('make-maps-button').addEventListener('click', function()
         projection: am5map.geoMercator()
     }));
 
-    // Call the function to create the slider
-    //createSlider(root, chart);
+    // Call the function to create the slider again
+    createSlider(root, chart, backgroundSeries, projectionFunction);
 
     // Create series for background fill
     backgroundSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {}));
@@ -196,6 +196,9 @@ document.getElementById('make-maps-button').addEventListener('click', function()
 
     });
 
+    // Call the function to set up the dropdown again
+    setupProjectionDropdown(chart);
+    
     // Make stuff animate on load
     chart.appear(1000, 100);
 });

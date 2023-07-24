@@ -1,0 +1,29 @@
+{
+  "airportSearch.js": [
+    "main.js"
+  ],
+  "collapsible.js": [],
+  "dropdown.js": [
+    "airportSearch.js",
+    "main.js"
+  ],
+  "locationPair.js": [
+    "airportSearch.js",
+    "locationPairClass.js",
+    "main.js"
+  ],
+  "locationPairClass.js": [],
+  "main.js": [],
+  "mapProjection.js": [],
+  "mapUtilities.js": [
+    "mapProjection.js"
+  ],
+  "map_animations_along_lines.js": [
+    "mapProjection.js",
+    "mapUtilities.js"
+  ],
+  "suggestion_pairs.js": [
+    "locationPairClass.js"
+  ],
+  "tabs.js": []
+}
