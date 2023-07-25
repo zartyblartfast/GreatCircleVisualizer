@@ -2,18 +2,18 @@ import { locationPair } from './locationPairClass.js';
 
 window.addEventListener('DOMContentLoaded', async () => {
   try {
-    console.log('Fetching suggestion pairs...');
+    //console.log('Fetching suggestion pairs...');
     const response = await fetch('./data/suggestion_pairs.json');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     } else {
       const suggestionPairs = await response.json();
-      console.log('Successfully fetched suggestion pairs:', suggestionPairs);
+      //console.log('Successfully fetched suggestion pairs:', suggestionPairs);
 
       document.getElementById('suggestions-button').addEventListener('click', () => {
-        console.log('Suggestions button clicked. Processing suggestion pairs...');
+        //console.log('Suggestions button clicked. Processing suggestion pairs...');
         locationPair.lastSuggestionPairs.forEach(pair => {
-          console.log('Removing suggestion pair:', pair);
+          //console.log('Removing suggestion pair:', pair);
           locationPair.removeLocationPair(pair, false); // pass false for shouldDisplay
         });
       
@@ -37,7 +37,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           if (!locationPair.locationPairs.find(
             storedPair => storedPair.airportACode === newPair.airportACode && storedPair.airportBCode === newPair.airportBCode
           )) {
-            console.log('Adding new suggestion pair:', newPair);
+            //console.log('Adding new suggestion pair:', newPair);
             locationPair.addLocationPair(newPair, true);
             locationPair.lastSuggestionPairs.push(newPair);
           }

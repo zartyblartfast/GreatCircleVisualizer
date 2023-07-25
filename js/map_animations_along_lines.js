@@ -91,18 +91,18 @@ rhumbLineSeries.mapLines.template.setAll({
 pointSeries = createPointSeries(root, chart);
 
 globalLocationPair.locationPairs.forEach(pair => {
-    console.log("Inside forEach Pair (body), calling addLineAndPlane.  Pair: ", pair)
+    //console.log("Inside forEach Pair (body), calling addLineAndPlane.  Pair: ", pair)
     var city1 = addCity(root, chart, pointSeries,{ latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName, pair.airportACode, pair.airportACountry);
    
-    console.log("Inside forEach Pair (body). Pair.airportAName: ", pair.airportAName)
-    console.log("Inside forEach Pair (body). Pair.countryA: ", pair.countryA)
+    //console.log("Inside forEach Pair (body). Pair.airportAName: ", pair.airportAName)
+    //console.log("Inside forEach Pair (body). Pair.countryA: ", pair.countryA)
 
     var city2 = addCity(root, chart, pointSeries, { latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName, pair.airportBCode, pair.airportBCountry);
 
-    console.log("Inside forEach Pair (body). Pair.airportBName: ", pair.airportBName)
+    //console.log("Inside forEach Pair (body). Pair.airportBName: ", pair.airportBName)
 
-    console.log("City1 object: ", city1);
-    console.log("City2 object: ", city2);
+    //console.log("City1 object: ", city1);
+    //console.log("City2 object: ", city2);
 
     addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2);
 
@@ -111,7 +111,7 @@ globalLocationPair.locationPairs.forEach(pair => {
 // Event listener for the "Make maps" button
 document.getElementById('make-maps-button').addEventListener('click', function() {
 
-    console.log("globalLocationPair after make-maps-button click: ", globalLocationPair)
+    //console.log("globalLocationPair after make-maps-button click: ", globalLocationPair)
 
     // Stop animations and clear the data from each series in the planeSeriesArray
     stopAnimationsAndClearData(planeSeriesArray);
@@ -137,7 +137,8 @@ document.getElementById('make-maps-button').addEventListener('click', function()
     // Create a new chart
     chart = root.container.children.push(am5map.MapChart.new(root, {
         panX: "rotateX",
-        panY: "rotateY",
+        panY: "translateY",
+        rotationY: 0,
         projection: am5map.geoMercator()
     }));
 
@@ -181,16 +182,16 @@ document.getElementById('make-maps-button').addEventListener('click', function()
 
     // Add new data
     globalLocationPair.locationPairs.forEach(pair => {
-        console.log("Inside forEach Pair (click function), calling addLineAndPlane.  Pair: ", pair)
+        //console.log("Inside forEach Pair (click function), calling addLineAndPlane.  Pair: ", pair)
         var city1 = addCity(root, chart, pointSeries, { latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName, pair.airportACode, pair.airportACountry);
 
-        console.log("Inside forEach Pair (click function). Pair.airportAName: ", pair.airportAName)
+        //console.log("Inside forEach Pair (click function). Pair.airportAName: ", pair.airportAName)
 
         var city2 = addCity(root, chart, pointSeries, { latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName, pair.airportBCode, pair.airportBCountry);
-        console.log("Inside forEach Pair (click function). Pair.airportBName: ", pair.airportBName)
+        //console.log("Inside forEach Pair (click function). Pair.airportBName: ", pair.airportBName)
 
-        console.log("City1 object: ", city1);
-        console.log("City2 object: ", city2);
+        //console.log("City1 object: ", city1);
+        //console.log("City2 object: ", city2);
 
         addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2);
 

@@ -45,12 +45,14 @@ export function addCity(root, chart, pointSeries, coords, title, code, country) 
 
 export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2) {
 
+    /*
     console.log("Inside addLineAndPlane. City1.airportAName: ", city1.get("airportName"))
     console.log("Inside addLineAndPlane. City1.latitude: ", city1.get("latitude"))
     console.log("Inside addLineAndPlane. City1.longitude: ", city1.get("longitude"))
     console.log("Inside addLineAndPlane. City2.airportAName: ", city2.get("airportName"))
     console.log("Inside addLineAndPlane. City2.latitude: ", city2.get("latitude"))
     console.log("Inside addLineAndPlane. City2.longitude: ", city2.get("longitude"))
+    */
 
     var lineDataItem = lineSeries.pushDataItem({
         pointsToConnect: [city1, city2]
@@ -62,7 +64,7 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
         { latitude: city2.get("latitude"), longitude: city2.get("longitude") }
     );
 
-    console.log("rhumbLinePoints: ",rhumbLinePoints)
+    //console.log("rhumbLinePoints: ",rhumbLinePoints)
 
     // Add a new data item to the rhumbLineSeries for each pair of cities
     
@@ -94,7 +96,7 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     //chart.series.push(rhumbLineSeries);
 
     //console.log(rhumbLineSeries.dataItems[0]._settings.multiGeoLine);
-    console.log("rhumbLineSeries.dataItems",rhumbLineSeries.dataItems);
+    //console.log("rhumbLineSeries.dataItems",rhumbLineSeries.dataItems);
 
 
     var planeSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
@@ -121,8 +123,8 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     });
 
     //These two console.log statement prevent more than one airport pair from being plotted
-    console.log(">>> animate method: airport A ", city1.airportName)
-    console.log(">>> animate method: airport B ", city2.airportName)
+    //console.log(">>> animate method: airport A ", city1.airportName)
+    //console.log(">>> animate method: airport B ", city2.airportName)
 
     planeDataItem.animate({
         key: "positionOnLine",
@@ -175,16 +177,16 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
         if (!switchButton.get("active")) {
             // Set the chart's projection back to the stored value
 
-            console.log("1. createSlider currentProjection: ",currentProjection)
-            console.log("1. createSlider currentProjectionName: ",currentProjectionName)
+            //console.log("1. createSlider currentProjection: ",currentProjection)
+            //console.log("1. createSlider currentProjectionName: ",currentProjectionName)
 
             chart.set("projection", currentProjection);
-            backgroundSeries.mapPolygons.template.set("fillOpacity", 0);
+            /////backgroundSeries.mapPolygons.template.set("fillOpacity", 0);
             
             if (currentProjectionName === "geoAzimuthalEquidistant") {
 
-                console.log("2. createSlider currentProjection: ",currentProjection)
-                console.log("2. createSlider currentProjectionName: ",currentProjectionName)
+                //console.log("2. createSlider currentProjection: ",currentProjection)
+                //console.log("2. createSlider currentProjectionName: ",currentProjectionName)
                 // Get the projection function from the D3 object
                 //let projectionFunction = d3[projectionFunctionName];
                 //let projectionFunction = d3[projectionFunction];
@@ -200,8 +202,8 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
             } else {
 
                 //console.log("inside switchButton, not geoAzimuthalEquidistant")    
-                console.log("3. createSlider currentProjection: ",currentProjection)  
-                console.log("3. createSlider currentProjectionName: ",currentProjectionName)
+                //console.log("3. createSlider currentProjection: ",currentProjection)  
+                //console.log("3. createSlider currentProjectionName: ",currentProjectionName)
 
                 chart.set("panX", "rotateX");
                 chart.set("panY", "translateY");
@@ -213,16 +215,16 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
             //chart.set("rotationY", 0);
         } else {
             // Store the current projection before switching to the "globe" view
-            console.log("4. createSlider currentProjection: ",currentProjection)        
-            console.log("4. createSlider currentProjectionName: ",currentProjectionName)
+            //console.log("4. createSlider currentProjection: ",currentProjection)        
+            //console.log("4. createSlider currentProjectionName: ",currentProjectionName)
 
             currentProjection = chart.get("projection");
             chart.set("projection", am5map.geoOrthographic());
             chart.set("panY", "rotateY")
-            backgroundSeries.mapPolygons.template.set("fillOpacity", 0.1);
+            /////backgroundSeries.mapPolygons.template.set("fillOpacity", 0.1);
 
-            console.log("5. createSlider currentProjection: ",currentProjection) 
-            console.log("5. createSlider currentProjectionName: ",currentProjectionName)
+            //console.log("5. createSlider currentProjection: ",currentProjection) 
+            //console.log("5. createSlider currentProjectionName: ",currentProjectionName)
         }
     });
 }

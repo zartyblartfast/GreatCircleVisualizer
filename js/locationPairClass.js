@@ -11,7 +11,7 @@ export class LocationPair {
   }
 
     addLocationPair(pair, isSuggested) {
-      console.log('addLocationPair called with pair:', pair, 'and isSuggested:', isSuggested);
+      //console.log('addLocationPair called with pair:', pair, 'and isSuggested:', isSuggested);
       
       pair.isSuggested = isSuggested || false;
       this.locationPairs.push(pair);
@@ -27,9 +27,9 @@ export class LocationPair {
           this.userAddedPairs = existingPairs;
           localStorage.setItem('locationPairs', JSON.stringify(this.userAddedPairs));
           
-          console.log('addLocationPair isSuggested = false');
+          //console.log('addLocationPair isSuggested = false');
       } else {
-          console.log('addLocationPair isSuggested = true');
+          //console.log('addLocationPair isSuggested = true');
       }
 
       this.displayLocationPairs(this.locationPairs);
@@ -38,13 +38,13 @@ export class LocationPair {
       window.globalLocationPair.locationPairs = this.locationPairs;
 
       // Dispatch the event
-      console.log('Dispatching locationPairsChanged event');
+      //console.log('Dispatching locationPairsChanged event');
       window.dispatchEvent(new CustomEvent('locationPairsChanged'));
     }
 
 
     removeLocationPair(pairOrElement) {
-      console.log('removeLocationPair called with:', pairOrElement);
+      //console.log('removeLocationPair called with:', pairOrElement);
       let pair;
       if (pairOrElement instanceof HTMLElement) { // if an HTMLElement was passed
           const index = pairOrElement.dataset.index;
@@ -56,8 +56,8 @@ export class LocationPair {
       const index = this.locationPairs.findIndex(
           storedPair => storedPair.airportACode === pair.airportACode && storedPair.airportBCode === pair.airportBCode
       );
-      console.log('removeLocationPair fn - index :' + index);
-      console.log('removeLocationPair found pair at index:', index, 'pair:', pair);
+      //console.log('removeLocationPair fn - index :' + index);
+      //console.log('removeLocationPair found pair at index:', index, 'pair:', pair);
   
       if (index !== -1) {
           this.locationPairs.splice(index, 1);
@@ -77,7 +77,7 @@ export class LocationPair {
   
 
   displayLocationPairs() {
-    console.log('displayLocationPairs called with:', this.locationPairs);
+    //console.log('displayLocationPairs called with:', this.locationPairs);
     //const locationPairTags = document.getElementById('location-pair-tags');
     const locationPairTags = document.querySelector('.location-pair-tags-container');
     locationPairTags.innerHTML = '';
@@ -85,7 +85,7 @@ export class LocationPair {
       const tag = document.createElement('div');
       tag.classList.add('tag');
   
-      console.log('displayLocationPairs - isSuggested:', pair.isSuggested);
+      //console.log('displayLocationPairs - isSuggested:', pair.isSuggested);
   
       // if pair is a suggested one, add a 'suggested' class to the tag
       if (pair.isSuggested) {
