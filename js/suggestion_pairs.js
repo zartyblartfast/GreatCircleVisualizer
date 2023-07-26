@@ -8,6 +8,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     } else {
       const suggestionPairs = await response.json();
+      //console.log(suggestionPairs); 
       //console.log('Successfully fetched suggestion pairs:', suggestionPairs);
 
       document.getElementById('suggestions-button').addEventListener('click', () => {
@@ -20,6 +21,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         locationPair.displayLocationPairs(locationPair.locationPairs); // display the pairs once after all have been removed
       
         suggestionPairs.forEach(pair => {
+
+          //console.log(typeof pair.GreatCircleDistKm);  
+          //console.log(typeof pair.RhumbLineDistKm); 
+
           const newPair = {
             airportAName: pair.airportAName,
             airportACode: pair.airportACode,
@@ -31,6 +36,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             airportBCountry: pair.airportBCountry,
             airportBLat: pair.airportBLat,
             airportBLon: pair.airportBLon,
+            GreatCircleDistKm: pair.GreatCircleDistKm,
+            RhumbLineDistKm: pair.RhumbLineDistKm,
             isSuggested: true
           };
 

@@ -74,10 +74,23 @@ graticuleSeries.mapLines.template.setAll({
 
 
 // Create line series for trajectory lines
+/*
 var lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
 lineSeries.mapLines.template.setAll({
     stroke: root.interfaceColors.get("alternativeBackground"),
-    strokeOpacity: 0.3
+    strokeWidth: 2,
+    strokeOpacity: 0.3,
+    interactive: true,
+});
+*/
+var lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
+lineSeries.mapLines.template.setAll({
+    stroke: root.interfaceColors.get("alternativeBackground"),
+    strokeWidth: 4,
+    strokeOpacity: 0.3,
+    interactive: true//,
+    //tooltipText: "test test"
+    //tooltipText: "{pointsToConnect[0].airportName} ({pointsToConnect[0].code}) to {pointsToConnect[1].airportName} ({pointsToConnect[1].code})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km"
 });
 
 let rhumbLineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
@@ -104,7 +117,7 @@ globalLocationPair.locationPairs.forEach(pair => {
     //console.log("City1 object: ", city1);
     //console.log("City2 object: ", city2);
 
-    addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2);
+    addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, pair.GreatCircleDistKm, pair.RhumbLineDistKm);
 
 });
 
@@ -169,20 +182,30 @@ document.getElementById('make-maps-button').addEventListener('click', function()
         stroke: root.interfaceColors.get("alternativeBackground"),
         strokeOpacity: 0.08
     });
-
+    
     // Create line series for trajectory lines
     lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
     lineSeries.mapLines.template.setAll({
         stroke: root.interfaceColors.get("alternativeBackground"),
-        strokeOpacity: 0.3
+        strokeWidth: 4,
+        strokeOpacity: 0.3,
+        interactive: true//,
+        //tooltipText: "test test"
+        //tooltipText: "{pointsToConnect[0].airportName} ({pointsToConnect[0].code}) to {pointsToConnect[1].airportName} ({pointsToConnect[1].code})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km"
     });
+
 
     // Create point series for markers
     pointSeries = createPointSeries(root, chart);
 
     // Add new data
     globalLocationPair.locationPairs.forEach(pair => {
+
+
         //console.log("Inside forEach Pair (click function), calling addLineAndPlane.  Pair: ", pair)
+        //console.log("GreatCircleDistKm >>>>>", pair.GreatCircleDistKm)
+        //console.log("RhumbLineDistKm >>>>>", pair.RhumbLineDistKm)
+
         var city1 = addCity(root, chart, pointSeries, { latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName, pair.airportACode, pair.airportACountry);
 
         //console.log("Inside forEach Pair (click function). Pair.airportAName: ", pair.airportAName)
@@ -192,8 +215,9 @@ document.getElementById('make-maps-button').addEventListener('click', function()
 
         //console.log("City1 object: ", city1);
         //console.log("City2 object: ", city2);
+        //console.log("distances: ", city1.)
 
-        addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2);
+        addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, pair.GreatCircleDistKm, pair.RhumbLineDistKm);
 
     });
 

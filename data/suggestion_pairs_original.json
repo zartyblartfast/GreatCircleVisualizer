@@ -1,0 +1,98 @@
+[
+    {
+        "airportAName": "Sultan Babullah Airport",
+        "airportACode": "TTE",
+        "airportACountry": "ID",
+        "airportALat": 0.831012,
+        "airportALon": 127.381611,
+        "airportBName": "Mariscal Sucre International Airport",
+        "airportBCode": "UIO",
+        "airportBCountry": "EC",
+        "airportBLat": -0.125399,
+        "airportBLon": -78.354306
+    },
+    {
+        "airportAName": "Hobart International Airport",
+        "airportACode": "HBA",
+        "airportACountry": "AU",
+        "airportALat": -42.836101532,
+        "airportALon": 147.509994507,
+        "airportBName": "Troll Airfield",
+        "airportBCode": "QET",
+        "airportBCountry": "AQ",
+        "airportBLat": -71.95714,
+        "airportBLon": 2.45257
+    },
+    {
+        "airportAName": "Los Angeles / Tom Bradley International Airport",
+        "airportACode": "LAX",
+        "airportACountry": "US",
+        "airportALat": 33.942501,
+        "airportALon": -118.407997,
+        "airportBName": "Dubai International Airport",
+        "airportBCode": "DXB",
+        "airportBCountry": "AE",
+        "airportBLat": 25.2527999878,
+        "airportBLon": 55.3643989563
+    },
+    {
+        "airportAName": "Hobart International Airport",
+        "airportACode": "HBA",
+        "airportACountry": "AU",
+        "airportALat": -42.836101532,
+        "airportALon": 147.509994507,
+        "airportBName": "Malvinas Argentinas Airport",
+        "airportBCode": "USH",
+        "airportBCountry": "AR",
+        "airportBLat": -54.8433,
+        "airportBLon": -68.2958
+    },
+    {
+        "airportAName": "Libreville Leon M'ba International Airport",
+        "airportACode": "LBV",
+        "airportACountry": "GA",
+        "airportALat": 0.458600014448,
+        "airportALon": 9.4122800827,
+        "airportBName": "Mariscal Sucre International Airport",
+        "airportBCode": "UIO",
+        "airportBCountry": "EC",
+        "airportBLat": -0.125399,
+        "airportBLon": -78.354306
+    },
+    {
+        "airportAName": "Libreville Leon M'ba International Airport",
+        "airportACode": "LBV",
+        "airportACountry": "GA",
+        "airportALat": 0.458600014448,
+        "airportALon": 9.4122800827,
+        "airportBName": "Sultan Babullah Airport",
+        "airportBCode": "TTE",
+        "airportBCountry": "ID",
+        "airportBLat": 0.831012,
+        "airportBLon": 127.381611
+    },
+    {
+        "airportAName": "McMurdo Station Ice Runway",
+        "airportACode": "NZIR",
+        "airportACountry": "AQ",
+        "airportALat": -77.8463,
+        "airportALon": 166.4694,
+        "airportBName": "Cape Town International Airport",
+        "airportBCode": "CPT",
+        "airportBCountry": "ZA",
+        "airportBLat": -33.9648017883,
+        "airportBLon": 18.6016998291
+    },
+    {
+        "airportAName": "South Pole Station Skiway",
+        "airportACode": "NZSP",
+        "airportACountry": "AQ",
+        "airportALat": -90.0,
+        "airportALon": 0.0,
+        "airportBName": "Alert Airport",
+        "airportBCode": "CYLT",
+        "airportBCountry": "CA",
+        "airportBLat": 82.5178,
+        "airportBLon": -62.2806
+    }
+]

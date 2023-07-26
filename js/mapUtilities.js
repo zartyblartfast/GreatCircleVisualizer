@@ -43,7 +43,7 @@ export function addCity(root, chart, pointSeries, coords, title, code, country) 
     return dataItem;
 }
 
-export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2) {
+export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, GreatCircleDistKm, RhumbLineDistKm) {
 
     /*
     console.log("Inside addLineAndPlane. City1.airportAName: ", city1.get("airportName"))
@@ -53,11 +53,40 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     console.log("Inside addLineAndPlane. City2.latitude: ", city2.get("latitude"))
     console.log("Inside addLineAndPlane. City2.longitude: ", city2.get("longitude"))
     */
+    //console.log("Inside addLineAndPlane, GreatCircleDistKm: ", GreatCircleDistKm)
+    //console.log("Inside addLineAndPlane, RhumbLineDistKm: ", RhumbLineDistKm)
 
+    /*
     var lineDataItem = lineSeries.pushDataItem({
         pointsToConnect: [city1, city2]
     });
+    */
 
+    // Calculate the percentage difference
+    let percentageDifference = ((RhumbLineDistKm - GreatCircleDistKm) / GreatCircleDistKm) * 100;
+
+    // Include the sign in the percentage difference
+    let signedPercentageDifference;
+    if (Math.abs(percentageDifference) < 0.005) { // If the absolute value of the percentage difference is less than 0.005
+        signedPercentageDifference = '~0';
+    } else {
+        signedPercentageDifference = percentageDifference > 0 ? `+${percentageDifference.toFixed(2)}` : percentageDifference.toFixed(2);
+    }
+
+    var lineDataItem = lineSeries.pushDataItem({
+        pointsToConnect: [city1, city2],
+        airportAName: city1.get("airportName"),
+        airportACode: city1.get("code"),
+        airportBName: city2.get("airportName"),
+        airportBCode: city2.get("code"),
+        GreatCircleDistKm: Number(GreatCircleDistKm).toFixed(1),
+        RhumbLineDistKm: Number(RhumbLineDistKm).toFixed(1),
+        PercentageDifference: signedPercentageDifference
+    });
+
+    lineSeries.mapLines.template.set("tooltipText", "{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
+    //lineSeries.mapLines.template.set("tooltipText", "<span style='font-size: 10px;'>{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km</span>");
+    
     // Calculate the points for the rhumb line
     var rhumbLinePoints = calculateRhumbLinePoints(
         { latitude: city1.get("latitude"), longitude: city1.get("longitude") },

@@ -1,6 +1,7 @@
 import { getAirportList } from './main.js';
 import { setSelectedAirportACode, setSelectedAirportBCode, getSelectedAirportACode, getSelectedAirportBCode } from './airportSearch.js';
 import { locationPair } from './locationPairClass.js';
+import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.4.0/latlon-spherical.min.js';
 
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-button').disabled = true;
@@ -35,6 +36,16 @@ window.addEventListener('DOMContentLoaded', () => {
         isSuggested: false
       };      
   
+      // Calculate distances
+      const p1 = new LatLon(newPair.airportALat, newPair.airportALon);
+      const p2 = new LatLon(newPair.airportBLat, newPair.airportBLon);
+      const d = p1.distanceTo(p2) / 1000;  // in kilometers
+      const r = p1.rhumbDistanceTo(p2) / 1000;  // in kilometers
+
+      // Add distances to the newPair object
+      newPair.GreatCircleDistKm = d;
+      newPair.RhumbLineDistKm = r;
+
       console.log('User added a new pair:', newPair);
       locationPair.addLocationPair(newPair, false);
       

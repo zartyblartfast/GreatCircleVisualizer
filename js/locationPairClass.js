@@ -1,3 +1,5 @@
+//import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.4.0/latlon-spherical.min.js';
+
 export class LocationPair {
   constructor() {
     this.locationPairs = JSON.parse(localStorage.getItem('locationPairs')) || [];
@@ -113,7 +115,8 @@ export class LocationPair {
         this.removeLocationPair(tag);
       });
       deleteButtonWrapper.appendChild(deleteButton);
-  
+
+      /*
       const additionalInfo = document.createElement('div');
       additionalInfo.classList.add('additional-info');
       additionalInfo.innerHTML = 
@@ -135,6 +138,56 @@ export class LocationPair {
         <p>Country: ${pair.airportBCountry}</p>
         <p>Latitude: ${pair.airportBLat}</p>
         <p>Longitude: ${pair.airportBLon}</p>
+      </div>
+    </div>`
+    */
+    //console.log("pair.GreatCircleDistKm: ", pair.GreatCircleDistKm);  // add this line
+    //console.log(typeof pair.GreatCircleDistKm);  // add this line
+    //console.log("pair.RhumbLineDistKm: ", pair.RhumbLineDistKm);  // add this line
+    //console.log(typeof pair.RhumbLineDistKm);  // add this line
+
+    // Calculate the percentage difference
+    const greatCircleDist = parseFloat(pair.GreatCircleDistKm);
+    const rhumbLineDist = parseFloat(pair.RhumbLineDistKm);
+    const percentageDifference = ((rhumbLineDist - greatCircleDist) / greatCircleDist) * 100;
+
+    // Include the sign in the percentage difference
+    let signedPercentageDifference;
+    if (Math.abs(percentageDifference) < 0.005) { // If the absolute value of the percentage difference is less than 0.005
+      signedPercentageDifference = '~0';
+    } else {
+      signedPercentageDifference = percentageDifference > 0 ? `+${percentageDifference.toFixed(2)}` : percentageDifference.toFixed(2);
+    }
+
+    const additionalInfo = document.createElement('div');
+    additionalInfo.classList.add('additional-info');
+    additionalInfo.innerHTML = 
+    `<div class="tag-content">
+      <div class="header">
+        <hr class="separator">
+        <span class="airport-name";">${pair.airportAName} (${pair.airportACode})</span>
+      </div>
+      <div class="airport-info">
+        <p>Country: ${pair.airportACountry}</p>
+        <p>Latitude: ${pair.airportALat}</p>
+        <p>Longitude: ${pair.airportALon}</p>
+      </div>
+      <div class="header">
+        <hr class="separator">
+        <span class="airport-name";">${pair.airportBName} (${pair.airportBCode})</span>
+      </div>
+      <div class="airport-info">
+        <p>Country: ${pair.airportBCountry}</p>
+        <p>Latitude: ${pair.airportBLat}</p>
+        <p>Longitude: ${pair.airportBLon}</p>
+      </div>
+      <div class="header">
+        <hr class="separator">
+        <span class="distance-info">Distances (km):</span>
+      </div>
+      <div class="distance-info">
+        <p>Great Circle: ${pair.GreatCircleDistKm.toFixed(1)}</p>
+        <p>Rhumb Line: ${pair.RhumbLineDistKm.toFixed(1)} (${signedPercentageDifference}%)</p>
       </div>
     </div>`
   
