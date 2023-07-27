@@ -50,10 +50,11 @@
   /*width: var(--tag-width); */
   width: 296px;
   text-align: center;
-  background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);
+  /*background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);*/
+  background: grey;
   padding: 2px 2px; /* Adjust padding as needed */
   color: white;
-  margin-bottom: 2px; /* Adjust margin as needed */
+  margin-bottom: 5px; /* Adjust margin as needed */
   margin-top: 0px; /* Adjust top margin as needed */
   font-size: 0.9em; 
 }

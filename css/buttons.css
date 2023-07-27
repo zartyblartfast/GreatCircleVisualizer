@@ -1,94 +1,32 @@
-/* https://codepen.io/lukemeyrick/pen/YzEqOwe */
-.button {
-    display: inline-block;
-    position: relative;
-    z-index: 0;
-    overflow: hidden;
-    text-decoration: none;
-    font-family: sans-serif;
-    font-weight: 600;
-    font-size: 0.75em;
-    padding: 0.3em 0.45em;
-    border-radius: calc(0.75em + 0.5em + 0.15em);
-    transition: 4s;
-    margin-top: 0.5em;
-}
-
-.button:before, .button:after {
-    content: "";
-    position: absolute;
-    top: -1.5em;
-    width: 200%;
-    aspect-ratio: 1;
+/*https://uiverse.io/SteveBloX/short-fish-35*/
+#add-button, #suggestions-button, #make-maps-button {
+    width: var(--field-width);
+    height: 35px;
     border: none;
-    border-radius: 40%;
-    transition: 4s;
-}
-
-.button:before {
-    left: -80%;
-    transform: translate3d(0, 5em, 0) rotate(-340deg);
-}
-
-.button:after {
-    right: -80%;
-    transform: translate3d(0, 5em, 0) rotate(390deg);
-}
-
-.button:hover:before, .button:hover:after, .button:focus:before, .button:focus:after {
-    transform: none;
-}
-
-.button:hover, .button:focus {
+    border-radius: 45px;
+    transition: all 0.3s;
+    cursor: pointer;
+    background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);
     color: white;
-}
+    font-size: 0.9em;
+    font-weight: 550;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 3px;
+    margin-bottom: 2px;
+  }
+  
+  #add-button:hover, #suggestions-button:hover, #make-maps-button:hover {
+    background: linear-gradient(45deg, #6593f5, #0f2027, #b3ccdd);
+    color: white;
+    font-size: 1.0em;
+  }
+  
+  #make-maps-button {
+    grid-area: make-maps-button-container;
+    width: 100%;
+  }
 
-.button-light {
-    color: #333;
-    border: 0.15em solid #b3ccdd;
-}
-
-
-.button-light:before, .button-light:after {
-    background-color: rgba(179, 204, 221, 0.25);
-}
-
-
-.button-light:hover:before, .button-light:hover:after, .button-light:focus:before, .button-light:focus:after {
-    background-color: rgba(179, 204, 221, 0.75);
-    width: 50%; /* Reduced size */
-    height: 50%; /* Reduced size */
-}
-
-.button-light:hover, .button-light:focus {
-    color: black; /* Change this to black */
-}
-
-.button-dark {
-    color: #0f2027;
-    border: 0.15em solid #0f2027;
-    background-color: transparent; /* Make sure the initial background color is transparent */
-    transition: background-color 0.3s ease; /* Add a transition for the background color */
-}
-
-.button-dark:before, .button-dark:after {
-    background-color: rgba(15, 32, 39, 0.15); /* Reduced opacity */
-}
-
-.button-dark:hover:before, .button-dark:hover:after, .button-dark:focus:before, .button-dark:focus:after {
-    background-color: rgba(15, 32, 39, 0.75);
-    width: 50%; /* Reduced size */
-    height: 50%; /* Reduced size */
-}
-
-.button-dark:hover, .button-dark:focus {
-    color: #ffffff; /* Change text color to pure white on hover */
-    background-color: rgba(15, 32, 39, 0.75); /* Change background color on hover */
-}
-
-
-
-.button:disabled {
-    background-color: grey;
+  #add-button:disabled, #suggestions-button:disabled, #make-maps-button:disabled {
+    background: grey;
     cursor: not-allowed;
 }
