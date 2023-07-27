@@ -1,3 +1,5 @@
+//import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.4.0/latlon-spherical.min.js';
+
 export class LocationPair {
   constructor() {
     this.locationPairs = JSON.parse(localStorage.getItem('locationPairs')) || [];
@@ -11,7 +13,7 @@ export class LocationPair {
   }
 
     addLocationPair(pair, isSuggested) {
-      console.log('addLocationPair called with pair:', pair, 'and isSuggested:', isSuggested);
+      //console.log('addLocationPair called with pair:', pair, 'and isSuggested:', isSuggested);
       
       pair.isSuggested = isSuggested || false;
       this.locationPairs.push(pair);
@@ -27,9 +29,9 @@ export class LocationPair {
           this.userAddedPairs = existingPairs;
           localStorage.setItem('locationPairs', JSON.stringify(this.userAddedPairs));
           
-          console.log('addLocationPair isSuggested = false');
+          //console.log('addLocationPair isSuggested = false');
       } else {
-          console.log('addLocationPair isSuggested = true');
+          //console.log('addLocationPair isSuggested = true');
       }
 
       this.displayLocationPairs(this.locationPairs);
@@ -38,13 +40,13 @@ export class LocationPair {
       window.globalLocationPair.locationPairs = this.locationPairs;
 
       // Dispatch the event
-      console.log('Dispatching locationPairsChanged event');
+      //console.log('Dispatching locationPairsChanged event');
       window.dispatchEvent(new CustomEvent('locationPairsChanged'));
     }
 
 
     removeLocationPair(pairOrElement) {
-      console.log('removeLocationPair called with:', pairOrElement);
+      //console.log('removeLocationPair called with:', pairOrElement);
       let pair;
       if (pairOrElement instanceof HTMLElement) { // if an HTMLElement was passed
           const index = pairOrElement.dataset.index;
@@ -56,8 +58,8 @@ export class LocationPair {
       const index = this.locationPairs.findIndex(
           storedPair => storedPair.airportACode === pair.airportACode && storedPair.airportBCode === pair.airportBCode
       );
-      console.log('removeLocationPair fn - index :' + index);
-      console.log('removeLocationPair found pair at index:', index, 'pair:', pair);
+      //console.log('removeLocationPair fn - index :' + index);
+      //console.log('removeLocationPair found pair at index:', index, 'pair:', pair);
   
       if (index !== -1) {
           this.locationPairs.splice(index, 1);
@@ -77,7 +79,7 @@ export class LocationPair {
   
 
   displayLocationPairs() {
-    console.log('displayLocationPairs called with:', this.locationPairs);
+    //console.log('displayLocationPairs called with:', this.locationPairs);
     //const locationPairTags = document.getElementById('location-pair-tags');
     const locationPairTags = document.querySelector('.location-pair-tags-container');
     locationPairTags.innerHTML = '';
@@ -85,8 +87,9 @@ export class LocationPair {
       const tag = document.createElement('div');
       tag.classList.add('tag');
   
-      console.log('displayLocationPairs - isSuggested:', pair.isSuggested);
-  
+      //console.log('displayLocationPairs - isSuggested:', pair.isSuggested);
+      //console.log("pair: ", pair)
+
       // if pair is a suggested one, add a 'suggested' class to the tag
       if (pair.isSuggested) {
         tag.classList.add('suggested');
@@ -99,7 +102,12 @@ export class LocationPair {
       tag.appendChild(mainContent);
   
       const mainLabel = document.createElement('span');
-      mainLabel.textContent = `${pair.airportACode} - ${pair.airportBCode}`;
+       
+      if (pair.isSuggested) {
+        mainLabel.textContent = `Suggested: ${pair.airportACode} - ${pair.airportBCode}`;
+      } else {
+        mainLabel.textContent = `${pair.airportACode} - ${pair.airportBCode}`;
+      }
       mainContent.appendChild(mainLabel);
   
       const deleteButtonWrapper = document.createElement('div');
@@ -113,17 +121,30 @@ export class LocationPair {
         this.removeLocationPair(tag);
       });
       deleteButtonWrapper.appendChild(deleteButton);
-  
-      const additionalInfo = document.createElement('div');
-      additionalInfo.classList.add('additional-info');
-      additionalInfo.innerHTML = 
-      `<div class="tag-content">
+
+    // Calculate the percentage difference
+    const greatCircleDist = parseFloat(pair.GreatCircleDistKm);
+    const rhumbLineDist = parseFloat(pair.RhumbLineDistKm);
+    const percentageDifference = ((rhumbLineDist - greatCircleDist) / greatCircleDist) * 100;
+
+    // Include the sign in the percentage difference
+    let signedPercentageDifference;
+    if (Math.abs(percentageDifference) < 0.005) { // If the absolute value of the percentage difference is less than 0.005
+      signedPercentageDifference = '~0';
+    } else {
+      signedPercentageDifference = percentageDifference > 0 ? `+${percentageDifference.toFixed(2)}` : percentageDifference.toFixed(2);
+    }
+
+    const additionalInfo = document.createElement('div');
+    additionalInfo.classList.add('additional-info');
+    additionalInfo.innerHTML = 
+    `<div class="tag-content">
       <div class="header">
         <hr class="separator">
         <span class="airport-name";">${pair.airportAName} (${pair.airportACode})</span>
       </div>
       <div class="airport-info">
-        <p>Country: ${pair.airportACountry}</p>
+        <p>Country: ${pair.airportACountryFull}</p>
         <p>Latitude: ${pair.airportALat}</p>
         <p>Longitude: ${pair.airportALon}</p>
       </div>
@@ -132,9 +153,17 @@ export class LocationPair {
         <span class="airport-name";">${pair.airportBName} (${pair.airportBCode})</span>
       </div>
       <div class="airport-info">
-        <p>Country: ${pair.airportBCountry}</p>
+        <p>Country: ${pair.airportBCountryFull}</p>
         <p>Latitude: ${pair.airportBLat}</p>
         <p>Longitude: ${pair.airportBLon}</p>
+      </div>
+      <div class="header">
+        <hr class="separator">
+        <span class="distance-info">Distances (km):</span>
+      </div>
+      <div class="distance-info">
+        <p>Great Circle: ${pair.GreatCircleDistKm.toFixed(1)}</p>
+        <p>Rhumb Line: ${pair.RhumbLineDistKm.toFixed(1)} (${signedPercentageDifference}%)</p>
       </div>
     </div>`
   

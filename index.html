@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="./css/buttons.css">
   <link rel="stylesheet" href="./css/tags.css">
   <link rel="stylesheet" href="./css/airport-svg.css">
-  <link rel="stylesheet" href="./css/tabs.css">
+  <!--<link rel="stylesheet" href="./css/tabs.css">-->
   <link rel="stylesheet" href="./css/mapStyles.css">
 
   <!-- Awesomplete CSS -->
@@ -27,13 +27,16 @@
 
 <body>
   <header>
-    <h1>Great Circle Mapper</h1>
+    <h1>Great Circle Visualizer</h1>
     <p>Visualize great circles routes between any two airport locations on Earth using different map projections</p>
   </header>
   <main>
     <div class="main-container">
       <div class="grid-wrapper">
         <div class="grid-container container">
+          <div class="add-tags-header-container">
+            <h3 class="add-tags-header">Add Airport Pairs</h3>
+          </div>
           <div class="location-a-label">
             <img class="location-image" src="./assets/Airport_symbol.png" alt="Airport symbol">
             <span class="location-text">Airport A</span>
@@ -66,40 +69,27 @@
           <div class="info-message-container">
             <div id="info-message"></div>
           </div>
+          <div class="tags-header-container">
+            <h3 class="tags-header">Airport Pair Tags</h3>
+          </div>
           <div class="location-pair-tags-container">
             <div class="location-pair-tags" id="location-pair-tags"></div>
-          </div>
+          </div>  
         </div>
       </div>
 
       <div class="wrapper">
-        <div class="tabs">
-          <div role="tablist" aria-label="Map Examples">
-            <button role="tab" aria-selected="true" id="animations">
-              Map Projection vs Globe
-            </button>
-            <button role="tab" aria-selected="false" id="projections">
-              From Globe to Maps - Learning Path
-            </button>
-          </div>
-          <div role="tabpanel" aria-labelledby="animations">
-            <div id="chartdiv1">
-                <select id="projectionSelect">
-                    <!-- Options will be added dynamically from JavaScript -->
-                </select>
-            </div>
-          </div>
-          </div>
-          <div role="tabpanel" aria-labelledby="projections" hidden>
-            <div id="chartdiv2"></div> <!-- Placeholder for amCharts example 2 -->
-          </div>
+        <div id="chartdiv1">
+            <select id="projectionSelect">
+                <!-- Options will be added dynamically from JavaScript -->
+            </select>
         </div>
-      </div>
-      
+    </div>    
+    
 
     </div>
       
-    <button type="button" class="collapsible" id="how-to-use-button">How to Use the Great Circle Mapper<span class="icon"></span> </button>
+    <button type="button" class="collapsible" id="how-to-use-button">How to Use the Great Circle Visualizer<span class="icon"></span> </button>
     <div class="content collapsed"></div>
     <button type="button" class="collapsible" id="contact-us-button">Contact Us <span class="icon"></span></button>
     <div class="content collapsed"></div>
@@ -160,6 +150,7 @@
     <script type="module" src="./js/suggestion_pairs.js"></script>
     <script type="module" src="./js/airportSearch.js"></script>
     <script type="module" src="./js/dropdown.js"></script>
+    <script type="module" src="./js/locationPairClass.js"></script>
 
     <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
@@ -171,7 +162,7 @@
 
     <script type="module" src="./js/map_animations_along_lines.js" defer></script>
     <script type="module" src="./js/mapUtilities.js"></script>
-    <script type="module" src="./js/tabs.js"></script>
+    <!--<script type="module" src="./js/tabs.js"></script>-->
   
 </body>
 </html>

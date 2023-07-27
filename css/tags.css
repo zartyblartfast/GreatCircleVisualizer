@@ -1,3 +1,10 @@
+.tags-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
 .location-pair-tags-container { grid-area: location-pair-tags-container; }
 
 
@@ -98,4 +105,17 @@
     height: 1px;
     background-color: #ddd;
     margin: 10px 0;
+}
+
+.tag-content .distance-info {
+  /* Add styles for the distance info within the additional info */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.tag-content .distance-info p {
+  margin: 0;
+  padding: 1px 0;
+  border-top: none; /* Add this line to remove the border */
+  border-bottom: none; /* Add this line to remove the border */
 }

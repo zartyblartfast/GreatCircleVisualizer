@@ -23,6 +23,7 @@ export async function fetchAirportData() {
   return data;
 }
 
+/*
 export async function initializeApp() {
   const countryData = await fetchCountryData();
   const airportData = await fetchAirportData();
@@ -32,3 +33,4 @@ export async function initializeApp() {
   
   // Any other initialization code goes here
 }
+*/

@@ -2,4 +2,7 @@
 ./package-lock.json
 ./package.json
 ./node_modules
+./test.html
+./test2.html
+./initialise_Git_To_DEV01.bat
 node_modules
