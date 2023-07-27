@@ -1,14 +1,14 @@
 import { 
-    haversineDistance, 
+    //haversineDistance, 
     addCity, 
     addLineAndPlane, 
     createSlider, 
     createPointSeries, 
-    stopAnimationsAndClearData, 
-    rhumbDistance, 
-    calculateRhumbLinePoints, 
-    toRad, 
-    toDeg
+    stopAnimationsAndClearData//, 
+    //rhumbDistance, 
+    //calculateRhumbLinePoints, 
+    //toRad, 
+    //toDeg
 } from './mapUtilities.js';
 import { setupProjectionDropdown, updateProjection} from './mapProjection.js';
 
@@ -30,6 +30,8 @@ var chart = root.container.children.push(am5map.MapChart.new(root, {
     panX: "rotateX",
     panY: "translateY",
     rotationY: 0,
+    //minWidth: 200, // minimum width in pixels
+    //minHeight: 200, // minimum height in pixels
     projection: d3.geoMercator()
 }));
 
@@ -88,10 +90,9 @@ lineSeries.mapLines.template.setAll({
     stroke: root.interfaceColors.get("alternativeBackground"),
     strokeWidth: 4,
     strokeOpacity: 0.3,
-    interactive: true//,
-    //tooltipText: "test test"
-    //tooltipText: "{pointsToConnect[0].airportName} ({pointsToConnect[0].code}) to {pointsToConnect[1].airportName} ({pointsToConnect[1].code})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km"
-});
+    interactive: true
+ });
+
 
 let rhumbLineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
 rhumbLineSeries.mapLines.template.setAll({
@@ -105,12 +106,12 @@ pointSeries = createPointSeries(root, chart);
 
 globalLocationPair.locationPairs.forEach(pair => {
     //console.log("Inside forEach Pair (body), calling addLineAndPlane.  Pair: ", pair)
-    var city1 = addCity(root, chart, pointSeries,{ latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName, pair.airportACode, pair.airportACountry);
+    var city1 = addCity(root, chart, pointSeries,{ latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName, pair.airportACode, pair.airportACountryFull);
    
     //console.log("Inside forEach Pair (body). Pair.airportAName: ", pair.airportAName)
     //console.log("Inside forEach Pair (body). Pair.countryA: ", pair.countryA)
 
-    var city2 = addCity(root, chart, pointSeries, { latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName, pair.airportBCode, pair.airportBCountry);
+    var city2 = addCity(root, chart, pointSeries, { latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName, pair.airportBCode, pair.airportBCountryFull);
 
     //console.log("Inside forEach Pair (body). Pair.airportBName: ", pair.airportBName)
 
@@ -152,6 +153,8 @@ document.getElementById('make-maps-button').addEventListener('click', function()
         panX: "rotateX",
         panY: "translateY",
         rotationY: 0,
+        //minWidth: 200, // minimum width in pixels
+        //minHeight: 200, // minimum height in pixels
         projection: am5map.geoMercator()
     }));
 
@@ -190,10 +193,7 @@ document.getElementById('make-maps-button').addEventListener('click', function()
         strokeWidth: 4,
         strokeOpacity: 0.3,
         interactive: true//,
-        //tooltipText: "test test"
-        //tooltipText: "{pointsToConnect[0].airportName} ({pointsToConnect[0].code}) to {pointsToConnect[1].airportName} ({pointsToConnect[1].code})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km"
     });
-
 
     // Create point series for markers
     pointSeries = createPointSeries(root, chart);

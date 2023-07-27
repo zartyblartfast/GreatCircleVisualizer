@@ -88,7 +88,8 @@ export class LocationPair {
       tag.classList.add('tag');
   
       //console.log('displayLocationPairs - isSuggested:', pair.isSuggested);
-  
+      //console.log("pair: ", pair)
+
       // if pair is a suggested one, add a 'suggested' class to the tag
       if (pair.isSuggested) {
         tag.classList.add('suggested');
@@ -101,7 +102,12 @@ export class LocationPair {
       tag.appendChild(mainContent);
   
       const mainLabel = document.createElement('span');
-      mainLabel.textContent = `${pair.airportACode} - ${pair.airportBCode}`;
+       
+      if (pair.isSuggested) {
+        mainLabel.textContent = `Suggested: ${pair.airportACode} - ${pair.airportBCode}`;
+      } else {
+        mainLabel.textContent = `${pair.airportACode} - ${pair.airportBCode}`;
+      }
       mainContent.appendChild(mainLabel);
   
       const deleteButtonWrapper = document.createElement('div');
@@ -115,36 +121,6 @@ export class LocationPair {
         this.removeLocationPair(tag);
       });
       deleteButtonWrapper.appendChild(deleteButton);
-
-      /*
-      const additionalInfo = document.createElement('div');
-      additionalInfo.classList.add('additional-info');
-      additionalInfo.innerHTML = 
-      `<div class="tag-content">
-      <div class="header">
-        <hr class="separator">
-        <span class="airport-name";">${pair.airportAName} (${pair.airportACode})</span>
-      </div>
-      <div class="airport-info">
-        <p>Country: ${pair.airportACountry}</p>
-        <p>Latitude: ${pair.airportALat}</p>
-        <p>Longitude: ${pair.airportALon}</p>
-      </div>
-      <div class="header">
-        <hr class="separator">
-        <span class="airport-name";">${pair.airportBName} (${pair.airportBCode})</span>
-      </div>
-      <div class="airport-info">
-        <p>Country: ${pair.airportBCountry}</p>
-        <p>Latitude: ${pair.airportBLat}</p>
-        <p>Longitude: ${pair.airportBLon}</p>
-      </div>
-    </div>`
-    */
-    //console.log("pair.GreatCircleDistKm: ", pair.GreatCircleDistKm);  // add this line
-    //console.log(typeof pair.GreatCircleDistKm);  // add this line
-    //console.log("pair.RhumbLineDistKm: ", pair.RhumbLineDistKm);  // add this line
-    //console.log(typeof pair.RhumbLineDistKm);  // add this line
 
     // Calculate the percentage difference
     const greatCircleDist = parseFloat(pair.GreatCircleDistKm);
@@ -168,7 +144,7 @@ export class LocationPair {
         <span class="airport-name";">${pair.airportAName} (${pair.airportACode})</span>
       </div>
       <div class="airport-info">
-        <p>Country: ${pair.airportACountry}</p>
+        <p>Country: ${pair.airportACountryFull}</p>
         <p>Latitude: ${pair.airportALat}</p>
         <p>Longitude: ${pair.airportALon}</p>
       </div>
@@ -177,7 +153,7 @@ export class LocationPair {
         <span class="airport-name";">${pair.airportBName} (${pair.airportBCode})</span>
       </div>
       <div class="airport-info">
-        <p>Country: ${pair.airportBCountry}</p>
+        <p>Country: ${pair.airportBCountryFull}</p>
         <p>Latitude: ${pair.airportBLat}</p>
         <p>Longitude: ${pair.airportBLon}</p>
       </div>

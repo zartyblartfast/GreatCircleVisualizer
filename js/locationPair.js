@@ -9,10 +9,14 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-button').addEventListener('click', () => {
       const airportList = getAirportList();
       
+      //console.log("airportList: ", airportList)
+
       const airportA = airportList.find(airport => airport.value === getSelectedAirportACode());
       const airportB = airportList.find(airport => airport.value === getSelectedAirportBCode());
-      
-      console.log('Selected airports:', airportA, airportB);
+
+      //console.log('Selected airports:', airportA, airportB);
+
+      console.log("airportB countryfull: ", airportB.countryfull)
 
       document.getElementById('info-message').textContent = '';
   
@@ -28,11 +32,13 @@ window.addEventListener('DOMContentLoaded', () => {
         airportALat: airportA.lat,
         airportALon: airportA.lon,
         airportACountry: airportA.country,
+        airportACountryFull: airportA.countryfull,
         airportBName: airportB.label.split(' (')[0],
         airportBCode: airportB.value,
         airportBLat: airportB.lat,
         airportBLon: airportB.lon,
         airportBCountry: airportB.country,
+        airportBCountryFull: airportB.countryfull,
         isSuggested: false
       };      
   

@@ -17,9 +17,7 @@
 .button:before, .button:after {
     content: "";
     position: absolute;
-    /*position: relative;*/
     top: -1.5em;
-    /*z-index: -1;*/
     width: 200%;
     aspect-ratio: 1;
     border: none;
@@ -37,43 +35,60 @@
     transform: translate3d(0, 5em, 0) rotate(390deg);
 }
 
-.button:hover, .button:focus {
-    color: white;
-}
-
 .button:hover:before, .button:hover:after, .button:focus:before, .button:focus:after {
     transform: none;
 }
 
-/* Add the color-specific classes */
+.button:hover, .button:focus {
+    color: white;
+}
+
 .button-light {
-    color: #b3ccdd;
+    color: #333;
     border: 0.15em solid #b3ccdd;
 }
+
 
 .button-light:before, .button-light:after {
     background-color: rgba(179, 204, 221, 0.25);
 }
 
+
 .button-light:hover:before, .button-light:hover:after, .button-light:focus:before, .button-light:focus:after {
     background-color: rgba(179, 204, 221, 0.75);
+    width: 50%; /* Reduced size */
+    height: 50%; /* Reduced size */
+}
+
+.button-light:hover, .button-light:focus {
+    color: black; /* Change this to black */
 }
 
 .button-dark {
     color: #0f2027;
     border: 0.15em solid #0f2027;
+    background-color: transparent; /* Make sure the initial background color is transparent */
+    transition: background-color 0.3s ease; /* Add a transition for the background color */
 }
 
 .button-dark:before, .button-dark:after {
-    background-color: rgba(15, 32, 39, 0.25);
+    background-color: rgba(15, 32, 39, 0.15); /* Reduced opacity */
 }
 
 .button-dark:hover:before, .button-dark:hover:after, .button-dark:focus:before, .button-dark:focus:after {
     background-color: rgba(15, 32, 39, 0.75);
+    width: 50%; /* Reduced size */
+    height: 50%; /* Reduced size */
 }
+
+.button-dark:hover, .button-dark:focus {
+    color: #ffffff; /* Change text color to pure white on hover */
+    background-color: rgba(15, 32, 39, 0.75); /* Change background color on hover */
+}
+
+
 
 .button:disabled {
     background-color: grey;
     cursor: not-allowed;
 }
-  

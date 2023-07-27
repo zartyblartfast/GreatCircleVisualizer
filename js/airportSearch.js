@@ -34,6 +34,7 @@ export async function initializeAirportSearch() {
     label: `${airport.name} (${airport.iata_code})`,
     value: airport.iata_code,
     country: airport.iso_country,
+    countryfull: airport.country,  // added this as a step toward displaying full country names in airport pair tags
     lat: airport.latitude,
     lon: airport.longitude
   })));

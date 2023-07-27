@@ -49,6 +49,8 @@ export function updateProjection(chart, projectionName, isRotatable) {
             
                 chart.set("panX", "rotateX")
                 chart.set("panY", "rotateY")
+                //chart.set("minWidth", 200); // minimum width in pixels
+                //chart.set("minHeight", 200); // minimum height in pixels
                 chart.set("rotationY", 1);
             } else {
                 console.log("In updateProject, isRotatable === false");
@@ -56,6 +58,8 @@ export function updateProjection(chart, projectionName, isRotatable) {
                 chart.set("panX", "rotateX")
                 chart.set("panY", "translateY")
                 chart.set("rotationY", 0);
+                //chart.set("minWidth", 200); // minimum width in pixels
+                //chart.set("minHeight", 200); // minimum height in pixels
                 console.log("typeof projectFunction === function, chart: ",chart)
             }
           

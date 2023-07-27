@@ -2,6 +2,7 @@
 //import { currentProjectionName } from './mapProjection.js';
 import { currentProjectionName, updateProjection } from './mapProjection.js';
 
+/*
 export function haversineDistance(coords1, coords2, isMiles = false) {
     function toRad(x) {
       return x * Math.PI / 180;
@@ -29,7 +30,7 @@ export function haversineDistance(coords1, coords2, isMiles = false) {
   
     return d;
   }
-
+*/
 
 export function addCity(root, chart, pointSeries, coords, title, code, country) {
     var dataItem = pointSeries.pushDataItem({
@@ -85,13 +86,15 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     });
 
     lineSeries.mapLines.template.set("tooltipText", "{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
-    //lineSeries.mapLines.template.set("tooltipText", "<span style='font-size: 10px;'>{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km</span>");
-    
+    //lineSeries.mapLines.template.backgroundSeries
+
+    /*
     // Calculate the points for the rhumb line
     var rhumbLinePoints = calculateRhumbLinePoints(
         { latitude: city1.get("latitude"), longitude: city1.get("longitude") },
         { latitude: city2.get("latitude"), longitude: city2.get("longitude") }
     );
+    */
 
     //console.log("rhumbLinePoints: ",rhumbLinePoints)
 
@@ -103,10 +106,12 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     });
      */
 
+    /*
     rhumbLineSeries.mapLines.template.setAll({
         stroke: am5.color(0xff0000), // red color
         strokeWidth: 2
     });
+    */
     
     /*
     rhumbLineSeries.data.push({
@@ -117,10 +122,11 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     //rhumbLineSeries.data.push({
     //    multiGeoLine: [rhumbLinePoints.map(point => [point.longitude, point.latitude])]
     //});
+    /*
     rhumbLineSeries.data.push({
         multiGeoLine: [rhumbLinePoints.map(point => ({ longitude: point.longitude, latitude: point.latitude }))]
     });
-    
+    */
 
     //chart.series.push(rhumbLineSeries);
 
@@ -228,6 +234,8 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
                 chart.set("panX", "rotateX");
                 chart.set("panY", "rotateY");
                 chart.set("rotationY", 1);
+                //chart.set("minWidth", 200); // minimum width in pixels
+                //chart.set("minHeight", 200); // minimum height in pixels
             } else {
 
                 //console.log("inside switchButton, not geoAzimuthalEquidistant")    
@@ -237,6 +245,8 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
                 chart.set("panX", "rotateX");
                 chart.set("panY", "translateY");
                 chart.set("rotationY", 0);
+                //chart.set("minWidth", 200); // minimum width in pixels
+                //chart.set("minHeight", 200); // minimum height in pixels
             }
             
             //chart.set("panX", "rotateX");
@@ -250,6 +260,8 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
             currentProjection = chart.get("projection");
             chart.set("projection", am5map.geoOrthographic());
             chart.set("panY", "rotateY")
+            //chart.set("minWidth", 200); // minimum width in pixels
+            //chart.set("minHeight", 200); // minimum height in pixels
             /////backgroundSeries.mapPolygons.template.set("fillOpacity", 0.1);
 
             //console.log("5. createSlider currentProjection: ",currentProjection) 
@@ -306,6 +318,7 @@ export function stopAnimationsAndClearData(planeSeriesArray) {
     }
 }
 
+/*
 export function rhumbDistance(coords1, coords2, isMiles = false) {
     function toRad(x) {
         return x * Math.PI / 180;
@@ -379,3 +392,4 @@ export function toRad(x) {
 export function toDeg(x) {
     return x * 180 / Math.PI;
 }
+*/
