@@ -14,7 +14,6 @@
 
   <link rel="stylesheet" href="./css/styles.css">
   <link rel="stylesheet" href="./css/buttons.css">
-  <link rel="stylesheet" href="./css/accordions.css">
   <link rel="stylesheet" href="./css/tags.css">
   <link rel="stylesheet" href="./css/airport-svg.css">
   <!--<link rel="stylesheet" href="./css/tabs.css">-->
@@ -23,6 +22,7 @@
   <!-- Awesomplete CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/awesomplete@1.1.5/awesomplete.css" />
 
+  <script src="/dist/handy-collapse.js"></script>
 
   <title>Great Circle Map</title>
 </head>
@@ -30,7 +30,7 @@
 <body>
   <header>
     <h1>Great Circle Visualizer</h1>
-    <p>Visualize great circles routes between any two airport locations on Earth using different map projections & compare to globe view</p>
+    <p>Visualize great circles routes between any two airport locations on Earth using different map projections</p>
   </header>
   <main>
     <div class="main-container">
@@ -88,86 +88,54 @@
       </div>    
     </div>
       
-    <div class="accordion main-accordion" id="accordion1">
-      <button class="accordion-header">How to Use the Great Circle Visualizer</button>
-      <div class="accordion-panel">
-          <!-- Load content from 'how-to-use.html' -->
-      </div>
-    </div>
+    <button type="button" class="collapsible" id="how-to-use-button">How to Use the Great Circle Visualizer<span class="icon"></span> </button>
+    <div class="content collapsed"></div>
+    <button type="button" class="collapsible" id="contact-us-button">Contact Us <span class="icon"></span></button>
+    <div class="content collapsed"></div>
     
-    <div class="accordion main-accordion" id="accordion2">
-      <button class="accordion-header">Learn More</button>
-      <div class="accordion-panel">
-          <div class="accordion nested-accordion" id="accordion2-1">
-              <button class="nested-accordion-header">Understanding Map Projections</button>
-              <div class="nested-accordion-panel">
-                <!-- Test content-->
-              </div>
-          </div>
-          <div class="accordion nested-accordion" id="accordion2-2">
-              <button class="nested-accordion-header">Exploring Great Circles</button>
-              <div class="nested-accordion-panel">
-                  <!-- Load content from 'exploring-great-circles.html' -->
-              </div>
-          </div>
-          <div class="accordion nested-accordion" id="accordion2-3">
-              <button class="nested-accordion-header">Navigation Through History</button>
-              <div class="nested-accordion-panel">
-                  <!-- Load content from 'navigation-through-history.html' -->
-              </div>
-          </div>
-          <div class="accordion nested-accordion" id="accordion2-4">
-              <button class="nested-accordion-header">Modern Navigation Systems</button>
-              <div class="nested-accordion-panel">
-                  <!-- Load content from 'modern-navigation-systems.html' -->
-              </div>
-          </div>
-      </div>
-    </div>
-    
-    <div class="accordion main-accordion" id="accordion3">
-      <button class="accordion-header">Contact us</button>
-      <div class="accordion-panel">
-          <!-- Load content from 'contact-us.html' -->
-      </div>
-    </div>
-    
-  </div>
-      
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-$(document).ready(function () {
-  // Load content into the main accordions
-  $("#accordion1 .accordion-panel").load("how-to-use-the-great-circle-visualizer.html");
-  
-  // Load content into the nested accordions
-  $("#accordion2-1 .nested-accordion-panel").load("understanding-map-projections.html");
-  $("#accordion2-2 .nested-accordion-panel").load("exploring-great-circles.html");
-  $("#accordion2-3 .nested-accordion-panel").load("navigation-through-history.html");
-  $("#accordion2-4 .nested-accordion-panel").load("modern-navigation-systems.html");
-  
-  $("#accordion3 .accordion-panel").load("contact-us.html");
+        window.addEventListener('DOMContentLoaded', (event) => {
+            fetch('how-to-use.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.querySelector("#how-to-use-button + .content").innerHTML = data;
+                })
+                .catch(error => console.error(error));
 
-  // Hide all panels initially
-  $('.accordion-panel, .nested-accordion-panel').hide();
-
-  // Setup click event for both .accordion-header and .nested-accordion-header
-  $('.accordion-header, .nested-accordion-header').click(function () {
-    // Get the direct parent of this header (either .main-accordion or .nested-accordion)
-    var parentAccordion = $(this).parent();
-
-    // Close all panels of the accordions at the same level with a 600 millisecond duration
-    parentAccordion.siblings().find('.accordion-panel, .nested-accordion-panel').slideUp(200);
-
-    // Toggle the panel associated with this header with a 600 millisecond duration
-    $(this).siblings('.accordion-panel, .nested-accordion-panel').first().slideToggle(600);
-  });
-});
-
-
-
+            fetch('contact-us.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.querySelector("#contact-us-button + .content").innerHTML = data;
+                })
+                .catch(error => console.error(error));
+        });
+    
     </script>
-      
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- jQuery code for collapsible sections -->
+    <script>
+      $(document).ready(function() {
+          $(".collapsible").click(function() {
+              // If the clicked section is already open, collapse it
+              if ($(this).hasClass("active")) {
+                  $(this).removeClass("active");
+                  $(this).next().slideUp(500);
+              } else {
+                  // Collapse all sections
+                  $(".collapsible").removeClass("active");
+                  $(".content").slideUp(500);
+  
+                  // Expand the clicked section
+                  $(this).addClass("active");
+                  $(this).next().slideDown(500);
+              }
+          });
+      });
+    </script>
+  
     <!-- Awesomplete JS -->
     <script src="https://cdn.jsdelivr.net/npm/awesomplete@1.1.5/awesomplete.min.js"></script>
 
@@ -177,7 +145,6 @@ $(document).ready(function () {
 
     <!-- custom JS files -->
     <script type="module" src="./js/main.js"></script>
-
     <!-- <script type="module" src="./js/tags.js"></script> -->
     <script type="module" src="./js/locationPair.js"></script>
     <script type="module" src="./js/suggestion_pairs.js"></script>
