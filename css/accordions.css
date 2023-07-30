@@ -1,0 +1,80 @@
+/* Accordions.css */
+.accordion {
+    margin: 0 auto;
+    max-width: none;
+    width: 100%;
+}
+
+.accordion-header {
+    height: 35px;
+    line-height: 35px;
+    border: none;
+    border-radius: 45px;
+    transition: all 0.3s;
+    cursor: pointer;
+    background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);
+    color: white;
+    font-size: 0.9em;
+    font-weight: 550;
+    font-family: 'Montserrat', sans-serif;
+    padding: 0 0.5em;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.accordion-header:hover {
+    background: linear-gradient(45deg, #6593f5, #0f2027, #b3ccdd);
+    color: white;
+    font-size: 1.0em;
+}
+
+.nested-accordion-header {
+    width: 80%;
+    margin: auto;
+    height: 35px;
+    line-height: 35px;
+    border: 8px;
+    border-radius: 45px;
+    transition: all 0.3s;
+    cursor: pointer;
+    background: linear-gradient(45deg, #6593f5, #b3ccdd, #0f2027); /* Adjusted color order */
+    color: white;
+    font-size: 0.9em;
+    font-weight: 550;
+    font-family: 'Montserrat', sans-serif;
+    padding: 0 0.5em;
+    box-sizing: border-box;
+    text-align: center;
+    border-bottom: 0; 
+    border: 1px solid #ddd;
+}
+
+.nested-accordion-header:hover {
+    background: linear-gradient(45deg, #0f2027, #6593f5, #b3ccdd);
+    color: white;
+    font-size: 1.0em;
+}
+
+.accordion-header:first-child {
+    border-top: 1px solid #ccc;
+}
+
+.accordion-panel {
+    border: 1px solid #ccc; 
+    line-height: 1.5;
+    display: none;
+    padding: 0 0.5em;
+    box-sizing: border-box;
+}
+
+.nested-accordion-panel {
+    border: 1px solid #ddd;
+    line-height: 1.5;
+    display: none;
+    padding: 0 0.5em;
+    width: 80%;
+    margin: auto;
+    box-sizing: border-box;
+}

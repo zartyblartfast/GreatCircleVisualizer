@@ -76,15 +76,6 @@ graticuleSeries.mapLines.template.setAll({
 
 
 // Create line series for trajectory lines
-/*
-var lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
-lineSeries.mapLines.template.setAll({
-    stroke: root.interfaceColors.get("alternativeBackground"),
-    strokeWidth: 2,
-    strokeOpacity: 0.3,
-    interactive: true,
-});
-*/
 var lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
 lineSeries.mapLines.template.setAll({
     stroke: root.interfaceColors.get("alternativeBackground"),
