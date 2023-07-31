@@ -77,6 +77,7 @@ async function processSuggestions() {
 
       suggestionPairs.forEach(pair => {
         const newPair = {
+          id: pair.airportACode + "-" + pair.airportBCode,
           airportAName: pair.airportAName,
           airportACode: pair.airportACode,
           airportACountry: pair.airportACountry,

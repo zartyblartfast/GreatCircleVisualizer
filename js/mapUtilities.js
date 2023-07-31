@@ -1,7 +1,9 @@
 // mapUtilities.js
 //import { currentProjectionName } from './mapProjection.js';
 import { currentProjectionName, updateProjection } from './mapProjection.js';
-
+// Access the global instance
+//var globalLocationPair = window.globalLocationPair;
+//import { locationPair } from './locationPairClass.js';
 /*
 export function haversineDistance(coords1, coords2, isMiles = false) {
     function toRad(x) {
@@ -74,7 +76,22 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
         signedPercentageDifference = percentageDifference > 0 ? `+${percentageDifference.toFixed(2)}` : percentageDifference.toFixed(2);
     }
 
+    /* original working code for rollback
     var lineDataItem = lineSeries.pushDataItem({
+        pointsToConnect: [city1, city2],
+        airportAName: city1.get("airportName"),
+        airportACode: city1.get("code"),
+        airportBName: city2.get("airportName"),
+        airportBCode: city2.get("code"),
+        GreatCircleDistKm: Number(GreatCircleDistKm).toFixed(1),
+        RhumbLineDistKm: Number(RhumbLineDistKm).toFixed(1),
+        PercentageDifference: signedPercentageDifference
+    });
+    */
+
+  
+    var lineDataItem = lineSeries.pushDataItem({
+        id: city1.get("code") + "-" + city2.get("code"), // Create a unique ID using airport codes
         pointsToConnect: [city1, city2],
         airportAName: city1.get("airportName"),
         airportACode: city1.get("code"),
@@ -178,6 +195,8 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
             plane.set("rotation", 0);
         }
     });
+    // rollback by removing this...
+    return lineDataItem; // Return the line's unique ID
 }
 
 export function createSlider(root, chart, backgroundSeries, projectionFunction) {

@@ -10,6 +10,8 @@ export class LocationPair {
     this.addLocationPair = this.addLocationPair.bind(this);
     this.removeLocationPair = this.removeLocationPair.bind(this);
     this.displayLocationPairs = this.displayLocationPairs.bind(this);
+
+    //this.changeLineColor = this.changeLineColor.bind(this);
   }
 
     addLocationPair(pair, isSuggested) {
@@ -78,6 +80,17 @@ export class LocationPair {
     }
   
 
+    /*
+    changeLineColor(lineSeries, lineId, color) {
+      try {
+        let lineDataItem = lineSeries.dataItems[lineId]; // Getting the line data item by id
+        lineDataItem.mapLine.set("stroke", color); // Changing the line color
+      } catch (error) {
+        console.error("Error in changeLineColor:", error);
+      }
+    }
+    */
+
   displayLocationPairs() {
     //console.log('displayLocationPairs called with:', this.locationPairs);
     //const locationPairTags = document.getElementById('location-pair-tags');
@@ -89,6 +102,9 @@ export class LocationPair {
   
       //console.log('displayLocationPairs - isSuggested:', pair.isSuggested);
       //console.log("pair: ", pair)
+
+      // add the id attribute to the tag
+      tag.setAttribute('id', pair.id);
 
       // if pair is a suggested one, add a 'suggested' class to the tag
       if (pair.isSuggested) {
@@ -168,7 +184,55 @@ export class LocationPair {
     </div>`
   
       tag.appendChild(additionalInfo);
-  
+
+      tag.addEventListener('click', () => {
+        // Collapse all other tags
+        const allTags = Array.from(locationPairTags.children);
+        allTags.forEach(otherTag => {
+          if (otherTag !== tag && otherTag.classList.contains('expanded')) {
+            otherTag.style.maxHeight = '30px';
+            otherTag.classList.remove('expanded');
+      
+            // Dispatch a custom event with the id of the collapsed pair
+            const pairId = otherTag.getAttribute('id');
+            const event = new CustomEvent('pairExpandCollapse', { detail: { pairId: pairId, expanded: false } });
+            document.dispatchEvent(event);
+      
+            console.log(`pairExpandCollapse event - pairId: ${pairId}, expanded: false`);
+          }
+        });
+      
+        // If the tag is already expanded, collapse it
+        if (tag.classList.contains('expanded')) {
+          tag.style.maxHeight = '30px';
+      
+          const pairId = tag.getAttribute('id');
+          const event = new CustomEvent('pairExpandCollapse', { detail: { pairId: pairId, expanded: false } });
+          document.dispatchEvent(event);
+      
+          console.log(`pairExpandCollapse event - pairId: ${pairId}, expanded: false`);
+        } else {
+          // If the tag is not expanded, expand it
+          // Use setTimeout to ensure the additional info is rendered before calculating the scroll height
+          setTimeout(() => {
+            const additionalInfo = tag.querySelector('.additional-info');
+            tag.style.maxHeight = `${30 + additionalInfo.scrollHeight}px`;
+      
+            const pairId = tag.getAttribute('id');
+            
+            // Dispatch a custom event with the id of the expanded pair
+            const event = new CustomEvent('pairExpandCollapse', { detail: { pairId: pairId, expanded: true } });
+            document.dispatchEvent(event);
+      
+            console.log(`pairExpandCollapse event - pairId: ${pairId}, expanded: true`);
+          }, 0);
+        }
+        tag.classList.toggle('expanded');
+      });
+      
+    
+      
+      /* use this for rollback
       tag.addEventListener('click', () => {
         // Collapse all other tags
         const allTags = Array.from(locationPairTags.children);
@@ -188,16 +252,49 @@ export class LocationPair {
           setTimeout(() => {
             const additionalInfo = tag.querySelector('.additional-info');
             tag.style.maxHeight = `${30 + additionalInfo.scrollHeight}px`;
+
+            const pairId = tag.getAttribute('id');
+            console.log("tag expand EL - pairId: ", pairId)
+            //const lineSeries = chart.series.getById(pairId);
           }, 0);
         }
         tag.classList.toggle('expanded');
       });
-  
+      */
+     /*
+      tag.addEventListener('click', () => {
+        // Collapse all other tags
+        const allTags = Array.from(locationPairTags.children);
+        allTags.forEach(otherTag => {
+            if (otherTag !== tag && otherTag.classList.contains('expanded')) {
+                otherTag.style.maxHeight = '30px';
+                otherTag.classList.remove('expanded');
+                //this.changeLineColor(otherTag.dataset.index, "normalColor");
+                this.changeLineColor(lineSeries, tag.dataset.index, "#FF0000");
+            }
+        });
+    
+        // If the tag is already expanded, collapse it
+        if (tag.classList.contains('expanded')) {
+            tag.style.maxHeight = '30px';
+            this.changeLineColor(lineSeries,tag.dataset.index, "normalColor");
+        } else {
+            // If the tag is not expanded, expand it
+            // Use setTimeout to ensure the additional info is rendered before calculating the scroll height
+            setTimeout(() => {
+                const additionalInfo = tag.querySelector('.additional-info');
+                tag.style.maxHeight = `${30 + additionalInfo.scrollHeight}px`;
+            }, 0);
+            this.changeLineColor(lineSeries,tag.dataset.index, "highlightColor"); // Assuming highlightColor is the color when line is highlighted
+        }
+        tag.classList.toggle('expanded');
+    });
+    */
       locationPairTags.appendChild(tag);
     });
   }  
 }
-export const locationPair = new LocationPair();
+//export const locationPair = new LocationPair();
 
 /*
  * Access the global instance of LocationPair.
@@ -210,4 +307,7 @@ export const locationPair = new LocationPair();
  * This allows us to use the LocationPair class in this file without changing the way it's accessed in other parts of the codebase.
  * Please note that this is a workaround specific to the current environment and may not be necessary if ES6 module imports are supported in the future.
  */ 
-window.globalLocationPair = new LocationPair();
+//window.globalLocationPair = new LocationPair();
+const instance = new LocationPair();
+export const locationPair = instance;
+window.globalLocationPair = instance;
