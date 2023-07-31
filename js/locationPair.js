@@ -25,8 +25,11 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('info-message').textContent = 'Please select both airports before adding';
         return;
       }
+              
+      console.log("id: ",airportA.value + "-" + airportB.value,)
   
       const newPair = {
+        id: airportA.value + "-" + airportB.value,
         airportAName: airportA.label.split(' (')[0],
         airportACode: airportA.value,
         airportALat: airportA.lat,
@@ -71,5 +74,6 @@ window.addEventListener('DOMContentLoaded', () => {
       
     });
   
+    console.log(">>> locationPair.locationPairs: ",locationPair.locationPairs)
     locationPair.displayLocationPairs(locationPair.locationPairs);
 });

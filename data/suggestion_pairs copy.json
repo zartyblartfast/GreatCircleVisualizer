@@ -1,6 +1,5 @@
 [
     {
-      "id": "TTE-UIO",
       "airportAName": "Sultan Babullah Airport",
       "airportACode": "TTE",
       "airportACountry": "ID",
@@ -14,10 +13,9 @@
       "airportBLat": -0.125399,
       "airportBLon": -78.354306,
       "GreatCircleDistKm": 17152.451179488857,    
-      "RhumbLineDistKm": 17153.212402577898
+      "RhumbLineDistKm": 17153.212402577898   
     },
     {
-      "id": "HBA-QET",
       "airportAName": "Hobart International Airport",
       "airportACode": "HBA",
       "airportACountry": "AU",
@@ -31,10 +29,9 @@
       "airportBLat": -71.95714,
       "airportBLon": 2.45257,
       "GreatCircleDistKm": 6960.168261672867, 
-      "RhumbLineDistKm": 8728.663235674474
+      "RhumbLineDistKm": 8728.663235674474    
     },
     {
-      "id": "LAX-DXB",
       "airportAName": "Los Angeles / Tom Bradley International Airport",
       "airportACode": "LAX",
       "airportACountry": "US",
@@ -48,10 +45,9 @@
       "airportBLat": 25.2527999878,
       "airportBLon": 55.3643989563,
       "GreatCircleDistKm": 13400.095543708267,    
-      "RhumbLineDistKm": 16802.602071247315
+      "RhumbLineDistKm": 16802.602071247315   
     },
     {
-      "id": "HBA-USH",
       "airportAName": "Hobart International Airport",
       "airportACode": "HBA",
       "airportACountry": "AU",
@@ -65,10 +61,9 @@
       "airportBLat": -54.8433,
       "airportBLon": -68.2958,
       "GreatCircleDistKm": 8637.236249161773, 
-      "RhumbLineDistKm": 10567.277602879296
+      "RhumbLineDistKm": 10567.277602879296   
     },
     {
-      "id": "LBV-UIO",
       "airportAName": "Libreville Leon M'ba International Airport",
       "airportACode": "LBV",
       "airportACountry": "GA",
@@ -82,10 +77,9 @@
       "airportBLat": -0.125399,
       "airportBLon": -78.354306,
       "GreatCircleDistKm": 9759.332825920657, 
-      "RhumbLineDistKm": 9759.345126144412
+      "RhumbLineDistKm": 9759.345126144412    
     },
     {
-      "id": "LBV-TTE", 
       "airportAName": "Libreville Leon M'ba International Airport",
       "airportACode": "LBV",
       "airportACountry": "GA",
@@ -99,10 +93,9 @@
       "airportBLat": 0.831012,
       "airportBLon": 127.381611,
       "GreatCircleDistKm": 13116.307702345439,    
-      "RhumbLineDistKm": 13116.820809705237
+      "RhumbLineDistKm": 13116.820809705237   
     },
     {
-      "id": "NZIR-CPT",
       "airportAName": "McMurdo Station Ice Runway",
       "airportACode": "NZIR",
       "airportACountry": "AQ",
@@ -116,10 +109,9 @@
       "airportBLat": -33.9648017883,
       "airportBLon": 18.6016998291,
       "GreatCircleDistKm": 7397.629351937006, 
-      "RhumbLineDistKm": 9222.591252356407
+      "RhumbLineDistKm": 9222.591252356407    
     },
     {
-      "id": "NZSP-CYLT",
       "airportAName": "South Pole Station Skiway",
       "airportACode": "NZSP",
       "airportACountry": "AQ",
@@ -133,6 +125,6 @@
       "airportBLat": 82.5178,
       "airportBLon": -62.2806,
       "GreatCircleDistKm": 19183.130612712583,    
-      "RhumbLineDistKm": 19183.130612712583
+      "RhumbLineDistKm": 19183.130612712583   
     }
   ]

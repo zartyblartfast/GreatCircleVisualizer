@@ -1,4 +1,4 @@
-export let locationPairs = JSON.parse(localStorage.getItem('locationPairs')) || [];
+//export let locationPairs = JSON.parse(localStorage.getItem('locationPairs')) || [];
 
 // copied from airportList.js for restructuring
 export let airportList = [];
