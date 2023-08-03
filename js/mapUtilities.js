@@ -46,7 +46,7 @@ export function addCity(root, chart, pointSeries, coords, title, code, country) 
     return dataItem;
 }
 
-export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, GreatCircleDistKm, RhumbLineDistKm) {
+export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, GreatCircleDistKm, RhumbLineDistKm, linesMap) {
 
     /*
     console.log("Inside addLineAndPlane. City1.airportAName: ", city1.get("airportName"))
@@ -103,7 +103,9 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     });
 
     lineSeries.mapLines.template.set("tooltipText", "{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
-    //lineSeries.mapLines.template.backgroundSeries
+
+    console.log('2. linesMap:', linesMap);
+    linesMap.set(city1.get("code") + "-" + city2.get("code"), lineDataItem);
 
     /*
     // Calculate the points for the rhumb line
@@ -196,24 +198,27 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
         }
     });
     // rollback by removing this...
+
     return lineDataItem; // Return the line's unique ID
+
 }
 
 export function createSlider(root, chart, backgroundSeries, projectionFunction) {
-
-    //console.log("createSlider, projectionFunction: ", projectionFunction)
-
-    // Create a container for the switch button
     var cont = chart.children.push(am5.Container.new(root, {
         layout: root.horizontalLayout,
         x: 20,
         y: 40
     }));
 
-    // Add labels and controls
-    cont.children.push(am5.Label.new(root, {
+    var labelMap = cont.children.push(am5.Label.new(root, {
         centerY: am5.p50,
         text: "Map"
+    }));
+
+    var labelGlobe = cont.children.push(am5.Label.new(root, {
+        centerY: am5.p50,
+        text: "Globe",
+        visible: false
     }));
 
     var switchButton = cont.children.push(am5.Button.new(root, {
@@ -224,69 +229,66 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
         })
     }));
 
-    // Variable to store the current projection
     var currentProjection = chart.get("projection");
 
+    /*
     switchButton.on("active", function() {
         if (!switchButton.get("active")) {
-            // Set the chart's projection back to the stored value
-
-            //console.log("1. createSlider currentProjection: ",currentProjection)
-            //console.log("1. createSlider currentProjectionName: ",currentProjectionName)
+            labelMap.set("visible", true);
+            labelGlobe.set("visible", false);
 
             chart.set("projection", currentProjection);
-            /////backgroundSeries.mapPolygons.template.set("fillOpacity", 0);
-            
+
             if (currentProjectionName === "geoAzimuthalEquidistant") {
-
-                //console.log("2. createSlider currentProjection: ",currentProjection)
-                //console.log("2. createSlider currentProjectionName: ",currentProjectionName)
-                // Get the projection function from the D3 object
-                //let projectionFunction = d3[projectionFunctionName];
-                //let projectionFunction = d3[projectionFunction];
-
-                //console.log('projectionFunctionName:', projectionFunctionName);
-                //console.log('projectionFunction:', projectionFunction);
-
-                //console.log("inside switchButton, geoAzimuthalEquidistant")
-                //chart.set("projection", projectionFunction().rotate([0, -90]));
                 chart.set("panX", "rotateX");
                 chart.set("panY", "rotateY");
                 chart.set("rotationY", 1);
-                //chart.set("minWidth", 200); // minimum width in pixels
-                //chart.set("minHeight", 200); // minimum height in pixels
             } else {
-
-                //console.log("inside switchButton, not geoAzimuthalEquidistant")    
-                //console.log("3. createSlider currentProjection: ",currentProjection)  
-                //console.log("3. createSlider currentProjectionName: ",currentProjectionName)
-
                 chart.set("panX", "rotateX");
                 chart.set("panY", "translateY");
                 chart.set("rotationY", 0);
-                //chart.set("minWidth", 200); // minimum width in pixels
-                //chart.set("minHeight", 200); // minimum height in pixels
             }
-            
-            //chart.set("panX", "rotateX");
-            //chart.set("panY", "translateY");
-            //chart.set("rotationY", 0);
         } else {
-            // Store the current projection before switching to the "globe" view
-            //console.log("4. createSlider currentProjection: ",currentProjection)        
-            //console.log("4. createSlider currentProjectionName: ",currentProjectionName)
+            labelMap.set("visible", false);
+            labelGlobe.set("visible", true);
 
             currentProjection = chart.get("projection");
             chart.set("projection", am5map.geoOrthographic());
-            chart.set("panY", "rotateY")
-            //chart.set("minWidth", 200); // minimum width in pixels
-            //chart.set("minHeight", 200); // minimum height in pixels
-            /////backgroundSeries.mapPolygons.template.set("fillOpacity", 0.1);
-
-            //console.log("5. createSlider currentProjection: ",currentProjection) 
-            //console.log("5. createSlider currentProjectionName: ",currentProjectionName)
+            chart.set("panY", "rotateY");
         }
     });
+    */
+    switchButton.on("active", function() {
+        var projectionSelect = document.getElementById('projectionSelect'); // Assuming the ID of the dropdown element is 'projectionSelect'
+        if (!switchButton.get("active")) {
+            labelMap.set("visible", true);
+            labelGlobe.set("visible", false);
+    
+            chart.set("projection", currentProjection);
+    
+            if (currentProjectionName === "geoAzimuthalEquidistant") {
+                chart.set("panX", "rotateX");
+                chart.set("panY", "rotateY");
+                chart.set("rotationY", 1);
+            } else {
+                chart.set("panX", "rotateX");
+                chart.set("panY", "translateY");
+                chart.set("rotationY", 0);
+            }
+    
+            projectionSelect.disabled = false; // Enable the dropdown
+        } else {
+            labelMap.set("visible", false);
+            labelGlobe.set("visible", true);
+    
+            currentProjection = chart.get("projection");
+            chart.set("projection", am5map.geoOrthographic());
+            chart.set("panY", "rotateY");
+    
+            projectionSelect.disabled = true; // Disable the dropdown
+        }
+    });
+    
 }
 
 

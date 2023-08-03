@@ -32,60 +32,67 @@
     <h1>Great Circle Visualizer</h1>
     <p>Visualize great circles routes between any two airport locations on Earth using different map projections & compare to globe view</p>
   </header>
+
   <main>
-    <div class="main-container">
-      <div class="grid-wrapper">
-        <div class="grid-container container">
-          <div class="add-tags-header-container">
-            <h3 class="add-tags-header">Add Airport Pairs</h3>
+
+    <div class="accordion main-accordion" id="accordion0">
+      <button class="accordion-header">Map Projections & Great Circle Visualization</button>
+      <div class="accordion-panel">
+        <div class="main-container">
+          <div class="grid-wrapper">
+            <div class="grid-container container">
+              <div class="add-tags-header-container">
+                <h3 class="add-tags-header">Add Airport Pairs</h3>
+              </div>
+              <div class="location-a-label">
+                <img class="location-image" src="./assets/Airport_symbol.png" alt="Airport symbol">
+                <span class="location-text">Airport A</span>
+              </div>
+              <div class="location-b-label">
+                <img class="location-image" src="./assets/Airport_symbol.png" alt="Airport symbol">
+                <span class="location-text">Airport B</span>
+              </div>
+              <div class="country-a-dropdown">
+                <select id="country-a-dropdown"></select>
+              </div>
+              <div class="country-b-dropdown">
+                <select id="country-b-dropdown"></select>
+              </div>
+              <div class="airport-a-filter-search">
+                <input type="text" id="airport-a-filter-search" placeholder="Search for Airport..." disabled>
+              </div>
+              <div class="airport-b-filter-search">
+                <input type="text" id="airport-b-filter-search" placeholder="Search for Airport..." disabled>
+              </div>
+              <div class="add-button-container">
+                <button id="add-button" class="button button-dark">Add</button>
+              </div>
+              <div class="suggestions-button-container">
+                <button id="suggestions-button" class="button button-light">Suggestions</button>
+              </div>
+              <div class="make-maps-button-container">
+                <button id="make-maps-button" class="button button-dark">Update Flight Paths</button>
+              </div>
+              <div class="info-message-container">
+                <div id="info-message"></div>
+              </div>
+              <div class="tags-header-container">
+                <h3 class="tags-header">Airport Pair Tags</h3>
+              </div>
+              <div class="location-pair-tags-container">
+                <div class="location-pair-tags" id="location-pair-tags"></div>
+              </div>  
+            </div>
           </div>
-          <div class="location-a-label">
-            <img class="location-image" src="./assets/Airport_symbol.png" alt="Airport symbol">
-            <span class="location-text">Airport A</span>
+        <div class="wrapper">
+          <div id="chartdiv1">
+              <select id="projectionSelect">
+                  <!-- Options will be added dynamically from JavaScript -->
+              </select>
           </div>
-          <div class="location-b-label">
-            <img class="location-image" src="./assets/Airport_symbol.png" alt="Airport symbol">
-            <span class="location-text">Airport B</span>
-          </div>
-          <div class="country-a-dropdown">
-            <select id="country-a-dropdown"></select>
-          </div>
-          <div class="country-b-dropdown">
-            <select id="country-b-dropdown"></select>
-          </div>
-          <div class="airport-a-filter-search">
-            <input type="text" id="airport-a-filter-search" placeholder="Search for Airport..." disabled>
-          </div>
-          <div class="airport-b-filter-search">
-            <input type="text" id="airport-b-filter-search" placeholder="Search for Airport..." disabled>
-          </div>
-          <div class="add-button-container">
-            <button id="add-button" class="button button-dark">Add</button>
-          </div>
-          <div class="suggestions-button-container">
-            <button id="suggestions-button" class="button button-light">Suggestions</button>
-          </div>
-          <div class="make-maps-button-container">
-            <button id="make-maps-button" class="button button-dark">Update Flight Paths</button>
-          </div>
-          <div class="info-message-container">
-            <div id="info-message"></div>
-          </div>
-          <div class="tags-header-container">
-            <h3 class="tags-header">Airport Pair Tags</h3>
-          </div>
-          <div class="location-pair-tags-container">
-            <div class="location-pair-tags" id="location-pair-tags"></div>
-          </div>  
-        </div>
+        </div>    
       </div>
-      <div class="wrapper">
-        <div id="chartdiv1">
-            <select id="projectionSelect">
-                <!-- Options will be added dynamically from JavaScript -->
-            </select>
-        </div>
-      </div>    
+      </div>
     </div>
       
     <div class="accordion main-accordion" id="accordion1">
@@ -131,38 +138,43 @@
           <!-- Load content from 'contact-us.html' -->
       </div>
     </div>
-    
+
   </div>
+  </main>
       
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-$(document).ready(function () {
-  // Load content into the main accordions
-  $("#accordion1 .accordion-panel").load("how-to-use-the-great-circle-visualizer.html");
-  
-  // Load content into the nested accordions
-  $("#accordion2-1 .nested-accordion-panel").load("understanding-map-projections.html");
-  $("#accordion2-2 .nested-accordion-panel").load("exploring-great-circles.html");
-  $("#accordion2-3 .nested-accordion-panel").load("navigation-through-history.html");
-  $("#accordion2-4 .nested-accordion-panel").load("modern-navigation-systems.html");
-  
-  $("#accordion3 .accordion-panel").load("contact-us.html");
+    $(document).ready(function () {
+      // Load content into the main accordions
+      $("#accordion1 .accordion-panel").load("how-to-use-the-great-circle-visualizer.html");
+      
+      // Load content into the nested accordions
+      $("#accordion2-1 .nested-accordion-panel").load("understanding-map-projections.html");
+      $("#accordion2-2 .nested-accordion-panel").load("exploring-great-circles.html");
+      $("#accordion2-3 .nested-accordion-panel").load("navigation-through-history.html");
+      $("#accordion2-4 .nested-accordion-panel").load("modern-navigation-systems.html");
+      
+      $("#accordion3 .accordion-panel").load("contact-us.html");
 
-  // Hide all panels initially
-  $('.accordion-panel, .nested-accordion-panel').hide();
+      // Hide all panels initially
+      $('.accordion-panel, .nested-accordion-panel').hide();
 
-  // Setup click event for both .accordion-header and .nested-accordion-header
-  $('.accordion-header, .nested-accordion-header').click(function () {
-    // Get the direct parent of this header (either .main-accordion or .nested-accordion)
-    var parentAccordion = $(this).parent();
+      
+      // Show the panel for accordion0
+      $('#accordion0 .accordion-panel').show();
 
-    // Close all panels of the accordions at the same level with a 600 millisecond duration
-    parentAccordion.siblings().find('.accordion-panel, .nested-accordion-panel').slideUp(200);
+      // Setup click event for both .accordion-header and .nested-accordion-header
+      $('.accordion-header, .nested-accordion-header').click(function () {
+        // Get the direct parent of this header (either .main-accordion or .nested-accordion)
+        var parentAccordion = $(this).parent();
 
-    // Toggle the panel associated with this header with a 600 millisecond duration
-    $(this).siblings('.accordion-panel, .nested-accordion-panel').first().slideToggle(600);
-  });
-});
+        // Close all panels of the accordions at the same level with a 600 millisecond duration
+        parentAccordion.siblings().find('.accordion-panel, .nested-accordion-panel').slideUp(200);
+
+        // Toggle the panel associated with this header with a 600 millisecond duration
+        $(this).siblings('.accordion-panel, .nested-accordion-panel').first().slideToggle(600);
+      });
+    });
 
 
 

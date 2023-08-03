@@ -172,7 +172,7 @@ td, th { border: 1px solid #000; }
   width: 100%;
   max-width: 1000px;
   min-width: 500px;
-  margin: -20px auto 4rem; /* top, right and left, bottom */
+  margin: 0px auto 4rem; /* top, right and left, bottom */
   padding: 2rem;
   background: white;
   /*box-shadow: 0 0 3px 5px rgba(0,0,0,0.08653);*/
