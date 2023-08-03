@@ -22,6 +22,7 @@ var globalLocationPair = window.globalLocationPair;
 // create a new map object to hold the lines plotted on the maps
 // The purpose of keeping a store of the line objects is so that the individual lines can hae their properties changed after they are created.
 var linesMap = new Map();
+console.log('1. linesMap:', linesMap);
 
 // Create root element
 var root = am5.Root.new("chartdiv1");
@@ -62,6 +63,10 @@ function initializeMap() {
     // Call the function to create the slider
     createSlider(root, chart, backgroundSeries, projectionFunction);
 
+    // Call the function to creat the zoom reset button.
+    //createZoomResetButton(root, chart)
+
+
     // Create main polygon series for countries
     polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
         geoJSON: am5geodata_worldLow
@@ -100,9 +105,17 @@ function initializeMap() {
         console.log("Inside forEach Pair (body), calling addLineAndPlane.  Pair: ", pair);
         var city1 = addCity(root, chart, pointSeries, { latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName, pair.airportACode, pair.airportACountryFull);
         var city2 = addCity(root, chart, pointSeries, { latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName, pair.airportBCode, pair.airportBCountryFull);
-        addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, pair.GreatCircleDistKm, pair.RhumbLineDistKm);
+        
+        // Calling addLineAndPlane and storing the returned line reference
+        var lineReference = addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, pair.GreatCircleDistKm, pair.RhumbLineDistKm, linesMap);
+
+        console.log('Line reference returned from addLineAndPlane:', lineReference);
+
+        // Storing the line reference in linesMap using pair.id as the key
+        linesMap.set(pair.id, lineReference);
     });
 
+    console.log("linesMap: ",linesMap)
     // Setup projection dropdown
     setupProjectionDropdown(chart);
 }
@@ -112,18 +125,50 @@ chart = root.container.children.push(am5map.MapChart.new(root, {
     panX: "rotateX",
     panY: "translateY",
     rotationY: 0,
-    projection: am5map.geoMercator()
+    projection: am5map.geoMercator(),
+    minZoomLevel: 1.0,
+    maxZoomLevel: 1.25
 }));
+
+
 initializeMap();
 
-// Event listener for the 'pairExpandCollapse' event
 document.addEventListener('pairExpandCollapse', function(event) {
     const { pairId, expanded } = event.detail;
-    console.log(`pairExpandCollapse event listener - pairId: ${pairId}, expanded: ${expanded}`);
-    // Rest of the code...
-});
-  
+    const lineReference = linesMap.get(pairId);
 
+    if (lineReference && lineReference._settings && lineReference._settings.mapLine) {
+        console.log('Found lineReference:', lineReference);
+   
+        /*
+
+        if (expanded) {
+            lineReference._settings.mapLine.set("stroke", am5.color("#FF0000")); // Change to a red color when expanded
+        } else {
+            lineReference._settings.mapLine.set("stroke", am5.color("#000000")); // Change back to black color when collapsed
+        }
+        */
+
+        if (expanded) {
+            lineReference._settings.mapLine.set("stroke", am5.color("#FF0000"));
+            lineReference._settings.mapLine.set("strokeWidth", 5);
+            lineReference._settings.mapLine.set("strokeOpacity", 0.5);
+        } else {
+            lineReference._settings.mapLine.set("stroke", am5.color("#000000"));
+            lineReference._settings.mapLine.set("strokeWidth", 4);
+            lineReference._settings.mapLine.set("strokeOpacity", 0.3);
+        }
+        
+        // Update chart to reflect changes
+        chart.invalidateLayout();
+
+    } else {
+        console.warn(`Line reference not found for pairId: ${pairId}`);
+    }
+});
+
+
+/*
 // Event listener for the "Make maps" button
 document.getElementById('make-maps-button').addEventListener('click', function() {
 
@@ -149,7 +194,9 @@ document.getElementById('make-maps-button').addEventListener('click', function()
         panX: "rotateX",
         panY: "translateY",
         rotationY: 0,
-        projection: am5map.geoMercator()
+        projection: am5map.geoMercator(),
+        minZoomLevel: 1.0,
+        maxZoomLevel: 1.5
     }));
 
     // Re-initialize map after button click
@@ -158,3 +205,44 @@ document.getElementById('make-maps-button').addEventListener('click', function()
     // Make stuff animate on load
     chart.appear(1000, 100);
 });
+*/
+// Event listener for the "Make maps" button
+document.getElementById('make-maps-button').addEventListener('click', function() {
+
+    console.log('Make maps button clicked, reinitialising map...');
+    
+    var projectionSelect = document.getElementById('projectionSelect'); // Assuming the ID of the dropdown element is 'projectionSelect'
+    projectionSelect.disabled = false; // Enable the dropdown
+
+    // Stop animations and clear the data from each series in the planeSeriesArray
+    stopAnimationsAndClearData(planeSeriesArray);
+
+    // Clear the planeSeriesArray
+    planeSeriesArray = [];
+
+    pointSeries.data.setAll([]);
+    lineSeries.data.setAll([]);
+
+    // Ensure all references to the old chart are removed
+    if (chart) {
+        // Dispose of the existing chart
+        chart.dispose();
+    }
+
+    // Create a new chart
+    chart = root.container.children.push(am5map.MapChart.new(root, {
+        panX: "rotateX",
+        panY: "translateY",
+        rotationY: 0,
+        projection: am5map.geoMercator(),
+        minZoomLevel: 1.0,
+        maxZoomLevel: 1.5
+    }));
+
+    // Re-initialize map after button click
+    initializeMap();
+
+    // Make stuff animate on load
+    chart.appear(1000, 100);
+});
+

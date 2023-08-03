@@ -77,11 +77,16 @@ export function setupProjectionDropdown(chart) {
     // Event listener for the projection dropdown
     var projectionSelect = document.getElementById('projectionSelect');
 
+    projectionSelect.innerHTML = "";
+
     // Fetch the JSON data from the file
     fetch('./data/projections.json')
         .then(response => response.json())
         .then(data => {
-            // Loop through the data and create an option for each item
+            // Sort the data by the "id" field
+            data.sort((a, b) => a.id - b.id);
+
+            // Loop through the sorted data and create an option for each item
             for (var i = 0; i < data.length; i++) {
                 var option = document.createElement("option");
                 option.text = data[i].name;
@@ -102,8 +107,8 @@ export function setupProjectionDropdown(chart) {
         const selectedProjection = projectionSelect.value;
         const isRotatable = projectionSelect.options[projectionSelect.selectedIndex].dataset.rotatable === 'true';
 
-        console.log("projectionSelect.value: ",projectionSelect.value)
-        console.log("projectionSelect, isRotatable : ",isRotatable)
+        console.log("projectionSelect.value: ", projectionSelect.value);
+        console.log("projectionSelect, isRotatable : ", isRotatable);
 
         updateProjection(chart, selectedProjection, isRotatable);
 
