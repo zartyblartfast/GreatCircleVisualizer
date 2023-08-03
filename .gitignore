@@ -4,5 +4,7 @@
 ./node_modules
 ./test.html
 ./test2.html
+./index3.html
+./index4.html
 ./initialise_Git_To_DEV01.bat
 node_modules
