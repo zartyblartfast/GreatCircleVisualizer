@@ -104,7 +104,7 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
 
     lineSeries.mapLines.template.set("tooltipText", "{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
 
-    console.log('2. linesMap:', linesMap);
+    //console.log('2. linesMap:', linesMap);
     linesMap.set(city1.get("code") + "-" + city2.get("code"), lineDataItem);
 
     /*

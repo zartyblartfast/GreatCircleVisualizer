@@ -63,8 +63,9 @@ window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('airport-b-filter-search').value = '';      
       document.getElementById('country-b-dropdown').value = '';
 
-      document.getElementById('airport-a-filter-search').disabled = true;
-      document.getElementById('airport-b-filter-search').disabled = true;
+      // 4 Aug 2023 - keep this for rollback
+      //document.getElementById('airport-a-filter-search').disabled = true;
+      //document.getElementById('airport-b-filter-search').disabled = true;
 
       document.getElementById('add-button').disabled = true;
 
@@ -74,6 +75,6 @@ window.addEventListener('DOMContentLoaded', () => {
       
     });
   
-    console.log(">>> locationPair.locationPairs: ",locationPair.locationPairs)
+    //console.log(">>> locationPair.locationPairs: ",locationPair.locationPairs)
     locationPair.displayLocationPairs(locationPair.locationPairs);
 });

@@ -193,6 +193,11 @@ export class LocationPair {
             otherTag.style.maxHeight = '30px';
             otherTag.classList.remove('expanded');
       
+            // Enable the delete button for the collapsed tag
+            const otherDeleteButton = otherTag.querySelector('.delete-button-wrapper button');
+            otherDeleteButton.disabled = false;
+
+
             // Dispatch a custom event with the id of the collapsed pair
             const pairId = otherTag.getAttribute('id');
             const event = new CustomEvent('pairExpandCollapse', { detail: { pairId: pairId, expanded: false } });
@@ -205,96 +210,38 @@ export class LocationPair {
         // If the tag is already expanded, collapse it
         if (tag.classList.contains('expanded')) {
           tag.style.maxHeight = '30px';
-      
+          deleteButton.disabled = false; // Enable delete button when tag is collapsed
+
           const pairId = tag.getAttribute('id');
           const event = new CustomEvent('pairExpandCollapse', { detail: { pairId: pairId, expanded: false } });
           document.dispatchEvent(event);
       
-          console.log(`pairExpandCollapse event - pairId: ${pairId}, expanded: false`);
+          //console.log(`pairExpandCollapse event - pairId: ${pairId}, expanded: false`);
         } else {
           // If the tag is not expanded, expand it
           // Use setTimeout to ensure the additional info is rendered before calculating the scroll height
           setTimeout(() => {
             const additionalInfo = tag.querySelector('.additional-info');
             tag.style.maxHeight = `${30 + additionalInfo.scrollHeight}px`;
-      
+            deleteButton.disabled = true; // Disable delete button when tag is expanded
+
             const pairId = tag.getAttribute('id');
             
             // Dispatch a custom event with the id of the expanded pair
             const event = new CustomEvent('pairExpandCollapse', { detail: { pairId: pairId, expanded: true } });
             document.dispatchEvent(event);
       
-            console.log(`pairExpandCollapse event - pairId: ${pairId}, expanded: true`);
+            //console.log(`pairExpandCollapse event - pairId: ${pairId}, expanded: true`);
           }, 0);
         }
         tag.classList.toggle('expanded');
       });
       
-    
-      
-      /* use this for rollback
-      tag.addEventListener('click', () => {
-        // Collapse all other tags
-        const allTags = Array.from(locationPairTags.children);
-        allTags.forEach(otherTag => {
-          if (otherTag !== tag && otherTag.classList.contains('expanded')) {
-            otherTag.style.maxHeight = '30px';
-            otherTag.classList.remove('expanded');
-          }
-        });
-  
-        // If the tag is already expanded, collapse it
-        if (tag.classList.contains('expanded')) {
-          tag.style.maxHeight = '30px';
-        } else {
-          // If the tag is not expanded, expand it
-          // Use setTimeout to ensure the additional info is rendered before calculating the scroll height
-          setTimeout(() => {
-            const additionalInfo = tag.querySelector('.additional-info');
-            tag.style.maxHeight = `${30 + additionalInfo.scrollHeight}px`;
-
-            const pairId = tag.getAttribute('id');
-            console.log("tag expand EL - pairId: ", pairId)
-            //const lineSeries = chart.series.getById(pairId);
-          }, 0);
-        }
-        tag.classList.toggle('expanded');
-      });
-      */
-     /*
-      tag.addEventListener('click', () => {
-        // Collapse all other tags
-        const allTags = Array.from(locationPairTags.children);
-        allTags.forEach(otherTag => {
-            if (otherTag !== tag && otherTag.classList.contains('expanded')) {
-                otherTag.style.maxHeight = '30px';
-                otherTag.classList.remove('expanded');
-                //this.changeLineColor(otherTag.dataset.index, "normalColor");
-                this.changeLineColor(lineSeries, tag.dataset.index, "#FF0000");
-            }
-        });
-    
-        // If the tag is already expanded, collapse it
-        if (tag.classList.contains('expanded')) {
-            tag.style.maxHeight = '30px';
-            this.changeLineColor(lineSeries,tag.dataset.index, "normalColor");
-        } else {
-            // If the tag is not expanded, expand it
-            // Use setTimeout to ensure the additional info is rendered before calculating the scroll height
-            setTimeout(() => {
-                const additionalInfo = tag.querySelector('.additional-info');
-                tag.style.maxHeight = `${30 + additionalInfo.scrollHeight}px`;
-            }, 0);
-            this.changeLineColor(lineSeries,tag.dataset.index, "highlightColor"); // Assuming highlightColor is the color when line is highlighted
-        }
-        tag.classList.toggle('expanded');
-    });
-    */
       locationPairTags.appendChild(tag);
     });
   }  
 }
-//export const locationPair = new LocationPair();
+
 
 /*
  * Access the global instance of LocationPair.

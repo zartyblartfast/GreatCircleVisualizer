@@ -66,6 +66,7 @@ export async function initializeAirportSearch() {
     awesompleteInstance.list = list;
   };
 
+  /*
   const updateAwesompleteList = (awesompleteInstance, countryCode) => {
     airportList = getAirportList();
     if (!airportList) {
@@ -75,7 +76,25 @@ export async function initializeAirportSearch() {
     let filteredAirports = airportList.filter(airport => airport.country === countryCode);
     setupAwesomplete(awesompleteInstance, filteredAirports.map(item => item.label));
   };          
+  */
+  const updateAwesompleteList = (awesompleteInstance, countryCode) => {
+    airportList = getAirportList();
+    if (!airportList) {
+      //console.error('airportList is undefined');
+      return;
+    } 
 
+    let filteredAirports = airportList;
+  
+    // Check if countryCode is present; if so, filter by country
+    if (countryCode) {
+      filteredAirports = airportList.filter(airport => airport.country === countryCode);
+    }
+    
+    setupAwesomplete(awesompleteInstance, filteredAirports.map(item => item.label));
+  };
+  
+  
   return {
     awesompleteA,
     awesompleteB,
