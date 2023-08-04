@@ -1,3 +1,25 @@
+header {
+  position: fixed; /* Make the header fixed position */
+  top: 0; /* Align the header to the top of the viewport */
+  left: 0; /* Align the header to the left of the viewport */
+  right: 0; /* Stretch the header across the full width of the viewport */
+  z-index: 1000; /* Ensure the header appears above other content */
+}
+
+.headroom {
+  transition: all .2s ease-in-out;
+  top: 0; /* Set the initial position */
+}
+
+.headroom--unpinned {
+  top: -150px; /* Move the header up out of view */
+}
+
+.headroom--pinned {
+  top: 0px; /* Move the header back into view */
+}
+
+
 .main-container {
   display: flex;
   justify-content: space-between;
@@ -129,6 +151,7 @@
 body {
   text-decoration: none;
   font-family: sans-serif;
+  padding-top: 125px;
 }
 
 header {
@@ -172,15 +195,16 @@ td, th { border: 1px solid #000; }
   width: 100%;
   max-width: 1000px;
   min-width: 500px;
-  margin: 0px auto 4rem; /* top, right and left, bottom */
-  padding: 2rem;
+  margin: 0px auto 2rem; /* top, right and left, bottom */
+  padding: 1rem;
   background: white;
   /*box-shadow: 0 0 3px 5px rgba(0,0,0,0.08653);*/
-  padding: 1.5rem; /* reduced padding */
-  box-shadow: none; /* no shadow */
+  padding: 1.0rem; 
+  box-shadow: none;
 }
 
 #chartdiv1 {
-  min-width: 500px;
-  min-height: 500px;
+  width: 100%;
+  min-width: 800px;
+  min-height: 600px;
 }

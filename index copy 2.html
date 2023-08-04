@@ -29,11 +29,16 @@
 
 <body>
   <header class="headroom">
-  <!--<header>-->
-    <h1>Great Circle Visualizer</h1>
+    <h1>YGreat Circle Visualizer</h1>
     <p>Visualize great circles routes between any two airport locations on Earth using different map projections & compare to globe view</p>
   </header>
   
+  <!--
+  <header>
+    <h1>Great Circle Visualizer</h1>
+    <p>Visualize great circles routes between any two airport locations on Earth using different map projections & compare to globe view</p>
+  </header>
+  -->
 
   <main>
 
@@ -143,7 +148,7 @@
 
   </div>
   </main>
-   
+      
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
     $(document).ready(function () {
@@ -182,17 +187,18 @@
 
     </script>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.12.0/headroom.min.js"></script>
+    <!-- Headroom JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom.js/0.12.0/headroom.min.js"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js"></script>
-    <!-- custom JS files -->
-    <script type="module" src="./js/main.js"></script>
     <!-- Awesomplete JS -->
     <script src="https://cdn.jsdelivr.net/npm/awesomplete@1.1.5/awesomplete.min.js"></script>
 
     <!-- D3 libraries -->
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+    <!-- custom JS files -->
+    <script type="module" src="./js/main.js"></script>
 
     <!-- <script type="module" src="./js/tags.js"></script> -->
     <script type="module" src="./js/locationPair.js"></script>
@@ -211,6 +217,7 @@
 
     <script type="module" src="./js/map_animations_along_lines.js" defer></script>
     <script type="module" src="./js/mapUtilities.js"></script>
+    <!--<script type="module" src="./js/tabs.js"></script>-->
   
 </body>
 </html>

@@ -48,6 +48,7 @@ function initializeMap() {
     updateProjection(chart, 'd3.' + currentProjectionName + '()');
 
     // Create series for background fill
+    /*
     backgroundSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {}));
     backgroundSeries.mapPolygons.template.setAll({
         fill: root.interfaceColors.get("alternativeBackground"),
@@ -59,6 +60,19 @@ function initializeMap() {
     backgroundSeries.data.push({
         geometry: am5map.getGeoRectangle(90, 180, -90, -180)
     });
+    */
+    var backgroundSeries = chart.series.unshift(
+        am5map.MapPolygonSeries.new(root, {})
+      );
+    
+      backgroundSeries.mapPolygons.template.setAll({
+        fill: am5.color(0xedf7fa),
+        stroke: am5.color(0xedf7fa),
+      });
+    
+      backgroundSeries.data.push({
+        geometry: am5map.getGeoRectangle(90, 180, -90, -180)
+      });
 
     // Call the function to create the slider
     createSlider(root, chart, backgroundSeries, projectionFunction);

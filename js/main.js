@@ -1,4 +1,24 @@
 //export let locationPairs = JSON.parse(localStorage.getItem('locationPairs')) || [];
+/*
+import Headroom from "headroom.js";
+
+var header = document.querySelector('.headroom');
+var headroom = new Headroom(header);
+headroom.init();
+// grab an element
+//var myElement = document.querySelector("header");
+// construct an instance of Headroom, passing the element
+//var headroom  = new Headroom(myElement);
+*/
+
+//var Headroom = require('./node_modules/headroom.js/dist/headroom.min.js'); // Adjust the path as needed
+var myElement = document.querySelector("header");
+var headroom  = new Headroom(myElement);
+headroom.init();
+
+
+ 
+//console.log(headroom);
 
 // copied from airportList.js for restructuring
 export let airportList = [];
