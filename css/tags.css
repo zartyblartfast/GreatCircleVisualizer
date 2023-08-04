@@ -119,3 +119,20 @@
   border-top: none; /* Add this line to remove the border */
   border-bottom: none; /* Add this line to remove the border */
 }
+
+.tag .delete-button-wrapper button {
+  /* Existing styles for the delete button, if any */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition effect */
+}
+
+.tag .delete-button-wrapper button:hover:not(:disabled) {
+  background-color: red; /* Change to a color that fits your theme */
+  color: white; /* Change the text color on hover */
+  cursor: pointer; /* Change the cursor to a hand icon */
+}
+
+.tag .delete-button-wrapper button:disabled {
+  background-color: inherit; /* Reset to the original background color */
+  color: inherit; /* Reset to the original text color */
+  cursor: not-allowed; /* Change the cursor to indicate the button is not clickable */
+}

@@ -46,8 +46,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('info-message').textContent = '';
         // Disable the 'Add' button when the country is changed
         document.getElementById('add-button').disabled = true;
+      //} else {
+      //  document.getElementById('airport-a-filter-search').disabled = true;
       } else {
-        document.getElementById('airport-a-filter-search').disabled = true;
+          // Code to handle when no country is selected
+          document.getElementById('airport-a-filter-search').disabled = false;
+          document.getElementById('airport-a-filter-search').value = '';
+          setSelectedAirportACode('');
+          updateAwesompleteList(awesompleteA, null); // Pass null or undefined to list all airports
+          document.getElementById('info-message').textContent = '';
+          // Can keep the 'Add' button disabled or enabled - test test
       }
     });
     
@@ -60,8 +68,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         updateAwesompleteList(awesompleteB, countryBDropdown.value);
         document.getElementById('info-message').textContent = '';
         document.getElementById('add-button').disabled = true;
+      //} else {
+      //  document.getElementById('airport-b-filter-search').disabled = true;
       } else {
-        document.getElementById('airport-b-filter-search').disabled = true;
+        // Code to handle when no country is selected
+        document.getElementById('airport-b-filter-search').disabled = false;
+        document.getElementById('airport-b-filter-search').value = '';
+        setSelectedAirportBCode('');
+        updateAwesompleteList(awesompleteB , null); // Pass null or undefined to list all airports
+        document.getElementById('info-message').textContent = '';
+        // Can keep the 'Add' button disabled or enabled - test test
       }
     });
     

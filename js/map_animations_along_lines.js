@@ -14,7 +14,7 @@ import { setupProjectionDropdown, updateProjection} from './mapProjection.js';
 
 "use strict";
 
-console.log('Initialising map on page open/refresh...');
+//console.log('Initialising map on page open/refresh...');
 
 // Access the global instance
 var globalLocationPair = window.globalLocationPair;
@@ -22,7 +22,7 @@ var globalLocationPair = window.globalLocationPair;
 // create a new map object to hold the lines plotted on the maps
 // The purpose of keeping a store of the line objects is so that the individual lines can hae their properties changed after they are created.
 var linesMap = new Map();
-console.log('1. linesMap:', linesMap);
+//console.log('1. linesMap:', linesMap);
 
 // Create root element
 var root = am5.Root.new("chartdiv1");
@@ -98,24 +98,24 @@ function initializeMap() {
     // Create point series for markers
     pointSeries = createPointSeries(root, chart);
 
-    console.log("globalLocationPair.locationPairs: ",globalLocationPair.locationPairs)
+    //console.log("globalLocationPair.locationPairs: ",globalLocationPair.locationPairs)
 
     // Add new data
     globalLocationPair.locationPairs.forEach(pair => {
-        console.log("Inside forEach Pair (body), calling addLineAndPlane.  Pair: ", pair);
+        //console.log("Inside forEach Pair (body), calling addLineAndPlane.  Pair: ", pair);
         var city1 = addCity(root, chart, pointSeries, { latitude: pair.airportALat, longitude: pair.airportALon }, pair.airportAName, pair.airportACode, pair.airportACountryFull);
         var city2 = addCity(root, chart, pointSeries, { latitude: pair.airportBLat, longitude: pair.airportBLon }, pair.airportBName, pair.airportBCode, pair.airportBCountryFull);
         
         // Calling addLineAndPlane and storing the returned line reference
         var lineReference = addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, pair.GreatCircleDistKm, pair.RhumbLineDistKm, linesMap);
 
-        console.log('Line reference returned from addLineAndPlane:', lineReference);
+        //console.log('Line reference returned from addLineAndPlane:', lineReference);
 
         // Storing the line reference in linesMap using pair.id as the key
         linesMap.set(pair.id, lineReference);
     });
 
-    console.log("linesMap: ",linesMap)
+    //console.log("linesMap: ",linesMap)
     // Setup projection dropdown
     setupProjectionDropdown(chart);
 }
@@ -138,7 +138,7 @@ document.addEventListener('pairExpandCollapse', function(event) {
     const lineReference = linesMap.get(pairId);
 
     if (lineReference && lineReference._settings && lineReference._settings.mapLine) {
-        console.log('Found lineReference:', lineReference);
+        //console.log('Found lineReference:', lineReference);
    
         /*
 
@@ -160,7 +160,7 @@ document.addEventListener('pairExpandCollapse', function(event) {
         }
         
         // Update chart to reflect changes
-        chart.invalidateLayout();
+        //chart.invalidateLayout();
 
     } else {
         console.warn(`Line reference not found for pairId: ${pairId}`);
@@ -209,7 +209,7 @@ document.getElementById('make-maps-button').addEventListener('click', function()
 // Event listener for the "Make maps" button
 document.getElementById('make-maps-button').addEventListener('click', function() {
 
-    console.log('Make maps button clicked, reinitialising map...');
+    //console.log('Make maps button clicked, reinitialising map...');
     
     var projectionSelect = document.getElementById('projectionSelect'); // Assuming the ID of the dropdown element is 'projectionSelect'
     projectionSelect.disabled = false; // Enable the dropdown

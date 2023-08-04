@@ -9,13 +9,13 @@ export function updateProjectionName(newName) {
 // Function to update the map projection
 export function updateProjection(chart, projectionName, isRotatable) {
 
-    console.log("in updateProjection fu, isRotatable arg: ",isRotatable )
+    //console.log("in updateProjection fu, isRotatable arg: ",isRotatable )
 
     if (isRotatable === undefined) {
         isRotatable = false;
     }
 
-    console.log("in updateProjection, after reset, isRotatable arg: ",isRotatable )
+    //console.log("in updateProjection, after reset, isRotatable arg: ",isRotatable )
     //try {
         // Remove "d3." from the start of the projectionName and the parentheses at the end
         let projectionFunctionName = projectionName.slice(3, -2);
@@ -29,13 +29,13 @@ export function updateProjection(chart, projectionName, isRotatable) {
             //let newProjection = projectionFunction().rotate([0, -90, 0]);
             // Update the chart's projection with the new projection object
             //chart.set("projection", newProjection);
-            console.log("typeof projectFunction === function")
+            //console.log("typeof projectFunction === function")
            
             chart.set("projection", projectionFunction());
             //if (projectionFunctionName === 'geoAzimuthalEquidistant') {
              if  (isRotatable === true) {
 
-                console.log("In updateProject, isRotatable === true");
+                //console.log("In updateProject, isRotatable === true");
 
                 //let newProjection = projectionFunction().rotate([0, -90, 0]);
                 //chart.set("projection", newProjection);
@@ -53,14 +53,14 @@ export function updateProjection(chart, projectionName, isRotatable) {
                 //chart.set("minHeight", 200); // minimum height in pixels
                 chart.set("rotationY", 1);
             } else {
-                console.log("In updateProject, isRotatable === false");
+                //console.log("In updateProject, isRotatable === false");
                 //chart.set("projection", projectionFunction());
                 chart.set("panX", "rotateX")
                 chart.set("panY", "translateY")
                 chart.set("rotationY", 0);
                 //chart.set("minWidth", 200); // minimum width in pixels
                 //chart.set("minHeight", 200); // minimum height in pixels
-                console.log("typeof projectFunction === function, chart: ",chart)
+                //console.log("typeof projectFunction === function, chart: ",chart)
             }
           
         } else {
@@ -107,8 +107,8 @@ export function setupProjectionDropdown(chart) {
         const selectedProjection = projectionSelect.value;
         const isRotatable = projectionSelect.options[projectionSelect.selectedIndex].dataset.rotatable === 'true';
 
-        console.log("projectionSelect.value: ", projectionSelect.value);
-        console.log("projectionSelect, isRotatable : ", isRotatable);
+        //console.log("projectionSelect.value: ", projectionSelect.value);
+        //console.log("projectionSelect, isRotatable : ", isRotatable);
 
         updateProjection(chart, selectedProjection, isRotatable);
 
