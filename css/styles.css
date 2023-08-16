@@ -199,12 +199,13 @@ td, th { border: 1px solid #000; }
   padding: 1rem;
   background: white;
   /*box-shadow: 0 0 3px 5px rgba(0,0,0,0.08653);*/
-  padding: 1.0rem; 
+  /*padding: 1.0rem; */
   box-shadow: none;
 }
 
 #chartdiv1 {
   width: 100%;
   min-width: 800px;
-  min-height: 600px;
+  height: 600px;
 }
+

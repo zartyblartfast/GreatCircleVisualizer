@@ -1,40 +1,11 @@
 // mapUtilities.js
 //import { currentProjectionName } from './mapProjection.js';
 import { currentProjectionName, updateProjection } from './mapProjection.js';
-// Access the global instance
-//var globalLocationPair = window.globalLocationPair;
-//import { locationPair } from './locationPairClass.js';
-/*
-export function haversineDistance(coords1, coords2, isMiles = false) {
-    function toRad(x) {
-      return x * Math.PI / 180;
-    }
-  
-    var lon1 = coords1.longitude;
-    var lat1 = coords1.latitude;
-  
-    var lon2 = coords2.longitude;
-    var lat2 = coords2.latitude;
-  
-    var R = 6371; // km
-  
-    var x1 = lat2 - lat1;
-    var dLat = toRad(x1);
-    var x2 = lon2 - lon1;
-    var dLon = toRad(x2)
-    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c;
-  
-    if(isMiles) d /= 1.60934;
-  
-    return d;
-  }
-*/
 
 export function addCity(root, chart, pointSeries, coords, title, code, country) {
+
+    console.log("inside addCity: ",code)
+
     var dataItem = pointSeries.pushDataItem({
         latitude: coords.latitude,
         longitude: coords.longitude,
@@ -47,23 +18,16 @@ export function addCity(root, chart, pointSeries, coords, title, code, country) 
 }
 
 export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, GreatCircleDistKm, RhumbLineDistKm, linesMap) {
-
-    /*
+    
     console.log("Inside addLineAndPlane. City1.airportAName: ", city1.get("airportName"))
     console.log("Inside addLineAndPlane. City1.latitude: ", city1.get("latitude"))
     console.log("Inside addLineAndPlane. City1.longitude: ", city1.get("longitude"))
     console.log("Inside addLineAndPlane. City2.airportAName: ", city2.get("airportName"))
     console.log("Inside addLineAndPlane. City2.latitude: ", city2.get("latitude"))
     console.log("Inside addLineAndPlane. City2.longitude: ", city2.get("longitude"))
-    */
+    
     //console.log("Inside addLineAndPlane, GreatCircleDistKm: ", GreatCircleDistKm)
     //console.log("Inside addLineAndPlane, RhumbLineDistKm: ", RhumbLineDistKm)
-
-    /*
-    var lineDataItem = lineSeries.pushDataItem({
-        pointsToConnect: [city1, city2]
-    });
-    */
 
     // Calculate the percentage difference
     let percentageDifference = ((RhumbLineDistKm - GreatCircleDistKm) / GreatCircleDistKm) * 100;
@@ -75,20 +39,6 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
     } else {
         signedPercentageDifference = percentageDifference > 0 ? `+${percentageDifference.toFixed(2)}` : percentageDifference.toFixed(2);
     }
-
-    /* original working code for rollback
-    var lineDataItem = lineSeries.pushDataItem({
-        pointsToConnect: [city1, city2],
-        airportAName: city1.get("airportName"),
-        airportACode: city1.get("code"),
-        airportBName: city2.get("airportName"),
-        airportBCode: city2.get("code"),
-        GreatCircleDistKm: Number(GreatCircleDistKm).toFixed(1),
-        RhumbLineDistKm: Number(RhumbLineDistKm).toFixed(1),
-        PercentageDifference: signedPercentageDifference
-    });
-    */
-
   
     var lineDataItem = lineSeries.pushDataItem({
         id: city1.get("code") + "-" + city2.get("code"), // Create a unique ID using airport codes
@@ -102,57 +52,14 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
         PercentageDifference: signedPercentageDifference
     });
 
-    lineSeries.mapLines.template.set("tooltipText", "{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
+    //lineSeries.mapLines.template.set("tooltipText", "{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
+    lineSeries.mapLines.template.set("tooltipText", 
+    "[bold]Great Circle[/]\n{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
 
     //console.log('2. linesMap:', linesMap);
     linesMap.set(city1.get("code") + "-" + city2.get("code"), lineDataItem);
 
-    /*
-    // Calculate the points for the rhumb line
-    var rhumbLinePoints = calculateRhumbLinePoints(
-        { latitude: city1.get("latitude"), longitude: city1.get("longitude") },
-        { latitude: city2.get("latitude"), longitude: city2.get("longitude") }
-    );
-    */
-
-    //console.log("rhumbLinePoints: ",rhumbLinePoints)
-
-    // Add a new data item to the rhumbLineSeries for each pair of cities
-    
-    /*
-    rhumbLineSeries.data.push({
-        multiGeoLine: rhumbLinePoints
-    });
-     */
-
-    /*
-    rhumbLineSeries.mapLines.template.setAll({
-        stroke: am5.color(0xff0000), // red color
-        strokeWidth: 2
-    });
-    */
-    
-    /*
-    rhumbLineSeries.data.push({
-        multiGeoLine: [rhumbLinePoints]
-    });
-    */
-   // Add a new data item to the rhumbLineSeries for each pair of cities
-    //rhumbLineSeries.data.push({
-    //    multiGeoLine: [rhumbLinePoints.map(point => [point.longitude, point.latitude])]
-    //});
-    /*
-    rhumbLineSeries.data.push({
-        multiGeoLine: [rhumbLinePoints.map(point => ({ longitude: point.longitude, latitude: point.latitude }))]
-    });
-    */
-
-    //chart.series.push(rhumbLineSeries);
-
-    //console.log(rhumbLineSeries.dataItems[0]._settings.multiGeoLine);
-    //console.log("rhumbLineSeries.dataItems",rhumbLineSeries.dataItems);
-
-
+/*
     var planeSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
     planeSeriesArray.push(planeSeries);  // Add the new planeSeries to the array
 
@@ -176,10 +83,6 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
         autoRotate: true
     });
 
-    //These two console.log statement prevent more than one airport pair from being plotted
-    //console.log(">>> animate method: airport A ", city1.airportName)
-    //console.log(">>> animate method: airport B ", city2.airportName)
-
     planeDataItem.animate({
         key: "positionOnLine",
         to: 1,
@@ -197,13 +100,13 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
             plane.set("rotation", 0);
         }
     });
-    // rollback by removing this...
-
+*/
     return lineDataItem; // Return the line's unique ID
-
 }
 
 export function createSlider(root, chart, backgroundSeries, projectionFunction) {
+
+    console.log("inside createSlider()")
     var cont = chart.children.push(am5.Container.new(root, {
         layout: root.horizontalLayout,
         x: 20,
@@ -231,33 +134,6 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
 
     var currentProjection = chart.get("projection");
 
-    /*
-    switchButton.on("active", function() {
-        if (!switchButton.get("active")) {
-            labelMap.set("visible", true);
-            labelGlobe.set("visible", false);
-
-            chart.set("projection", currentProjection);
-
-            if (currentProjectionName === "geoAzimuthalEquidistant") {
-                chart.set("panX", "rotateX");
-                chart.set("panY", "rotateY");
-                chart.set("rotationY", 1);
-            } else {
-                chart.set("panX", "rotateX");
-                chart.set("panY", "translateY");
-                chart.set("rotationY", 0);
-            }
-        } else {
-            labelMap.set("visible", false);
-            labelGlobe.set("visible", true);
-
-            currentProjection = chart.get("projection");
-            chart.set("projection", am5map.geoOrthographic());
-            chart.set("panY", "rotateY");
-        }
-    });
-    */
     switchButton.on("active", function() {
         var projectionSelect = document.getElementById('projectionSelect'); // Assuming the ID of the dropdown element is 'projectionSelect'
         if (!switchButton.get("active")) {
@@ -270,12 +146,16 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
                 chart.set("panX", "rotateX");
                 chart.set("panY", "rotateY");
                 chart.set("rotationY", 1);
+                chart.set("wheelY","rotateY")
+                chart.set("wheelSensitivity", 0.3)
             } else {
                 chart.set("panX", "rotateX");
-                chart.set("panY", "translateY");
+                //chart.set("panY", "translateY");
+                chart.set("panY", "none");
                 chart.set("rotationY", 0);
+                chart.set("wheelY","none")
             }
-    
+            chart.goHome();
             projectionSelect.disabled = false; // Enable the dropdown
         } else {
             labelMap.set("visible", false);
@@ -284,6 +164,10 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
             currentProjection = chart.get("projection");
             chart.set("projection", am5map.geoOrthographic());
             chart.set("panY", "rotateY");
+            //chart.set("panY", "none");
+            chart.set("wheelY","rotateY")
+            chart.set("wheelSensitivity", 0.3)
+            chart.goHome();
     
             projectionSelect.disabled = true; // Disable the dropdown
         }
@@ -339,40 +223,13 @@ export function stopAnimationsAndClearData(planeSeriesArray) {
     }
 }
 
-/*
-export function rhumbDistance(coords1, coords2, isMiles = false) {
-    function toRad(x) {
-        return x * Math.PI / 180;
-    }
+// Functions to calculate Rhumb Line points
+export function toRad(x) {
+return x * Math.PI / 180;
+}
 
-    function toDeg(x) {
-        return x * 180 / Math.PI;
-    }
-
-    var lon1 = coords1.longitude;
-    var lat1 = coords1.latitude;
-
-    var lon2 = coords2.longitude;
-    var lat2 = coords2.latitude;
-
-    var R = 6371; // km
-
-    var dLat = toRad(lat2 - lat1);
-    var dLon = toRad(lon2 - lon1);
-
-    var dPhi = Math.log(Math.tan(toRad(lat2) / 2 + Math.PI / 4) / Math.tan(toRad(lat1) / 2 + Math.PI / 4));
-    var q = (isFinite(dLat / dPhi)) ? dLat / dPhi : Math.cos(toRad(lat1));  // E-W line gives dPhi=0
-
-    // if dLon over 180° take shorter rhumb across 180° meridian:
-    if (Math.abs(dLon) > Math.PI) {
-        dLon = dLon > 0 ? -(2 * Math.PI - dLon) : (2 * Math.PI + dLon);
-    }
-
-    var dist = Math.sqrt(dLat * dLat + q * q * dLon * dLon) * R;
-
-    if(isMiles) dist /= 1.60934;
-
-    return dist;
+export function toDeg(x) {
+return x * 180 / Math.PI;
 }
 
 export function calculateRhumbLinePoints(start, end, numPoints = 100) {
@@ -396,21 +253,100 @@ export function calculateRhumbLinePoints(start, end, numPoints = 100) {
     lon1 = (lon1 + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
     lon2 = (lon2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
 
+    let lastLon = lon1;
     for (let i = 0; i <= numPoints; i++) {
         let f = i / numPoints;
         let lat = lat1 + (lat2 - lat1) * f;
         let lon = lon1 + dLon * f;
+
+        // If the line crosses the 180° meridian, split it into two segments
+        if (Math.abs(lon - lastLon) > Math.PI) {
+            let midLat = (lat + toRad(points[points.length - 1].latitude)) / 2;
+            if (lon > lastLon) {
+                points.push({ latitude: toDeg(midLat), longitude: -180 });
+                points.push({ latitude: toDeg(midLat), longitude: 180 });
+            } else {
+                points.push({ latitude: toDeg(midLat), longitude: 180 });
+                points.push({ latitude: toDeg(midLat), longitude: -180 });
+            }
+        }
+
         points.push({ latitude: toDeg(lat), longitude: toDeg(lon) });
+        lastLon = lon;
     }
 
     return points;
 }
 
-export function toRad(x) {
-    return x * Math.PI / 180;
-}
-
-export function toDeg(x) {
-    return x * 180 / Math.PI;
+/*
+export function addRhumbLine(RL_points, lineSeries) {
+    // Create a line for each pair of points for Rhumb Line
+    if (!Array.isArray(RL_points)) {
+        console.error('RL_points is not an array');
+        return;
+    }
+    RL_points.forEach(function(point, index) {
+        if (index < RL_points.length - 1) { 
+            lineSeries.pushDataItem({
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                [point.longitude, point.latitude],
+                [RL_points[index + 1].longitude, RL_points[index + 1].latitude] 
+                ]
+            }
+            });
+        }
+    });
 }
 */
+
+export function addRhumbLine(RL_points, lineSeries, city1, city2, GreatCircleDistKm, RhumbLineDistKm) {
+    if (!Array.isArray(RL_points)) {
+        console.error('RL_points is not an array');
+        return;
+    }
+
+    let percentageDifference = ((RhumbLineDistKm - GreatCircleDistKm) / GreatCircleDistKm) * 100;
+    let signedPercentageDifference = (Math.abs(percentageDifference) < 0.005) 
+        ? '~0' 
+        : (percentageDifference > 0) 
+            ? `+${percentageDifference.toFixed(2)}` 
+            : percentageDifference.toFixed(2);
+
+    RL_points.forEach(function(point, index) {
+        if (index < RL_points.length - 1) {
+            let lineData = {
+                geometry: {
+                    type: "LineString",
+                    coordinates: [
+                        [point.longitude, point.latitude],
+                        [RL_points[index + 1].longitude, RL_points[index + 1].latitude]
+                    ]
+                },
+                id: city1.get("code") + "-" + city2.get("code"),
+                airportAName: city1.get("airportName"),
+                airportACode: city1.get("code"),
+                airportBName: city2.get("airportName"),
+                airportBCode: city2.get("code"),
+                GreatCircleDistKm: Number(GreatCircleDistKm).toFixed(1),
+                RhumbLineDistKm: Number(RhumbLineDistKm).toFixed(1),
+                PercentageDifference: signedPercentageDifference,
+                stroke: am5.color(0x00FF00),  // Green color for rhumb line
+                tooltipText: "{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)" // Setting tooltip text directly here
+            };
+
+            lineSeries.pushDataItem(lineData);
+
+            //lineSeries.mapLines.template.set("tooltipText", "{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
+            lineSeries.mapLines.template.set("tooltipText", 
+            "[bold]Rhumb Line[/]\n{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
+            
+        }
+    });
+    console.log("############ addRhumbLine - lineSeries: ", lineSeries )
+}
+
+
+
+

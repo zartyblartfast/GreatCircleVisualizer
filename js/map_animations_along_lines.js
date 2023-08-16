@@ -4,7 +4,9 @@ import {
     addLineAndPlane, 
     createSlider, 
     createPointSeries, 
-    stopAnimationsAndClearData//, 
+    stopAnimationsAndClearData,
+    //addPlaneAnimation,
+    //removePlaneAnimation
     //rhumbDistance, 
     //calculateRhumbLinePoints, 
     //toRad, 
@@ -13,6 +15,9 @@ import {
 import { setupProjectionDropdown, updateProjection} from './mapProjection.js';
 
 "use strict";
+
+
+console.log("Inside map_animations_along_lines.js")
 
 //console.log('Initialising map on page open/refresh...');
 
@@ -44,8 +49,10 @@ var planeSeriesArray = [];
 let projectionFunction = d3[currentProjectionName];
 
 function initializeMap() {
+    console.log("Inside initializeMap()")
     // Update the projection and get the projection function
     updateProjection(chart, 'd3.' + currentProjectionName + '()');
+    console.log("Projection updated to:", currentProjectionName);
 
     // Create series for background fill
     /*
@@ -64,7 +71,9 @@ function initializeMap() {
     var backgroundSeries = chart.series.unshift(
         am5map.MapPolygonSeries.new(root, {})
       );
-    
+      console.log("Background series created:", backgroundSeries);
+
+
       backgroundSeries.mapPolygons.template.setAll({
         fill: am5.color(0xedf7fa),
         stroke: am5.color(0xedf7fa),
@@ -85,6 +94,9 @@ function initializeMap() {
     polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
         geoJSON: am5geodata_worldLow
     }));
+    console.log("Polygon series count:", chart.series.length);
+    console.log("Main polygon series added:", polygonSeries);
+
 
     // graticule series
     graticuleSeries = chart.series.push(am5map.GraticuleSeries.new(root, {}));
@@ -92,6 +104,7 @@ function initializeMap() {
         stroke: root.interfaceColors.get("alternativeBackground"),
         strokeOpacity: 0.08
     });
+    console.log("Graticule series added:", graticuleSeries);
 
     // Create line series for trajectory lines
     lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
@@ -101,13 +114,16 @@ function initializeMap() {
         strokeOpacity: 0.3,
         interactive: true
     });
+    console.log("Line series added:", lineSeries);
 
+    /*
     rhumbLineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
     rhumbLineSeries.mapLines.template.setAll({
         stroke: am5.color(0xff0000),
         strokeWidth: 2,
         strokeOpacity: 0.7
     });
+    */
 
     // Create point series for markers
     pointSeries = createPointSeries(root, chart);
@@ -136,16 +152,21 @@ function initializeMap() {
 
 // Initialize map on page load
 chart = root.container.children.push(am5map.MapChart.new(root, {
-    panX: "rotateX",
-    panY: "translateY",
+    //panX: "rotateX",
+    panX: "none",
+    //panY: "translateY",
+    panY: "none",
     rotationY: 0,
     projection: am5map.geoMercator(),
     minZoomLevel: 1.0,
     maxZoomLevel: 1.25
 }));
 
+console.log("Chart after initialization:", chart);
+
 
 initializeMap();
+
 
 document.addEventListener('pairExpandCollapse', function(event) {
     const { pairId, expanded } = event.detail;
@@ -153,15 +174,6 @@ document.addEventListener('pairExpandCollapse', function(event) {
 
     if (lineReference && lineReference._settings && lineReference._settings.mapLine) {
         //console.log('Found lineReference:', lineReference);
-   
-        /*
-
-        if (expanded) {
-            lineReference._settings.mapLine.set("stroke", am5.color("#FF0000")); // Change to a red color when expanded
-        } else {
-            lineReference._settings.mapLine.set("stroke", am5.color("#000000")); // Change back to black color when collapsed
-        }
-        */
 
         if (expanded) {
             lineReference._settings.mapLine.set("stroke", am5.color("#FF0000"));
@@ -182,44 +194,6 @@ document.addEventListener('pairExpandCollapse', function(event) {
 });
 
 
-/*
-// Event listener for the "Make maps" button
-document.getElementById('make-maps-button').addEventListener('click', function() {
-
-    console.log('Make maps button clicked, reinitialising map...');
-    
-    // Stop animations and clear the data from each series in the planeSeriesArray
-    stopAnimationsAndClearData(planeSeriesArray);
-
-    // Clear the planeSeriesArray
-    planeSeriesArray = [];
-
-    pointSeries.data.setAll([]);
-    lineSeries.data.setAll([]);
-
-    // Ensure all references to the old chart are removed
-    if (chart) {
-        // Dispose of the existing chart
-        chart.dispose();
-    }
-
-    // Create a new chart
-    chart = root.container.children.push(am5map.MapChart.new(root, {
-        panX: "rotateX",
-        panY: "translateY",
-        rotationY: 0,
-        projection: am5map.geoMercator(),
-        minZoomLevel: 1.0,
-        maxZoomLevel: 1.5
-    }));
-
-    // Re-initialize map after button click
-    initializeMap();
-
-    // Make stuff animate on load
-    chart.appear(1000, 100);
-});
-*/
 // Event listener for the "Make maps" button
 document.getElementById('make-maps-button').addEventListener('click', function() {
 
@@ -245,13 +219,17 @@ document.getElementById('make-maps-button').addEventListener('click', function()
 
     // Create a new chart
     chart = root.container.children.push(am5map.MapChart.new(root, {
-        panX: "rotateX",
-        panY: "translateY",
+        //panX: "rotateX",
+        panX: "none",
+        //panY: "translateY",
+        panY: "none",
         rotationY: 0,
         projection: am5map.geoMercator(),
         minZoomLevel: 1.0,
         maxZoomLevel: 1.5
     }));
+    
+    console.log("Chart after initialization (2):", chart);
 
     // Re-initialize map after button click
     initializeMap();

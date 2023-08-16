@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="./css/accordions.css">
   <link rel="stylesheet" href="./css/tags.css">
   <link rel="stylesheet" href="./css/airport-svg.css">
-  <!--<link rel="stylesheet" href="./css/tabs.css">-->
+  <link rel="stylesheet" href="./css/mapCompare_GC_RL.css">
   <link rel="stylesheet" href="./css/mapStyles.css">
 
   <!-- Awesomplete CSS -->
@@ -28,7 +28,8 @@
 </head>
 
 <body>
-  <header class="headroom">
+  <!--<header class="headroom">-->
+  <header>
   <!--<header>-->
     <h1>Great Circle Visualizer</h1>
     <p>Visualize great circles routes between any two airport locations on Earth using different map projections & compare to globe view</p>
@@ -86,17 +87,32 @@
               </div>  
             </div>
           </div>
-        <div class="wrapper">
-          <div id="chartdiv1">
-              <select id="projectionSelect">
-                  <!-- Options will be added dynamically from JavaScript -->
-              </select>
-          </div>
+          <div class="wrapper">
+            <select id="projectionSelect">
+                <!-- Options will be added dynamically from JavaScript -->
+            </select>
+            <div id="chartdiv1"></div>
+        </div>
+        
+        
         </div>    
       </div>
       </div>
     </div>
-      
+
+    <div class="accordion main-accordion" id="accordion0b">
+      <button class="accordion-header">Compare Great Circles and Rhumb Lines</button>
+      <div class="accordion-panel" id="mapContainer"> 
+          <!-- We will dynamically insert the map divs and dropdown here using JavaScript -->
+          <div class="tools">
+              <button id="selector-prev">&lt;&lt;</button>
+              <select id="selector"></select>
+              <button id="selector-next">&gt;&gt;</button>
+          </div>
+      </div>
+  </div>
+  
+
     <div class="accordion main-accordion" id="accordion1">
       <button class="accordion-header">How to Use the Great Circle Visualizer</button>
       <div class="accordion-panel">
@@ -104,6 +120,7 @@
       </div>
     </div>
     
+
     <div class="accordion main-accordion" id="accordion2">
       <button class="accordion-header">Learn More</button>
       <div class="accordion-panel">
@@ -148,6 +165,7 @@
     <script>
     $(document).ready(function () {
       // Load content into the main accordions
+      
       $("#accordion1 .accordion-panel").load("how-to-use-the-great-circle-visualizer.html");
       
       // Load content into the nested accordions
@@ -162,7 +180,7 @@
       $('.accordion-panel, .nested-accordion-panel').hide();
 
       
-      // Show the panel for accordion0
+      //Show the panel for accordion0
       $('#accordion0 .accordion-panel').show();
 
       // Setup click event for both .accordion-header and .nested-accordion-header
@@ -191,8 +209,8 @@
     <script src="https://cdn.jsdelivr.net/npm/awesomplete@1.1.5/awesomplete.min.js"></script>
 
     <!-- D3 libraries -->
-    <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <!--<script src="https://d3js.org/d3.v6.min.js"></script>-->
+    <!--<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>-->
 
     <!-- <script type="module" src="./js/tags.js"></script> -->
     <script type="module" src="./js/locationPair.js"></script>
@@ -200,16 +218,23 @@
     <script type="module" src="./js/airportSearch.js"></script>
     <script type="module" src="./js/dropdown.js"></script>
     <script type="module" src="./js/locationPairClass.js"></script>
-
+  
     <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-    <script src="https://d3js.org/d3-array.v1.min.js"></script>
-    <script src="https://d3js.org/d3-geo.v1.min.js"></script>
-    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 
-    <script type="module" src="./js/map_animations_along_lines.js" defer></script>
+    <!--<script src="https://d3js.org/d3-array.v1.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/d3-array@3.2.4/dist/d3-array.min.js"></script>
+    
+    <!--<script src="https://d3js.org/d3-geo.v1.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/d3-geo@3.1.0/dist/d3-geo.min.js"></script>
+
+    <!--<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/d3-geo-projection@4.0.0/dist/d3-geo-projection.min.js"></script>
+
+    <script type="module" src="./js/map_animations_along_lines.js"></script>
+    <script type="module" src="./js/map_compare_gc_rl.js"></script>
     <script type="module" src="./js/mapUtilities.js"></script>
   
 </body>

@@ -14,7 +14,10 @@
       "airportBLat": -0.125399,
       "airportBLon": -78.354306,
       "GreatCircleDistKm": 17152.451179488857,    
-      "RhumbLineDistKm": 17153.212402577898
+      "RhumbLineDistKm": 17153.212402577898,
+      "RhumbLineDisplay": false,
+      "geoOG_rotationX": null,
+      "geoOG_rotationY": null
     },
     {
       "id": "HBA-QET",
@@ -31,7 +34,10 @@
       "airportBLat": -71.95714,
       "airportBLon": 2.45257,
       "GreatCircleDistKm": 6960.168261672867, 
-      "RhumbLineDistKm": 8728.663235674474
+      "RhumbLineDistKm": 8728.663235674474,
+      "RhumbLineDisplay": true,
+      "geoOG_rotationX": -55.0,
+      "geoOG_rotationY": 75.0
     },
     {
       "id": "LAX-DXB",
@@ -48,7 +54,10 @@
       "airportBLat": 25.2527999878,
       "airportBLon": 55.3643989563,
       "GreatCircleDistKm": 13400.095543708267,    
-      "RhumbLineDistKm": 16802.602071247315
+      "RhumbLineDistKm": 16802.602071247315,
+      "RhumbLineDisplay": true,
+      "geoOG_rotationX": 0,
+      "geoOG_rotationY": 0
     },
     {
       "id": "HBA-USH",
@@ -65,7 +74,10 @@
       "airportBLat": -54.8433,
       "airportBLon": -68.2958,
       "GreatCircleDistKm": 8637.236249161773, 
-      "RhumbLineDistKm": 10567.277602879296
+      "RhumbLineDistKm": 10567.277602879296,
+      "RhumbLineDisplay": true,
+      "geoOG_rotationX": 0,
+      "geoOG_rotationY": 0
     },
     {
       "id": "LBV-UIO",
@@ -82,7 +94,10 @@
       "airportBLat": -0.125399,
       "airportBLon": -78.354306,
       "GreatCircleDistKm": 9759.332825920657, 
-      "RhumbLineDistKm": 9759.345126144412
+      "RhumbLineDistKm": 9759.345126144412,
+      "RhumbLineDisplay": false,
+      "geoOG_rotationX": null,
+      "geoOG_rotationY": null
     },
     {
       "id": "LBV-TTE", 
@@ -99,7 +114,10 @@
       "airportBLat": 0.831012,
       "airportBLon": 127.381611,
       "GreatCircleDistKm": 13116.307702345439,    
-      "RhumbLineDistKm": 13116.820809705237
+      "RhumbLineDistKm": 13116.820809705237,
+      "RhumbLineDisplay": false,
+      "geoOG_rotationX": null,
+      "geoOG_rotationY": null
     },
     {
       "id": "NZIR-CPT",
@@ -116,7 +134,10 @@
       "airportBLat": -33.9648017883,
       "airportBLon": 18.6016998291,
       "GreatCircleDistKm": 7397.629351937006, 
-      "RhumbLineDistKm": 9222.591252356407
+      "RhumbLineDistKm": 9222.591252356407,
+      "RhumbLineDisplay": true,
+      "geoOG_rotationX": 0,
+      "geoOG_rotationY": 0
     },
     {
       "id": "NZSP-CYLT",
@@ -133,6 +154,9 @@
       "airportBLat": 82.5178,
       "airportBLon": -62.2806,
       "GreatCircleDistKm": 19183.130612712583,    
-      "RhumbLineDistKm": 19183.130612712583
+      "RhumbLineDistKm": 19183.130612712583,
+      "RhumbLineDisplay": false,
+      "geoOG_rotationX": null,
+      "geoOG_rotationY": null
     }
   ]
