@@ -9,7 +9,7 @@ export function updateProjectionName(newName) {
 // Function to update the map projection
 export function updateProjection(chart, projectionName, isRotatable) {
 
-    //console.log("in updateProjection fu, isRotatable arg: ",isRotatable )
+    console.log("in updateProjection fu, isRotatable arg: ",isRotatable )
 
     if (isRotatable === undefined) {
         isRotatable = false;
@@ -48,16 +48,23 @@ export function updateProjection(chart, projectionName, isRotatable) {
                 //console.log("point: ", point);
             
                 chart.set("panX", "rotateX")
-                chart.set("panY", "rotateY")
+                //chart.set("panY", "rotateY")
+                chart.set("panY", "none")
                 //chart.set("minWidth", 200); // minimum width in pixels
                 //chart.set("minHeight", 200); // minimum height in pixels
                 chart.set("rotationY", 1);
+                chart.set("wheelY","rotateY")
+                //chart.appear(1000, -10);
             } else {
                 //console.log("In updateProject, isRotatable === false");
                 //chart.set("projection", projectionFunction());
+                chart.appear(1000, 100);
                 chart.set("panX", "rotateX")
-                chart.set("panY", "translateY")
+                //chart.set("panY", "translateY")
+                chart.set("panY", "none")
                 chart.set("rotationY", 0);
+                chart.set("wheelY","none")
+                //chart.appear(1000, -10);
                 //chart.set("minWidth", 200); // minimum width in pixels
                 //chart.set("minHeight", 200); // minimum height in pixels
                 //console.log("typeof projectFunction === function, chart: ",chart)

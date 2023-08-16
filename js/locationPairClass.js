@@ -151,6 +151,8 @@ export class LocationPair {
       signedPercentageDifference = percentageDifference > 0 ? `+${percentageDifference.toFixed(2)}` : percentageDifference.toFixed(2);
     }
 
+    //console.log("displayLocationPair - pair:", pair)
+
     const additionalInfo = document.createElement('div');
     additionalInfo.classList.add('additional-info');
     additionalInfo.innerHTML = 
@@ -203,7 +205,7 @@ export class LocationPair {
             const event = new CustomEvent('pairExpandCollapse', { detail: { pairId: pairId, expanded: false } });
             document.dispatchEvent(event);
       
-            console.log(`pairExpandCollapse event - pairId: ${pairId}, expanded: false`);
+            //console.log(`pairExpandCollapse event - pairId: ${pairId}, expanded: false`);
           }
         });
       

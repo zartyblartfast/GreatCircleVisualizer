@@ -1,4 +1,18 @@
-//export let locationPairs = JSON.parse(localStorage.getItem('locationPairs')) || [];
+//main.js
+
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+  console.error('Error occurred: ', msg, url, lineNo, columnNo, error);
+  return false;
+}
+
+//var Headroom = require('./node_modules/headroom.js/dist/headroom.min.js'); // Adjust the path as needed
+var myElement = document.querySelector("header");
+var headroom  = new Headroom(myElement);
+headroom.init();
+
+
+ 
+//console.log(headroom);
 
 // copied from airportList.js for restructuring
 export let airportList = [];

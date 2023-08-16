@@ -1232,6 +1232,14 @@
       "iata_code": "QET"
     },
     {
+      "name": "McMurdo Station Ice Runway",
+      "latitude": -77.8463,
+      "longitude": 166.4694,
+      "iso_country": "AQ",
+      "country": "Antarctica",
+      "iata_code": "NZIR"
+    },
+    {
       "name": "South Pole Station Skiway",
       "latitude": -90,
       "longitude": 0,
