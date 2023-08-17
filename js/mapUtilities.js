@@ -4,7 +4,7 @@ import { currentProjectionName, updateProjection } from './mapProjection.js';
 
 export function addCity(root, chart, pointSeries, coords, title, code, country) {
 
-    console.log("inside addCity: ",code)
+    //console.log("inside addCity: ",code)
 
     var dataItem = pointSeries.pushDataItem({
         latitude: coords.latitude,
@@ -19,13 +19,14 @@ export function addCity(root, chart, pointSeries, coords, title, code, country) 
 
 export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, GreatCircleDistKm, RhumbLineDistKm, linesMap) {
     
+    /*
     console.log("Inside addLineAndPlane. City1.airportAName: ", city1.get("airportName"))
     console.log("Inside addLineAndPlane. City1.latitude: ", city1.get("latitude"))
     console.log("Inside addLineAndPlane. City1.longitude: ", city1.get("longitude"))
     console.log("Inside addLineAndPlane. City2.airportAName: ", city2.get("airportName"))
     console.log("Inside addLineAndPlane. City2.latitude: ", city2.get("latitude"))
     console.log("Inside addLineAndPlane. City2.longitude: ", city2.get("longitude"))
-    
+    */
     //console.log("Inside addLineAndPlane, GreatCircleDistKm: ", GreatCircleDistKm)
     //console.log("Inside addLineAndPlane, RhumbLineDistKm: ", RhumbLineDistKm)
 
@@ -106,7 +107,7 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
 
 export function createSlider(root, chart, backgroundSeries, projectionFunction) {
 
-    console.log("inside createSlider()")
+    //console.log("inside createSlider()")
     var cont = chart.children.push(am5.Container.new(root, {
         layout: root.horizontalLayout,
         x: 20,
@@ -344,7 +345,7 @@ export function addRhumbLine(RL_points, lineSeries, city1, city2, GreatCircleDis
             
         }
     });
-    console.log("############ addRhumbLine - lineSeries: ", lineSeries )
+    //console.log("############ addRhumbLine - lineSeries: ", lineSeries )
 }
 
 

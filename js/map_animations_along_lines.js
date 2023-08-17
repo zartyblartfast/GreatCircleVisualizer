@@ -17,7 +17,7 @@ import { setupProjectionDropdown, updateProjection} from './mapProjection.js';
 "use strict";
 
 
-console.log("Inside map_animations_along_lines.js")
+//console.log("Inside map_animations_along_lines.js")
 
 //console.log('Initialising map on page open/refresh...');
 
@@ -49,10 +49,10 @@ var planeSeriesArray = [];
 let projectionFunction = d3[currentProjectionName];
 
 function initializeMap() {
-    console.log("Inside initializeMap()")
+    //console.log("Inside initializeMap()")
     // Update the projection and get the projection function
     updateProjection(chart, 'd3.' + currentProjectionName + '()');
-    console.log("Projection updated to:", currentProjectionName);
+    //console.log("Projection updated to:", currentProjectionName);
 
     // Create series for background fill
     /*
@@ -71,7 +71,7 @@ function initializeMap() {
     var backgroundSeries = chart.series.unshift(
         am5map.MapPolygonSeries.new(root, {})
       );
-      console.log("Background series created:", backgroundSeries);
+      //console.log("Background series created:", backgroundSeries);
 
 
       backgroundSeries.mapPolygons.template.setAll({
@@ -94,8 +94,8 @@ function initializeMap() {
     polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
         geoJSON: am5geodata_worldLow
     }));
-    console.log("Polygon series count:", chart.series.length);
-    console.log("Main polygon series added:", polygonSeries);
+    //console.log("Polygon series count:", chart.series.length);
+    //console.log("Main polygon series added:", polygonSeries);
 
 
     // graticule series
@@ -104,7 +104,7 @@ function initializeMap() {
         stroke: root.interfaceColors.get("alternativeBackground"),
         strokeOpacity: 0.08
     });
-    console.log("Graticule series added:", graticuleSeries);
+    //console.log("Graticule series added:", graticuleSeries);
 
     // Create line series for trajectory lines
     lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
@@ -114,7 +114,7 @@ function initializeMap() {
         strokeOpacity: 0.3,
         interactive: true
     });
-    console.log("Line series added:", lineSeries);
+    //console.log("Line series added:", lineSeries);
 
     /*
     rhumbLineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
@@ -162,7 +162,7 @@ chart = root.container.children.push(am5map.MapChart.new(root, {
     maxZoomLevel: 1.25
 }));
 
-console.log("Chart after initialization:", chart);
+//console.log("Chart after initialization:", chart);
 
 
 initializeMap();
@@ -229,7 +229,7 @@ document.getElementById('make-maps-button').addEventListener('click', function()
         maxZoomLevel: 1.5
     }));
     
-    console.log("Chart after initialization (2):", chart);
+    //console.log("Chart after initialization (2):", chart);
 
     // Re-initialize map after button click
     initializeMap();

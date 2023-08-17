@@ -9,7 +9,7 @@ export function updateProjectionName(newName) {
 // Function to update the map projection
 export function updateProjection(chart, projectionName, isRotatable) {
 
-    console.log("in updateProjection fu, isRotatable arg: ",isRotatable )
+    //console.log("in updateProjection fu, isRotatable arg: ",isRotatable )
 
     if (isRotatable === undefined) {
         isRotatable = false;
