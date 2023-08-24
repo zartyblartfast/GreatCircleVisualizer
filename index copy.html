@@ -21,7 +21,6 @@
   <link rel="stylesheet" href="./css/airport-svg.css">
   <link rel="stylesheet" href="./css/mapCompare_GC_RL.css">
   <link rel="stylesheet" href="./css/mapStyles.css">
-  <link rel="stylesheet" href="./css/contactUs.css">
 
   <!-- Awesomplete CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/awesomplete@1.1.5/awesomplete.css" />
@@ -47,18 +46,9 @@
         <div class="main-container">
           <div class="grid-wrapper">
             <div class="grid-container container">
-
               <div class="add-tags-header-container">
-                <div class="tags-header-icon-wrapper">
-                  <h3 class="add-tags-header">Add Airport Pairs</h3>
-                  <div class="tags-header-info-icon">
-                    <svg id="add-tags-header-icon" class="tags-header-svg" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                      <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                    </svg>
-                  </div>
-                </div>
+                <h3 class="add-tags-header">Add Airport Pairs</h3>
               </div>
-              
               <div class="location-a-label">
                 <img class="location-image" src="./assets/Airport_symbol.png" alt="Airport symbol">
                 <span class="location-text">Airport A</span>
@@ -73,93 +63,36 @@
               <div class="country-b-dropdown">
                 <select id="country-b-dropdown"></select>
               </div>
-              <div class="info-icon country-b-info">
-                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                  <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                </svg>
-              </div>
               <div class="airport-a-filter-search">
                 <input type="text" id="airport-a-filter-search" placeholder="Search for Airport...">
               </div>
               <div class="airport-b-filter-search">
                 <input type="text" id="airport-b-filter-search" placeholder="Search for Airport...">
               </div>
-              <div class="info-icon airport-b-info">
-                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                  <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                </svg>
-              </div>
               <div class="add-button-container">
-
-                <button id="add-button" class="button button-dark">
-                  <div class="button-label">Add</div>
-                  <div class="button-info-icon">
-                    <svg id="add-button-icon" class="button-svg" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                      <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                    </svg>
-                  </div>
-                </button>
-
+                <button id="add-button" class="button button-dark">Add</button>
               </div>
               <div class="suggestions-button-container">
-
-                <button id="suggestions-button" class="button button-light">
-                  <div class="button-text">Suggestions</div>
-                  <div class="button-info-icon">
-                    <svg id="suggestions-button-icon" class="button-svg" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                      <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                    </svg>
-                  </div>
-                </button>
-
+                <button id="suggestions-button" class="button button-light">Suggestions</button>
               </div>
-
               <div class="make-maps-button-container">
-                <div class="make-maps-button-container">
-                  <button id="make-maps-button" class="button button-dark">
-                    <div class="button-label">Update Flight Paths</div>
-                    <div class="button-info-icon">
-                      <svg id="make-maps-button-icon" class="button-svg" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                        <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                      </svg>
-                    </div>
-                  </button>
-                </div>
-        
+                <button id="make-maps-button" class="button button-dark">Update Flight Paths</button>
               </div>
-              
               <div class="info-message-container">
                 <div id="info-message"></div>
               </div>
-
               <div class="tags-header-container">
-                <div class="tags-header-icon-wrapper">
-                  <h3 class="tags-header">Airport Pair Tags</h3>
-                  <div class="tags-header-info-icon">
-                    <svg id="tags-header-icon" class="tags-header-svg" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                      <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                    </svg>
-                  </div>
-                </div>
+                <h3 class="tags-header">Airport Pair Tags</h3>
               </div>
-
               <div class="location-pair-tags-container">
                 <div class="location-pair-tags" id="location-pair-tags"></div>
               </div>  
             </div>
           </div>
           <div class="wrapper">
-            <div class="dropdown-container">
-                <select id="projectionSelect">
-                    <!-- Options will be added dynamically from JavaScript -->
-                </select>
-                <div class="info-icon">
-                  <!-- Your SVG or image for the 'i' icon goes here -->
-                  <svg id="info-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                    <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                  </svg>
-              </div>
-            </div>
+            <select id="projectionSelect">
+                <!-- Options will be added dynamically from JavaScript -->
+            </select>
             <div id="chartdiv1"></div>
         </div>
         
@@ -169,43 +102,20 @@
       </div>
     </div>
 
-      </div>
-      
-      <div class="accordion main-accordion" id="accordionOc">
+      </div><div class="accordion main-accordion" id="accordionOc">
         <button class="accordion-header">Compare Great Circles and Rhumb Lines</button>
         <div class="accordion-panel" id="mapContainerOc"> 
-
-
-            <!-- Legend Container -->
-            <div class="legend-container">
-                <!-- Existing Info Icon -->
-                <div class="GC_RL_info-icon-container">
-                  <svg id="GC_RL_info-icon" class="info-icon-svg" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                    <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                  </svg>
+              <!-- Legend Container -->
+              <div class="legend-container">
+                <div class="legend-item">
+                    <div class="legend-square red"></div>
+                    <div class="legend-text">Great Circle</div>
                 </div>
-                <div class="legend-and-icon-wrapper">
-                    <!-- Existing legend items -->
-                    <div class="legend-item">
-                        <div class="legend-square red"></div>
-                        <div class="legend-text">Great Circle</div>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-square black"></div>
-                        <div class="legend-text">Rhumb Line</div>
-                    </div>
-                    <!-- New 'i' icon -->
-                    <div class="GC_RL_Explainer-info-icon-container">
-                      <svg id="GC_RL_Explainer-info-icon" class="info-icon-svg" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
-                        <path d="M 25 2 C 12.264481 2 2 12.264481 2 25 C 2 37.735519 12.264481 48 25 48 C 37.735519 48 48 37.735519 48 25 C 48 12.264481 37.735519 2 25 2 z M 25 4 C 36.664481 4 46 13.335519 46 25 C 46 36.664481 36.664481 46 25 46 C 13.335519 46 4 36.664481 4 25 C 4 13.335519 13.335519 4 25 4 z M 25 11 A 3 3 0 0 0 25 17 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 23 23 L 23 36 L 21 36 L 21 38 L 29 38 L 29 36 L 27 36 L 27 21 L 21 21 z"></path>
-                      </svg>
-                    </div>
+                <div class="legend-item">
+                    <div class="legend-square black"></div>
+                    <div class="legend-text">Rhumb Line</div>
                 </div>
             </div>
-
-
-
-
             <!-- Map divs for Orthographic and Projection -->
             <div class="flex-map-container-oc">
               <div id="chartdiv_orthographic_c"></div>
@@ -213,20 +123,17 @@
             </div>
             <!-- Tools Container -->
             <div class="tools-container">
-              <div class="tools">
-                  <label for="selector-oc-1">Airport Pair:</label> 
-                  <button id="selector-prev-oc-1">&lt;&lt;</button>
-                  <select id="selector-oc-1"></select>
-                  <button id="selector-next-oc-1">&gt;&gt;</button>
-              </div>
-              <div class="tools">
-                  <label for="selector-oc-2">Map Projection:</label> 
-                  <button id="selector-prev-oc-2">&lt;&lt;</button>
-                  <select id="selector-oc-2"></select>
-                  <button id="selector-next-oc-2">&gt;&gt;</button>
-              </div>
-          </div>
-          
+                <div class="tools">
+                    <button id="selector-prev-oc-1">&lt;&lt;</button>
+                    <select id="selector-oc-1"></select>
+                    <button id="selector-next-oc-1">&gt;&gt;</button>
+                </div>
+                <div class="tools">
+                    <button id="selector-prev-oc-2">&lt;&lt;</button>
+                    <select id="selector-oc-2"></select>
+                    <button id="selector-next-oc-2">&gt;&gt;</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -313,13 +220,13 @@
       });
     });
 
+
+
     </script>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.12.0/headroom.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js"></script>
-
-    
     <!-- custom JS files -->
     <script type="module" src="./js/main.js"></script>
     <!-- Awesomplete JS -->
@@ -357,7 +264,5 @@
     <script type="module" src="./js/rotationTracker.js"></script>
     <script type="module" src="./js/mapUtilities.js"></script>
   
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
 </body>
 </html>

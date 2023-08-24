@@ -36,8 +36,8 @@
       "GreatCircleDistKm": 6960.168261672867, 
       "RhumbLineDistKm": 8728.663235674474,
       "RhumbLineDisplay": true,
-      "geoOG_rotationX": -55.0,
-      "geoOG_rotationY": 75.0
+      "geoOG_rotationX": -100.0,
+      "geoOG_rotationY": 78.0
     },
     {
       "id": "LAX-DXB",
@@ -56,8 +56,8 @@
       "GreatCircleDistKm": 13400.095543708267,    
       "RhumbLineDistKm": 16802.602071247315,
       "RhumbLineDisplay": true,
-      "geoOG_rotationX": 0,
-      "geoOG_rotationY": 0
+      "geoOG_rotationX": 30,
+      "geoOG_rotationY": -85
     },
     {
       "id": "HBA-USH",
@@ -76,8 +76,8 @@
       "GreatCircleDistKm": 8637.236249161773, 
       "RhumbLineDistKm": 10567.277602879296,
       "RhumbLineDisplay": true,
-      "geoOG_rotationX": 0,
-      "geoOG_rotationY": 0
+      "geoOG_rotationX": 140,
+      "geoOG_rotationY": 73
     },
     {
       "id": "LBV-UIO",
@@ -136,8 +136,8 @@
       "GreatCircleDistKm": 7397.629351937006, 
       "RhumbLineDistKm": 9222.591252356407,
       "RhumbLineDisplay": true,
-      "geoOG_rotationX": 0,
-      "geoOG_rotationY": 0
+      "geoOG_rotationX": -20,
+      "geoOG_rotationY": 30
     },
     {
       "id": "NZSP-CYLT",
