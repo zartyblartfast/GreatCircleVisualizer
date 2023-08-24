@@ -30,3 +30,48 @@
     background: grey;
     cursor: not-allowed;
 }
+
+.button-svg path {
+  fill: white; /* makes only the SVG icons inside the buttons white */
+}
+
+.button.button-dark, .button.button-light {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* To enable positioning for the child element */
+}
+
+.button-label {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.button-text {
+  padding-right: 5px;
+}
+
+/*
+.button-info-icon, .button-svg {
+  position: absolute;
+  right: 4px; 
+  top: 50%;
+  transform: translateY(-50%);
+}
+*/
+
+.button-info-icon {
+  position: absolute;
+  right: 7px; 
+  top: 50%;
+  transform: translateY(-45%);
+}
+
+.button-info-icon svg {
+  outline: none;
+}
+
+.button-info-icon svg:hover {
+  transform: scale(1.1) rotate(5deg);
+  transition: transform 0.2s ease-in-out;
+}

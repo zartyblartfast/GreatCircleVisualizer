@@ -1,9 +1,25 @@
+.tools-container {
+    display: flex; 
+    justify-content: center; /* Center the two .tools divs in the available space */
+    gap: 50px; /* Creates a 50px gap between the two .tools divs */
+}
+
+.tools {
+    display: flex;
+    align-items: center; 
+    gap: 5px; 
+}
+
+
+/*
 .tools {
     display: flex;           
-    flex-direction: row;     /* Ensure horizontal stacking */
+    flex-direction: row;    
     justify-content: center; 
     align-items: center;
+    gap: 5px;
 }
+*/
 
 .tools select, .tools input {
     font-size: 1.2em;
@@ -25,7 +41,87 @@
     justify-content: space-between;
 }
 
-#chartdiv_orthographic, #chartdiv_mercator {
+#chartdiv_orthographic, #chartdiv_projection {
     width: 49%; /* Giving 1% leeway for any margins or paddings */
     height: 500px;
 }
+
+.flex-map-container-oc {
+    display: flex;
+    justify-content: space-between;
+}
+
+#chartdiv_orthographic_c, #chartdiv_projection_c {
+    flex: 1; /* Make them take up equal space */
+    height: 500px;
+}
+.legend-container {
+    position: relative;  /* This ensures that the absolute positioning of children is relative to this container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.GC_RL_info-icon-container {
+    position: absolute;  /* Makes it absolute relative to the parent container */
+    left: 25%;  /* 25% from the left of .legend-container */
+    top: 50%;  /* Centers it vertically */
+    transform: translateY(-50%);  /* Fixes the vertical centering */
+    display: flex;
+    align-items: center;
+}
+
+.GC_RL_info-icon-container svg {
+    width: 25px;
+    height: 25px;
+    outline: none;
+    transition: transform 0.3s ease;
+}
+
+.GC_RL_info-icon-container svg:hover {
+    transform: scale(1.1) rotate(5deg);
+    transition: transform 0.2s ease-in-out;
+}
+
+.GC_RL_Explainer-info-icon-container {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+}
+
+.GC_RL_Explainer-info-icon-container svg {
+    outline: none;
+}
+
+.GC_RL_Explainer-info-icon-container svg:hover {
+    transform: scale(1.1) rotate(5deg);
+    transition: transform 0.2s ease-in-out;
+}
+
+.legend-and-icon-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.legend-square {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.legend-square.red {
+    background-color: red;
+}
+
+.legend-square.black {
+    background-color: black;
+}
+

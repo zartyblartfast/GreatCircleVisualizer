@@ -36,7 +36,6 @@ header {
   --tag-width: calc(var(--field-width) * 2 - 20 );
 }
 
-/*
 .container {
   display: grid;
   grid-template-columns: var(--column-width) var(--column-width);
@@ -56,105 +55,30 @@ header {
     "tags-header-container tags-header-container"
     "location-pair-tags-container location-pair-tags-container";
 }
-*/
-
-
-
-/* Add styles for new info-icon div */
-/*
-.info-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-}
-*/
-.container {
-  display: grid;
-  grid-template-columns: var(--column-width) var(--column-width) auto;  /* Add third column for icons */
-  grid-template-rows: auto auto auto auto auto auto auto auto auto auto; 
-  gap: 2px 2px;
-  grid-auto-flow: row;
-  justify-items: stretch;
-  grid-template-areas:
-    "add-tags-header-container add-tags-header-container add-tags-header-container"
-    "location-a-label location-b-label location-b-label"
-    "country-a-dropdown country-b-dropdown country-b-info"
-    "airport-a-filter-search airport-b-filter-search airport-b-info"
-    "airport-a-code airport-b-code airport-b-code"
-    "add-button-container suggestions-button-container suggestions-button-container"
-    "make-maps-button-container make-maps-button-container make-maps-button-container"
-    "info-message-container info-message-container info-message-container"
-    "tags-header-container tags-header-container tags-header-container"
-    "location-pair-tags-container location-pair-tags-container location-pair-tags-container";
-}
-
-
-/* Add styles for new info-icon div */
-.info-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px 0px; 
-}
-
-.info-icon svg {
-  outline: none;
-}
-
-.info-icon svg:hover {
-  transform: scale(1.1) rotate(5deg);  /* Increase size by 10% and rotate 5 degrees */
-  transition: transform 0.2s ease-in-out;
-}
-
-
-/* Set grid-areas for new info icons */
-.country-b-info { grid-area: country-b-info; }
-.airport-b-info { grid-area: airport-b-info; }
 
 .add-tags-header-container {
   grid-area: add-tags-header-container;
 }
 
-.tags-header-icon-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+.add-tags-header {
+  text-align: center;
+  font-size: 1.0em;
+  color: #333;
+  margin-bottom: 3px;
 }
 
 .add-tags-header,
 .tags-header {
+  /*width: var(--tag-width); */
+  width: 296px;
   text-align: center;
+  /*background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);*/
   background: grey;
   padding: 2px 2px; /* Adjust padding as needed */
   color: white;
   margin-bottom: 5px; /* Adjust margin as needed */
   margin-top: 0px; /* Adjust top margin as needed */
-  font-size: 0.9em;
-  /*width: 325px;*/
-  flex-grow: 1; 
-}
-
-.tags-header-info-icon {
-  position: absolute;
-  right: 2px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.tags-header-info-icon svg {
-  outline: none;
-}
-
-.tags-header-info-icon svg:hover {
-  transform: scale(1.1) rotate(5deg);
-  transition: transform 0.2s ease-in-out;
-}
-
-.tags-header-svg {
-  fill: #FFFFFF;
+  font-size: 0.9em; 
 }
 
 .location-a-label,
@@ -277,16 +201,6 @@ td, th { border: 1px solid #000; }
   /*box-shadow: 0 0 3px 5px rgba(0,0,0,0.08653);*/
   /*padding: 1.0rem; */
   box-shadow: none;
-}
-
-
-.dropdown-container {
-  display: flex;
-  align-items: center;
-}
-
-#projectionSelect {
-  margin-right: 5px;
 }
 
 #chartdiv1 {

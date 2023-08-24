@@ -1,10 +1,10 @@
-// mapUtilities.js
+// mapUtilities.jsrtLocation
 //import { currentProjectionName } from './mapProjection.js';
 import { currentProjectionName, updateProjection } from './mapProjection.js';
 
 export function addCity(root, chart, pointSeries, coords, title, code, country) {
 
-    console.log("inside addCity: ",code)
+    //console.log("inside addCity: ",code)
 
     var dataItem = pointSeries.pushDataItem({
         latitude: coords.latitude,
@@ -19,13 +19,14 @@ export function addCity(root, chart, pointSeries, coords, title, code, country) 
 
 export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeSeriesArray, city1, city2, GreatCircleDistKm, RhumbLineDistKm, linesMap) {
     
+    /*
     console.log("Inside addLineAndPlane. City1.airportAName: ", city1.get("airportName"))
     console.log("Inside addLineAndPlane. City1.latitude: ", city1.get("latitude"))
     console.log("Inside addLineAndPlane. City1.longitude: ", city1.get("longitude"))
     console.log("Inside addLineAndPlane. City2.airportAName: ", city2.get("airportName"))
     console.log("Inside addLineAndPlane. City2.latitude: ", city2.get("latitude"))
     console.log("Inside addLineAndPlane. City2.longitude: ", city2.get("longitude"))
-    
+    */
     //console.log("Inside addLineAndPlane, GreatCircleDistKm: ", GreatCircleDistKm)
     //console.log("Inside addLineAndPlane, RhumbLineDistKm: ", RhumbLineDistKm)
 
@@ -106,7 +107,7 @@ export function addLineAndPlane(root, chart, lineSeries, rhumbLineSeries, planeS
 
 export function createSlider(root, chart, backgroundSeries, projectionFunction) {
 
-    console.log("inside createSlider()")
+    //console.log("inside createSlider()")
     var cont = chart.children.push(am5.Container.new(root, {
         layout: root.horizontalLayout,
         x: 20,
@@ -344,9 +345,200 @@ export function addRhumbLine(RL_points, lineSeries, city1, city2, GreatCircleDis
             
         }
     });
-    console.log("############ addRhumbLine - lineSeries: ", lineSeries )
+    //console.log("############ addRhumbLine - lineSeries: ", lineSeries )
+}
+
+export function plotAirportLocation(chart, location, pair) {
+    if (!chart.pointSeries) {
+        chart.pointSeries = createPointSeries(chart._root, chart);
+    }
+
+    let city;  
+
+    if (location.latitude === pair.airportALat && location.longitude === pair.airportALon) {
+        city = addCity(chart._root, chart, chart.pointSeries, location, pair.airportAName, pair.airportACode, pair.airportACountryFull);
+    } else if (location.latitude === pair.airportBLat && location.longitude === pair.airportBLon) {
+        city = addCity(chart._root, chart, chart.pointSeries, location, pair.airportBName, pair.airportBCode, pair.airportBCountryFull);
+    }
+    return city
 }
 
 
+export function createLegend(root, chart) {
+    if (!chart || !chart.children) {
+        console.error("Invalid or undefined chart passed to createLegend.");
+        return;
+    }
+    // Create a legend for the map
+    var legend = chart.children.push(am5.Legend.new(root, {
+        nameField: "name",
+        fillField: "color",
+        strokeField: "color",
+        centerX: am5.percent(50),
+        x: am5.percent(50)
+    }));
+
+    legend.data.setAll([{
+        name: "Great Circle",
+        color: am5.color(0xFF0000) // Red color
+    }, {
+        name: "Rhumb Line",
+        color: am5.color(0x000000) // Black color
+    }]);
+}
+
+export function setOrthographicChartCenter(chart, pair) {
+    //console.log("setOrthographicChartCenter: ", pair)
+    chart.set("rotationX", pair.geoOG_rotationX);
+    chart.set("rotationY", pair.geoOG_rotationY);
+}
+
+export function setProjectionChartCenter(chart, pair) {
+    chart.set("rotationX", pair.geoOG_rotationX);
+}
+
+/*
+// Set the state of the navigation buttons based on the currently selected airport pair
+export function setButtonState() {
+
+    let selector = document.getElementById("selector-1");
+    if (selector) {
+        let index = selector.selectedIndex;
+        if (index == 0) {
+            document.getElementById("selector-prev-1").disabled = "disabled";
+            document.getElementById("selector-next-1").disabled = "";
+        } else if (index >= (selector.options.length - 1)) {
+            document.getElementById("selector-prev-1").disabled = "";
+            document.getElementById("selector-next-1").disabled = "disabled";
+        } else {
+            document.getElementById("selector-prev-1").disabled = "";
+            document.getElementById("selector-next-1").disabled = "";
+        }
+    }
+}
+
+export function setIndex(increment) {
+    const selector = document.getElementById("selector-1");
+    if (selector) {
+        let newIndex = selector.selectedIndex + increment;
+        if (newIndex >= 0 && newIndex < selector.options.length) {
+            selector.selectedIndex = newIndex;
+            selector.dispatchEvent(new Event("change")); // Manually dispatch the change event to update the maps
+        }
+    }
+    setButtonState();  // Update the Prev/Next button states based on the new dropdown index
+}
+*/
+
+export function setButtonState(prefix = "1") {
+    let selector = document.getElementById(`selector-${prefix}`);
+    
+    if (selector) {
+        let index = selector.selectedIndex;
+        if (index == 0) {
+            document.getElementById(`selector-prev-${prefix}`).disabled = "disabled";
+            document.getElementById(`selector-next-${prefix}`).disabled = "";
+        } else if (index >= (selector.options.length - 1)) {
+            document.getElementById(`selector-prev-${prefix}`).disabled = "";
+            document.getElementById(`selector-next-${prefix}`).disabled = "disabled";
+        } else {
+            document.getElementById(`selector-prev-${prefix}`).disabled = "";
+            document.getElementById(`selector-next-${prefix}`).disabled = "";
+        }
+    }
+}
+
+export function setIndex(increment, prefix = "1") {
+    const selector = document.getElementById(`selector-${prefix}`);
+    
+    if (selector) {
+        let newIndex = selector.selectedIndex + increment;
+        if (newIndex >= 0 && newIndex < selector.options.length) {
+            selector.selectedIndex = newIndex;
+            selector.dispatchEvent(new Event("change"));
+        }
+    }
+    setButtonState(prefix);
+}
 
 
+// Function to create a div element for map chart and return the created div
+export function createMapDiv(id) {
+   //console.log(`createMapDiv called with id: ${id}`);
+    
+    let div = document.createElement("div");
+    div.id = id;
+    //div.style.height = "600px"; // Set height here since it's constant
+
+    return div;
+}
+
+/*
+export function populateDropdown(suggestionPairs) {
+    const selector = document.getElementById("selector-1");
+    if (selector && suggestionPairs) {
+        // Clear any existing options
+        selector.innerHTML = '';
+        
+        // Add options based on suggestionPairs
+        suggestionPairs.forEach((pair, index) => {
+            const option = document.createElement("option");
+            option.value = index;
+            option.textContent = pair.id; // Use 'id' property for dropdown text
+            selector.appendChild(option);
+        });
+        
+        // Call setButtonState() to ensure correct button state after populating
+        setButtonState();
+    }
+}
+*/
+export function populateDropdown(suggestionPairs, prefix = "1") {
+    const selector = document.getElementById(`selector-${prefix}`);
+    
+    if (selector && suggestionPairs) {
+        // Clear any existing options
+        selector.innerHTML = '';
+        
+        // Add options based on suggestionPairs
+        suggestionPairs.forEach((pair, index) => {
+            const option = document.createElement("option");
+            option.value = index;
+            option.textContent = pair.id; // Use 'id' property for dropdown text
+            selector.appendChild(option);
+        });
+        
+        // Call setButtonState() to ensure correct button state after populating
+        setButtonState(prefix); // Updated to take prefix argument
+    }
+}
+
+
+export function clearAirportLocations(chart, lineSeries1, lineSeries2) {
+    if (chart.pointSeries && chart.pointSeries.data) {
+        chart.pointSeries.data.setAll([]);
+    }
+
+    if (lineSeries1) {
+        lineSeries1.data.setAll([]);
+    }
+
+    if (lineSeries2) {
+        lineSeries2.data.setAll([]);
+    }
+}
+
+
+export async function loadSuggestionPairs() {
+    try {
+        const response = await fetch('./data/suggestion_pairs.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.filter(pair => pair.RhumbLineDisplay !== false);
+    } catch (error) {
+        console.error("Failed to fetch suggestion pairs:", error);
+        return [];
+    }
+}
