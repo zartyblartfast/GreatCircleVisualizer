@@ -19,9 +19,9 @@ class MapComparisonDisplay {
             { id: "geoMercator", name: "Mercator" },
             { id: "geoEquirectangular", name: "Equirectangular" },
             { id: "geoNaturalEarth1", name: "NaturalEarth1" },
-            { id: "geoLaskowski", name: "Laskowski" }
+            { id: "geoLaskowski", name: "Laskowski" },
             // If geoAzimuthalEquidistant is included, it messes up the positioning of all the maps in the div
-            //{ id: "geoAzimuthalEquidistant", name: "AzimuthalEquidistant" }
+            { id: "geoAzimuthalEquidistant", name: "AzimuthalEquidistant" }
             
         ];
       }
@@ -330,7 +330,6 @@ class MapComparisonDisplay {
           chart.set("maxPanOut", 0);
       }
 
-      // You may want to update this to work with your class methods or remove if not applicable.
       this.setButtonState("oc-2");
     }
 
