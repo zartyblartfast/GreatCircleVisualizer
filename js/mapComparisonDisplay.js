@@ -327,7 +327,7 @@ class MapComparisonDisplay {
           chart.set("panY", "translateY");
           //chart.set("rotationX", 0);
           //chart.set("rotationY", 0);
-          //chart.set("wheelY","none");
+          chart.set("wheelY","none");
           //chart.set("maxPanOut", 0);
           chart.set("centerX",0);
           chart.set("centerY",0)
