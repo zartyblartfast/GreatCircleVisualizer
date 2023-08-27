@@ -312,7 +312,7 @@ class MapComparisonDisplay {
     setProjection(chart, name) {
 
       chart.set("projection", d3[name]());
-
+  
       if (name === 'geoOrthographic') {
           chart.set("panX", "rotateX");
           chart.set("panY", "rotateY");
@@ -323,15 +323,18 @@ class MapComparisonDisplay {
       } else {
           //chart.set("panX", "none");
           chart.set("panX", "translateX");
-          chart.set("panY", "none");
-          chart.set("rotationX", 0);
-          chart.set("rotationY", 0);
-          chart.set("wheelY","none");
-          chart.set("maxPanOut", 0);
+          //chart.set("panY", "none");
+          chart.set("panY", "translateY");
+          //chart.set("rotationX", 0);
+          //chart.set("rotationY", 0);
+          //chart.set("wheelY","none");
+          //chart.set("maxPanOut", 0);
+          chart.set("centerX",0);
+          chart.set("centerY",0)
       }
-
       this.setButtonState("oc-2");
     }
+
 
     plotSelectedPair(pair, chartObject) {
       if (!pair || !chartObject) {
@@ -494,23 +497,32 @@ class MapComparisonDisplay {
         }
 
         //console.log("projectionMap: ",this.currentProjection)
-
+        //chartObject.localChart.goHome();
+        
+        
         if (this.currentProjection === "geoAzimuthalEquidistant") {
           chartObject.localChart.set("rotationX", 0);
           chartObject.localChart.set("rotationY", -90);
-          chartObject.localChart.set("panX", "none");
-          chartObject.localChart.set("panY", "none");
-          chartObject.localChart.set("wheelY","none");
-          chartObject.localChart.set("maxPanOut", 0);
+          //chartObject.localChart.set("panX", "rotateX");
+          //chartObject.localChart.set("panY", "rotateY");
+          //chartObject.localChart.set("panX", "none");
+          //chartObject.localChart.set("panY", "none");
+          //chartObject.localChart.set("wheelY","none");
+          //chartObject.localChart.set("maxPanOut", 0);
           
         } else {
+    
           chartObject.localChart.set("rotationX", pair.geoOG_rotationX);
-          chartObject.localChart.set("rotationY", "none");
-          chartObject.localChart.set("panX", "translateX");
+          chartObject.localChart.set("rotationY", 0);
+          //chartObject.localChart.set("rotationY", "none");
+          //chartObject.localChart.set("panX", "translateX");
           //chartObject.localChart.set("panX", "rotateX");
+          
           //chartObject.localChart.set("panX", "none");
-          chartObject.localChart.set("panY", "none");
-          chartObject.localChart.set("maxPanOut", 0);
+          //chartObject.localChart.set("panY", "none");
+          //chartObject.localChart.set("wheelY","none")
+          //chartObject.localChart.set("maxPanOut", 0);
+
         }
         //chartObject.localChart.goHome();
     }
