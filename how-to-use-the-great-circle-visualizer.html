@@ -1,21 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Great Circle Visualizer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    section {
+      padding: 15px;
+    }
+    section:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    section:nth-child(odd) {
+      background-color: #e6e6e6;
+    }
+  </style>
+</head>
+<body>
+
 <div style="margin-left: 20px; margin-right: 20px;">
-  <p>Welcome to the Great Circle Visualizer! Follow these simple steps to get started:</p>
-  <ol>
-    <li><strong>View default Great Circles:</strong> Upon opening or refreshing the page, you'll see a set of suggested airport pairs and their corresponding great circles.</li>
-    <li><strong>Switch between 'map' and 'globe' view:</strong> Slide the switch. Rotate the globe view until your great circle route of interest appears straight. This helps visualize why Great Circles represent the shortest routes between two locations on Earth.</li>
-    <li><strong>Get airport & great circle info from the maps:</strong> Hover your mouse pointer over the airport locations and great circle routes for more information.</li>
-    <li><strong>Explore different map projections:</strong> Select a projection from the dropdown list. Notice how each 2D map projection distorts the shortest routes on Earth.</li>
-    <li><strong>View the Airport Pair Tags & Tag info:</strong> Each 'tag' corresponds to a pair of airports and a Great Circle route between them. Click on a tag to get more information.</li>
-    <li><strong>'Add Airport Pairs':</strong> To go beyond the default airport pair suggestions, you can add your own. Here's how:
-      <ol type="a">
-        <li><strong>Select two countries:</strong> Use the 'Airport A & B' dropdown boxes to select the countries of interest.</li>
-        <li><strong>Search for airports:</strong> Start typing the name of the city or airport in the search box. Select the desired airport from the list that appears.</li>
-        <li><strong>Add the airport pair:</strong> After selecting both Airport A & B, click the 'Add' button to add the pair to the Tag list.</li>
-      </ol>
-    </li>
-    <li><strong>Remove airport pairs:</strong> To remove an airport pair, click the 'x' on the corresponding tag.</li>
-    <li><strong>Add back suggested airport pairs:</strong> Click the 'Suggestions' button.</li>
-    <li><strong>Generate Great Circles:</strong> After selecting your airport pairs, click the 'Update Flight Paths' button to display the great circles on the map projections.</li>
-  </ol>
-  <p>Remember, the Great Circle Visualizer is based on well-established knowledge about great circles and the inherent distortions of all 2D map projections.</p>
+  <header>
+    <h1>Welcome to the Great Circle Visualizer!</h1>
+    <p>Follow these simple steps to get started:</p>
+  </header>
+
+  <section>
+    <h2>Map Projections and Great Circle Visualization</h2>
+    <p><strong>Overview:</strong> This feature allows you to visualize multiple Great Circle routes on various map projections. You can also switch to a 'globe view' (OrthoGraphic) to see how these routes look in a more realistic representation. This helps you understand how Great Circles are portrayed across different map projections and regions of the world.</p>
+    <ol>
+      <!-- Existing content for the first section -->
+      <li><strong>View default Great Circles:</strong> Upon opening or refreshing the page, you'll see a set of suggested airport pairs and their corresponding great circles.</li>
+      <li><strong>Switch between 'map' and 'globe' view:</strong> Slide the switch. Rotate the globe view until your great circle route of interest appears straight. This helps visualize why Great Circles represent the shortest routes between two locations on Earth.</li>
+      <li><strong>Get airport & great circle info from the maps:</strong> Hover your mouse pointer over the airport locations and great circle routes for more information.</li>
+      <li><strong>Explore different map projections:</strong> Select a projection from the dropdown list. Notice how each 2D map projection distorts the shortest routes on Earth.</li>
+      <li><strong>View the Airport Pair Tags & Tag info:</strong> Each 'tag' corresponds to a pair of airports and a Great Circle route between them. Click on a tag to get more information.</li>
+      <li><strong>'Add Airport Pairs':</strong> To go beyond the default airport pair suggestions, you can add your own. Here's how:
+        <ol type="a">
+          <li><strong>Optional: Select countries:</strong> To narrow down the airport search, you can optionally use the 'Airport A & B' dropdown boxes to select the countries of interest.</li>
+          <li><strong>Search for airports:</strong> Start typing the name of the city or airport in the search box. Select the desired airport from the list that appears.</li>
+          <li><strong>Add the airport pair:</strong> After selecting both Airport A & B, click the 'Add' button to add the pair to the Tag list.</li>
+        </ol>
+      </li>
+      <li><strong>Remove airport pairs:</strong> To remove an airport pair, click the 'x' on the corresponding tag.</li>
+      <li><strong>Add back suggested airport pairs:</strong> Click the 'Suggestions' button.</li>
+      <li><strong>Generate Great Circles:</strong> After selecting your airport pairs, click the 'Update Flight Paths' button to display the great circles on the map projections.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Compare Great Circles and Rhumb Lines</h2>
+    <p><strong>Overview:</strong> The globe map (OrthoGraphic) on the left and the selected map projection on the right display both a Great Circle (red) and Rhumb Line (black) route between two airport locations. This visualization will help you compare Great Circles and Rhumb Lines between different airport locations in different parts of the world.</p>
+    <ol>
+      <li><strong>Select the airport pair:</strong> Choose from the dropdown box (e.g., 'LAX-DXB').</li>
+      <li><strong>Select the map projection:</strong> Choose from the dropdown box (e.g., Mercator).</li>
+      <li><strong>Hover for information:</strong> Hover your mouse pointer over the airport locations and lines for more information.</li>
+    </ol>
+  </section>
+
+  <footer>
+    <p>Remember, the Great Circle Visualizer is based on well-established knowledge about great circles and the inherent distortions of all 2D map projections.</p>
+  </footer>
 </div>
+
+</body>
+</html>

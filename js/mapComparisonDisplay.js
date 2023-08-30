@@ -17,11 +17,27 @@ class MapComparisonDisplay {
         this.suggestionPairs = null;
         this.projections = [
             { id: "geoMercator", name: "Mercator" },
+            { id: "geoAiry", name: "Airy" },
+            { id: "geoAugust", name: "August" },
+            { id: "geoBaker", name: "Baker" },
+            { id: "geoBoggs", name: "Boggs" },
+            { id: "geoBromley", name: "Bromley" },
+            { id: "geoCollignon", name: "Collignon" },
+            { id: "geoConicEquidistant", name: "ConicEquidistant" },
+            { id: "geoCraig", name: "Craig" },
             { id: "geoEquirectangular", name: "Equirectangular" },
+            { id: "geoFahey", name: "Fahey" },
+            { id: "geoFoucaut", name: "Foucaut" },
+            { id: "geoFoucautSinusoidal", name: "FoucautSinusoidal" },
             { id: "geoNaturalEarth1", name: "NaturalEarth1" },
             { id: "geoLaskowski", name: "Laskowski" },
+            { id: "geoLagrange", name: "Lagrange" },
+            { id: "geoPeirceQuincuncial", name: "PeirceQuincuncial" },
+            { id: "geoTransverseMercator", name: "TransverseMercator" },
+            { id: "geoVanDerGrinten", name: "VanDerGrinten" }
+
             // If geoAzimuthalEquidistant is included, it messes up the positioning of all the maps in the div
-            { id: "geoAzimuthalEquidistant", name: "AzimuthalEquidistant" }
+            //{ id: "geoAzimuthalEquidistant", name: "AzimuthalEquidistant" }
             
         ];
       }
@@ -34,37 +50,6 @@ class MapComparisonDisplay {
         this.handleProjectionSelection(0);  // Index of the first projection
       }
 
-      /*     
-      handleAirportSelection(selectedIndex) {
-        console.log('Before plotSelectedPair, chartObject:', this.chartObject); // Debugging line
-        const selectedPair = this.suggestionPairs[selectedIndex];
-        this.currentAirportPair = selectedPair;
-        console.log(`Selected Airport Pair: ${selectedPair.id}`);
-        // Call method to update the maps
-        this.plotSelectedPair(selectedPair,this.chartObject);
-    }
-    */
-
-    /*
-    handleAirportSelection(selectedIndex) {
-      const selectedPair = this.suggestionPairs[selectedIndex];
-      this.currentAirportPair = selectedPair;
-      console.log(`Selected Airport Pair: ${selectedPair.id}`);
-    
-      // Assuming that the orthographic chart should be used for plotting
-      const chartObject = this.initializedRoots['chartdiv_orthographic_c'];
-    
-      if (!chartObject) {
-        console.error('No chartObject found for orthographic map');
-        return;
-      }
-    
-      // If plotSelectedPair expects the chart, you would call:
-      //this.plotSelectedPair(selectedPair, chartObject.localChart);
-      this.plotSelectedPair(selectedPair, chartObject);
-
-    }
-    */
     handleAirportSelection(selectedIndex) {
       const selectedPair = this.suggestionPairs[selectedIndex];
       this.currentAirportPair = selectedPair;
@@ -104,26 +89,6 @@ class MapComparisonDisplay {
         }
       }
     }
-    
-    /*
-    handleProjectionSelection(selectedIndex) {
-        const selectedProjection = this.projections[selectedIndex];
-        this.currentProjection = selectedProjection.id;
-        console.log(`Selected Projection: ${selectedProjection.name}`);
-        // Call method to update the map projections
-        this.updateMapProjections();
-    }
-
-    // Add a method to update both map projections
-    updateMapProjections() {
-        //if (this.orthoGraphicMap) {
-        //    this.setProjection(this.orthoGraphicMap, this.currentProjection);
-        //}
-        if (this.projectionMap) {
-            this.setProjection(this.projectionMap, this.currentProjection);
-        }
-    }
-    */
 
       populateAirportDropdown() {
         const selector = document.getElementById('selector-oc-1');  // Adjusted the ID for the airport dropdown in the new accordion
@@ -221,7 +186,6 @@ class MapComparisonDisplay {
             }
         }
         this.setButtonState(prefix);
-
     }
 
     async createMap(projectionType, divId) {
@@ -243,7 +207,8 @@ class MapComparisonDisplay {
               panX: "none",
               //panY: projectionType === "geoOrthographic" ? "rotateY" : "translateY",
               panY: projectionType === "geoOrthographic" ? "rotateY" : "none",
-              zoomLevel: 1.0,
+              wheelY: projectionType === "geoOrthographic" ? "rotateY" : "none",
+              zoomLevel: 1,
               maxZoomLevel: 0,
               minZoomLevel: 0,
               pinchZoomX: "none",
@@ -285,7 +250,7 @@ class MapComparisonDisplay {
           backgroundSeries.data.push({
             geometry: am5map.getGeoRectangle(90, 180, -90, -180)
           });
-  
+
           // Depending on your implementation, you might want to call setProjection here
           this.setProjection(localChart, projectionType);
   
@@ -302,7 +267,7 @@ class MapComparisonDisplay {
           } else if (divId === 'chartdiv_projection_c') {
             this.projectionMap = localChart;
           }
-    
+          
           resolve(divId);
         });
       });
@@ -310,8 +275,7 @@ class MapComparisonDisplay {
 
     // The setProjection function can also be a method within this class
     setProjection(chart, name) {
-
-      chart.set("projection", d3[name]());
+      chart.set("projection", d3[name].call(this));
   
       if (name === 'geoOrthographic') {
           chart.set("panX", "rotateX");
@@ -321,16 +285,10 @@ class MapComparisonDisplay {
           chart.set("wheelY","rotateY");
           chart.set("maxPanOut", 0);
       } else {
-          //chart.set("panX", "none");
-          chart.set("panX", "translateX");
-          //chart.set("panY", "none");
-          chart.set("panY", "translateY");
-          //chart.set("rotationX", 0);
-          //chart.set("rotationY", 0);
-          //chart.set("wheelY","none");
-          //chart.set("maxPanOut", 0);
-          chart.set("centerX",0);
-          chart.set("centerY",0)
+          chart.set("panX", "none");
+          chart.set("panY", "none");
+          chart.set("wheelY","none");
+          chart.set("wheelX","none");
       }
       this.setButtonState("oc-2");
     }
@@ -351,8 +309,8 @@ class MapComparisonDisplay {
       this.clearAirportLocations(chartObject);
 
       this.setOrthographicChartCenter(this.currentAirportPair);
-      this.setProjectionChartCenter(this.currentAirportPair);
-  
+      
+
       this.updateRoutes(chartObject, "great-circle");
       
       let city1 = this.plotAirportLocation(chartObject, location1, this.currentAirportPair);
@@ -371,6 +329,8 @@ class MapComparisonDisplay {
       this.addRhumbLineMethod(this.rhumbLinePoints, chartObject.RLlineSeries, city1, city2, pair.GreatCircleDistKm, pair.RhumbLineDistKm)
 
       this.updateRoutes(chartObject, "rhumb-line");
+
+      this.setProjectionChartCenter(this.currentAirportPair);
     }
 
     calculateAndStoreRhumbLinePoints(startLocation, endLocation, numPoints) {
@@ -415,10 +375,12 @@ class MapComparisonDisplay {
       GClineSeries.mapLines.template.set("tooltipText",
           "[bold]Great Circle[/]\n{airportAName} ({airportACode}) to {airportBName} ({airportBCode})\nGreat Circle Distance: {GreatCircleDistKm} km\nRhumb Line Distance: {RhumbLineDistKm} km ({PercentageDifference}%)");
 
+     
       /*
-      var planeSeries = localChart.series.push(am5map.MapPointSeries.new(chartObject.root, {}));
+      //var planeSeries = localChart.series.push(am5map.MapPointSeries.new(chartObject.root, {}));
+      var planeSeries = localChart.series.push(am5map.MapPointSeries.new(localRoot, {}));
       planeSeriesArray.push(planeSeries);  // Add the new planeSeries to the array
-
+      
       var plane = am5.Graphics.new(root, {
           svgPath: "m2,106h28l24,30h72l-44,-133h35l80,132h98c21,0 21,34 0,34l-98,0 -80,134h-35l43,-133h-71l-24,30h-28l15,-47",
           scale: 0.06,
@@ -427,6 +389,7 @@ class MapComparisonDisplay {
           fill: am5.color(0x000000)
       });
 
+      
       planeSeries.bullets.push(function () {
           var container = am5.Container.new(root, {});
           container.children.push(plane);
@@ -456,7 +419,6 @@ class MapComparisonDisplay {
               plane.set("rotation", 0);
           }
       });
-
       */
 
       // Saving the lineDataItem to the class instance
@@ -495,36 +457,14 @@ class MapComparisonDisplay {
             console.error("Projection chart not initialized.");
             return;
         }
-
-        //console.log("projectionMap: ",this.currentProjection)
-        //chartObject.localChart.goHome();
-        
-        
+             
         if (this.currentProjection === "geoAzimuthalEquidistant") {
           chartObject.localChart.set("rotationX", 0);
           chartObject.localChart.set("rotationY", -90);
-          //chartObject.localChart.set("panX", "rotateX");
-          //chartObject.localChart.set("panY", "rotateY");
-          //chartObject.localChart.set("panX", "none");
-          //chartObject.localChart.set("panY", "none");
-          //chartObject.localChart.set("wheelY","none");
-          //chartObject.localChart.set("maxPanOut", 0);
-          
         } else {
-    
           chartObject.localChart.set("rotationX", pair.geoOG_rotationX);
           chartObject.localChart.set("rotationY", 0);
-          //chartObject.localChart.set("rotationY", "none");
-          //chartObject.localChart.set("panX", "translateX");
-          //chartObject.localChart.set("panX", "rotateX");
-          
-          //chartObject.localChart.set("panX", "none");
-          //chartObject.localChart.set("panY", "none");
-          //chartObject.localChart.set("wheelY","none")
-          //chartObject.localChart.set("maxPanOut", 0);
-
         }
-        //chartObject.localChart.goHome();
     }
 
     updateRoutes(chart, lineType) {
@@ -637,48 +577,5 @@ class MapComparisonDisplay {
     
       return city;
     }
-    
-
-    /*
-    createLegend(chartObject) {
-
-      //console.log("Inside createLegend, chartObject: ", chartObject)
-
-      const { localRoot, localChart } = chartObject;
-      
-      if (!localChart || !localChart.children) {
-        console.error("Invalid or undefined chart passed to createLegend.");
-        return;
-      }
-  
-      // Remove existing legend if any
-      const existingLegend = localChart.children.getIndex((child) => child instanceof am5.Legend);
-      if (existingLegend) {
-        localChart.children.removeIndex(existingLegend);
-      }
-  
-      // Create a new legend for the map
-      const legend = localChart.children.push(
-        am5.Legend.new(localRoot, {
-          nameField: "name",
-          fillField: "color",
-          strokeField: "color",
-          centerX: am5.percent(50),
-          x: am5.percent(50)
-        })
-      );
-  
-      legend.data.setAll([
-        {
-          name: "Great Circle",
-          color: am5.color(0xFF0000)  // Red color
-        },
-        {
-          name: "Rhumb Line",
-          color: am5.color(0x000000)  // Black color
-        }
-      ]);
-    }
-    */
   }
   export const mapComparison = new MapComparisonDisplay('accordionOc');  // assuming 'accordionOc' is the id you want to pass.
