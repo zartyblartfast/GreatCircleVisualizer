@@ -106,8 +106,8 @@ function initializeMap() {
 
 // Initialize map on page load
 chart = root.container.children.push(am5map.MapChart.new(root, {
-    //panX: "rotateX",
-    panX: "none",
+    panX: "rotateX",
+    //panX: "none",
     //panY: "translateY",
     panY: "none",
     rotationY: 0,
