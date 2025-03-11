@@ -1,5 +1,10 @@
 import { calculateRhumbLinePoints, addRhumbLine, addCity } from './mapUtilities.js';
-import { updateProjection as updateProjectionFromMapProjection, initializeAEProjection, resetChartPropertiesForProjection } from './mapProjection.js';
+import { 
+    updateProjection as updateProjectionFromMapProjection, 
+    initializeAEProjection, 
+    resetChartPropertiesForProjection,
+    restoreAEProjection
+} from './mapProjection.js';
 import { Logger } from './logger.js';
 
 class MapComparisonDisplay {
@@ -347,9 +352,11 @@ class MapComparisonDisplay {
         resetChartPropertiesForProjection(chart, name);
         
         if (name === "geoAzimuthalEquidistant") {
-            // For AE projection, use the centerAEProjection method
-            Logger.debug('mapComparisonDisplay', "Calling centerAEProjection from setProjection");
-            this.centerAEProjection(chart);
+            // For AE projection, use the restoreAEProjection function instead of centerAEProjection
+            Logger.debug('mapComparisonDisplay', "Calling restoreAEProjection from setProjection");
+            // Use restoreAEProjection with no animation for immediate effect
+            const success = restoreAEProjection(chart, false, true);
+            Logger.debug('mapComparisonDisplay', "restoreAEProjection result:", success);
         } else {
             // For non-AE projections, call updateProjection from mapProjection.js
             const isOrthographic = name === "geoOrthographic";
@@ -361,6 +368,13 @@ class MapComparisonDisplay {
             
             const projection = updateProjectionFromMapProjection(chart, name, isOrthographic);
             Logger.debug('mapComparisonDisplay', "Projection returned:", projection ? "defined" : "undefined");
+            
+            // Explicitly ensure maxPanOut is set to 1 for non-AE projections
+            // This addresses the root cause of the projection transition issues
+            if (name !== "geoAzimuthalEquidistant") {
+                Logger.debug('mapComparisonDisplay', "Explicitly setting maxPanOut to 1 for non-AE projection");
+                chart.set("maxPanOut", 1);
+            }
         }
         
         // Update projection tracking
@@ -394,9 +408,10 @@ class MapComparisonDisplay {
             projection: chart.get("projection") ? "defined" : "undefined"
         });
         
-        // Use the unified AE projection handler from mapProjection.js
+        // Use the new restoreAEProjection function for more reliable centering
         // Pass false to avoid animation when called from setProjection
-        initializeAEProjection(chart, undefined, false);
+        const success = restoreAEProjection(chart, false, true);
+        Logger.debug('mapComparisonDisplay', "restoreAEProjection result:", success);
         
         // Log chart properties after changes
         Logger.debug('mapComparisonDisplay', "AFTER centerAEProjection - Chart properties:", {
@@ -409,7 +424,7 @@ class MapComparisonDisplay {
             projection: chart.get("projection") ? "defined" : "undefined"
         });
         
-        Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] AE projection centered using unified handler");
+        Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] AE projection centered using restoreAEProjection");
     }
 
     // Add a new method to handle map/globe toggle
@@ -524,11 +539,12 @@ class MapComparisonDisplay {
             
             if (this.currentProjection === "geoAzimuthalEquidistant") {
                 Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] Ensuring AE projection is centered on North Pole after toggle");
-                // Use initializeAEProjection directly with animation for smoother transition
-                initializeAEProjection(chartObject.localChart, undefined, true);
+                // Use restoreAEProjection instead of initializeAEProjection for more reliable centering
+                Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] Calling restoreAEProjection with animation");
+                restoreAEProjection(chartObject.localChart, true, true);
                 
-                // Log AE specific properties after initialization
-                Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] AE projection initialized, rotationY:", chartObject.localChart.get("rotationY"));
+                // Log AE specific properties after restoration
+                Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] AE projection restored, rotationY:", chartObject.localChart.get("rotationY"));
             } else if (this.currentProjection === "geoOrthographic") {
                 // Restore the previous rotation for the globe view
                 Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] Restoring globe rotation after toggle:", {
