@@ -1,84 +1,305 @@
 // mapProjection.js
+import { Logger } from './logger.js';
 
 export let currentProjectionName = "geoMercator";
 
-export function updateProjectionName(newName) {
-    currentProjectionName = newName;
+// Projection state tracker to reliably track projection state
+let projectionState = {
+    currentProjection: "geoMercator",
+    isAzimuthalEquidistant: false,
+    properties: {
+        rotationX: 0,
+        rotationY: 0,
+        panX: "none",
+        panY: "none",
+        wheelY: "none",
+        maxPanOut: 1
+    }
+};
+
+/**
+ * Updates the projection state tracker with the current projection and its properties
+ * @param {string} projectionName - The name of the projection
+ * @param {Object} properties - The properties associated with the projection
+ */
+export function updateProjectionState(projectionName, properties = {}) {
+    Logger.debug('mapProjection', "[PROJECTION_STATE] Updating projection state:", {
+        from: projectionState.currentProjection,
+        to: projectionName,
+        isAzimuthalEquidistant: projectionName === "geoAzimuthalEquidistant",
+        properties: properties
+    });
+    
+    projectionState.currentProjection = projectionName;
+    projectionState.isAzimuthalEquidistant = projectionName === "geoAzimuthalEquidistant";
+    
+    // Update properties if provided
+    if (Object.keys(properties).length > 0) {
+        projectionState.properties = { ...projectionState.properties, ...properties };
+    }
+    
+    // Update the exported currentProjectionName for backward compatibility
+    currentProjectionName = projectionName;
 }
 
-// Function to update the map projection
+/**
+ * Checks if the current projection is Azimuthal Equidistant
+ * @returns {boolean} True if the current projection is AE
+ */
+export function isAzimuthalEquidistant() {
+    return projectionState.isAzimuthalEquidistant;
+}
+
+/**
+ * Gets the current projection state
+ * @returns {Object} The current projection state
+ */
+export function getProjectionState() {
+    return { ...projectionState };
+}
+
+export function updateProjectionName(newName) {
+    currentProjectionName = newName;
+    // Also update the projection state for consistency
+    updateProjectionState(newName);
+}
+
+/**
+ * Resets chart properties to default values based on the target projection
+ * This ensures clean transitions between projections, particularly when switching from AE
+ * @param {Object} chart - The chart object to reset properties on
+ * @param {string} targetProjection - The projection to reset properties for
+ * @returns {Object} The chart with reset properties
+ */
+export function resetChartPropertiesForProjection(chart, targetProjection) {
+    const isAE = targetProjection === "geoAzimuthalEquidistant";
+    const currentState = getProjectionState();
+    const wasAE = currentState.isAzimuthalEquidistant;
+    
+    Logger.debug('mapProjection', "[RESET_PROPERTIES] Resetting chart properties:", {
+        from: currentState.currentProjection,
+        to: targetProjection,
+        wasAE: wasAE,
+        isAE: isAE,
+        currentProperties: {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut")
+        }
+    });
+    
+    // Default properties for non-AE projections
+    if (!isAE) {
+        // Set default properties for non-AE projections
+        chart.set("rotationX", 0);
+        chart.set("rotationY", 0);
+        chart.set("panX", "none");
+        chart.set("panY", "none");
+        chart.set("wheelY", "none");
+        chart.set("maxPanOut", 1);
+        
+        // Special handling for orthographic projection
+        if (targetProjection === "geoOrthographic") {
+            chart.set("panX", "rotateX");
+            chart.set("panY", "rotateY");
+            chart.set("wheelY", "rotateY");
+        }
+    } else {
+        // For AE projection, we'll use initializeAEProjection which sets all the necessary properties
+        // This is just a safeguard in case initializeAEProjection isn't called
+        chart.set("rotationX", 0);
+        chart.set("rotationY", -90);
+        chart.set("panX", "rotateX");
+        chart.set("panY", "rotateY");
+        chart.set("wheelY", "rotateY");
+        chart.set("maxPanOut", 0);
+    }
+    
+    // Update the projection state
+    updateProjectionState(targetProjection, {
+        rotationX: chart.get("rotationX"),
+        rotationY: chart.get("rotationY"),
+        panX: chart.get("panX"),
+        panY: chart.get("panY"),
+        wheelY: chart.get("wheelY"),
+        maxPanOut: chart.get("maxPanOut")
+    });
+    
+    Logger.debug('mapProjection', "[RESET_PROPERTIES] Chart properties after reset:", {
+        rotationX: chart.get("rotationX"),
+        rotationY: chart.get("rotationY"),
+        panX: chart.get("panX"),
+        panY: chart.get("panY"),
+        wheelY: chart.get("wheelY"),
+        maxPanOut: chart.get("maxPanOut")
+    });
+    
+    return chart;
+}
+
+/**
+ * Initializes the Azimuthal Equidistant projection
+ * @param {Object} chart - The chart object to set properties on
+ * @param {Object} [projectionFunction=d3.geoAzimuthalEquidistant] - The D3 projection function
+ * @param {boolean} useAnimation - Whether to use animation for rotation
+ * @returns {Object} The initialized projection
+ */
+export function initializeAEProjection(chart, projectionFunction = d3.geoAzimuthalEquidistant, useAnimation = false) {
+    Logger.debug('mapProjection', "[DEBUG] initializeAEProjection called with useAnimation:", useAnimation);
+    
+    // Log chart properties before any changes
+    Logger.debug('mapProjection', "BEFORE initializeAEProjection - Chart properties:", {
+        rotationX: chart.get("rotationX"),
+        rotationY: chart.get("rotationY"),
+        panX: chart.get("panX"),
+        panY: chart.get("panY"),
+        wheelY: chart.get("wheelY"),
+        maxPanOut: chart.get("maxPanOut"),
+        projection: chart.get("projection") ? "defined" : "undefined"
+    });
+    
+    try {
+        // Create AE projection with North Pole centered
+        const newProjection = projectionFunction()
+            .rotate([0, -90, 0]) // Rotate to center the North Pole
+            .translate([chart.width() / 2, chart.height() / 2]) // Center in the viewport
+            .scale(chart.height() / 2); // Scale to fit the circular map
+    
+        // Apply the projection
+        chart.set("projection", newProjection);
+    
+        // Set specific rotation for AE projection
+        chart.set("rotationX", 0);
+        
+        if (useAnimation) {
+            // Use animation for rotationY (for smoother transitions)
+            Logger.debug('mapProjection', "Using animation for rotationY");
+            chart.animate({
+                key: "rotationY",
+                to: -90,
+                duration: 1000,
+                easing: am5.ease.out(am5.ease.cubic)
+            });
+        } else {
+            // Set rotationY directly (for immediate effect)
+            Logger.debug('mapProjection', "Setting rotationY directly to -90");
+            chart.set("rotationY", -90);
+        }
+    
+        // Enable vertical dragging (panY)
+        chart.set("panX", "rotateX");
+        chart.set("panY", "rotateY");
+        chart.set("wheelY", "rotateY");
+        
+        // Set maxPanOut to 0 for AE projection
+        chart.set("maxPanOut", 0);
+    
+        // Log chart properties after changes
+        Logger.debug('mapProjection', "AFTER initializeAEProjection - Chart properties:", {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut"),
+            projection: chart.get("projection") ? "defined" : "undefined"
+        });
+        
+        // Update the projection state
+        updateProjectionState("geoAzimuthalEquidistant", {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut")
+        });
+        
+        return newProjection;
+    } catch (error) {
+        Logger.error('mapProjection', "Error initializing AE projection:", error);
+        return null;
+    }
+}
+
+/**
+ * Updates the map projection
+ * @param {Object} chart - The chart object to update the projection on
+ * @param {string} projectionName - The name of the projection to update to
+ * @param {boolean} isRotatable - Whether the projection is rotatable
+ * @returns {Object} The updated projection object
+ */
 export function updateProjection(chart, projectionName, isRotatable) {
-
-    //console.log("in updateProjection fu, isRotatable arg: ",isRotatable )
-
     if (isRotatable === undefined) {
         isRotatable = false;
     }
 
-    //console.log("in updateProjection, after reset, isRotatable arg: ",isRotatable )
-    //try {
-        // Remove "d3." from the start of the projectionName and the parentheses at the end
-        let projectionFunctionName = projectionName.slice(3, -2);
+    Logger.debug('mapProjection', "[DEBUG] updateProjection called with projectionName:", projectionName);
+    
+    let projectionFunctionName = projectionName;
+    // If the name includes 'd3.' at the beginning and '()' at the end, remove them
+    if (projectionName.startsWith('d3.') && projectionName.endsWith('()')) {
+        projectionFunctionName = projectionName.slice(3, -2);
+    }
+    
+    Logger.debug('mapProjection', "[DEBUG] After processing, projectionFunctionName:", projectionFunctionName);
+    
+    // Get the function from d3.geo namespace if it starts with 'geo'
+    let projectionFunction;
+    if (projectionFunctionName.startsWith('geo') && d3.geo && typeof d3.geo[projectionFunctionName.slice(3)] === 'function') {
+        Logger.debug('mapProjection', "[DEBUG] Found function in d3.geo namespace:", projectionFunctionName.slice(3));
+        projectionFunction = d3.geo[projectionFunctionName.slice(3)];
+    } else {
+        Logger.debug('mapProjection', "[DEBUG] Looking for function directly in d3:", projectionFunctionName);
+        projectionFunction = d3[projectionFunctionName];
+    }
+    
+    Logger.debug('mapProjection', "[DEBUG] projectionFunction found:", typeof projectionFunction === 'function');
 
-        // Get the projection function from the D3 object
-        let projectionFunction = d3[projectionFunctionName];
+    if (typeof projectionFunction === 'function') {
+        let newProjection;
 
-        // Check if the projection function exists
-        if (typeof projectionFunction === 'function') {
-            // Special case for geoAzimuthalEquidistant projection
-            //let newProjection = projectionFunction().rotate([0, -90, 0]);
-            // Update the chart's projection with the new projection object
-            //chart.set("projection", newProjection);
-            //console.log("typeof projectFunction === function")
-           
-            chart.set("projection", projectionFunction());
-            //if (projectionFunctionName === 'geoAzimuthalEquidistant') {
-             if  (isRotatable === true) {
-
-                //console.log("In updateProject, isRotatable === true");
-
-                //let newProjection = projectionFunction().rotate([0, -90, 0]);
-                //chart.set("projection", newProjection);
-
-                //chart.set("projection", projectionFunction());
-                //chart.get("projection").rotate([0, -90, 0]);
-            
-                //var projection = chart.get("projection");
-                //var point = projection([0, 90]);
-                //console.log("point: ", point);
-            
-                chart.set("panX", "rotateX")
-                //chart.set("panY", "rotateY")
-                chart.set("panY", "none")
-                //chart.set("minWidth", 200); // minimum width in pixels
-                //chart.set("minHeight", 200); // minimum height in pixels
-                chart.set("rotationY", 1);
-                chart.set("wheelY","rotateY")
-                //chart.appear(1000, -10);
-            } else {
-                //console.log("In updateProject, isRotatable === false");
-                //chart.set("projection", projectionFunction());
-                chart.appear(1000, 100);
-                chart.set("panX", "rotateX")
-                //chart.set("panY", "translateY")
-                chart.set("panY", "none")
-                chart.set("rotationY", 0);
-                chart.set("wheelY","none")
-                //chart.appear(1000, -10);
-                //chart.set("minWidth", 200); // minimum width in pixels
-                //chart.set("minHeight", 200); // minimum height in pixels
-                //console.log("typeof projectFunction === function, chart: ",chart)
-            }
-          
+        if (projectionFunctionName === 'geoAzimuthalEquidistant') {
+            // Use the unified AE projection handler
+            newProjection = initializeAEProjection(chart, projectionFunction, true);
         } else {
-            console.error(`Failed to update projection: No projection function found for ${projectionName}`);
-        }
-    //} catch (error) {
-    //    console.error(`Failed to update projection: ${error}`);
-    //}
-    //chart.invalidateData();
-}
+            // Reset chart properties before updating the projection
+            chart = resetChartPropertiesForProjection(chart, projectionFunctionName);
+            
+            // Default case for other projections
+            newProjection = projectionFunction();
+            chart.set("projection", newProjection);
 
+            // Set standard properties for non-AE projections
+            chart.set("panX", isRotatable ? "rotateX" : "none");
+            chart.set("panY", isRotatable ? "rotateY" : "none");
+            chart.set("wheelY", isRotatable ? "rotateY" : "none");
+            chart.set("rotationY", isRotatable ? 1 : 0);
+        }
+
+        // Re-enable interactions
+        chart.set("interactionsEnabled", true);
+        
+        // Update the projection state
+        updateProjectionState(projectionFunctionName, {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut")
+        });
+        
+        Logger.debug('mapProjection', "[DEBUG] Returning projection:", newProjection ? "defined" : "undefined");
+        return newProjection;
+    } else {
+        Logger.error('mapProjection', `Projection function not found for ${projectionFunctionName}`);
+        return null;
+    }
+}
 
 export function setupProjectionDropdown(chart) {
     // Event listener for the projection dropdown
@@ -108,14 +329,14 @@ export function setupProjectionDropdown(chart) {
                 projectionSelect.add(option);
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => Logger.error('mapProjection', 'Error:', error));
 
     projectionSelect.addEventListener('change', function() {
         const selectedProjection = projectionSelect.value;
         const isRotatable = projectionSelect.options[projectionSelect.selectedIndex].dataset.rotatable === 'true';
 
-        //console.log("projectionSelect.value: ", projectionSelect.value);
-        //console.log("projectionSelect, isRotatable : ", isRotatable);
+        Logger.debug('mapProjection', "projectionSelect.value: ", projectionSelect.value);
+        Logger.debug('mapProjection', "projectionSelect, isRotatable : ", isRotatable);
 
         updateProjection(chart, selectedProjection, isRotatable);
 

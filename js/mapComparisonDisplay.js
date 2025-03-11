@@ -1,4 +1,6 @@
-import { calculateRhumbLinePoints, addRhumbLine } from './mapUtilities.js';
+import { calculateRhumbLinePoints, addRhumbLine, addCity } from './mapUtilities.js';
+import { updateProjection as updateProjectionFromMapProjection, initializeAEProjection, resetChartPropertiesForProjection } from './mapProjection.js';
+import { Logger } from './logger.js';
 
 class MapComparisonDisplay {
     constructor(rootElementId) {
@@ -6,7 +8,8 @@ class MapComparisonDisplay {
         this.orthoGraphicMap = null;  // Object to store orthographic map instance
         this.projectionMap = null;   // Object to store projection map instance
         this.currentAirportPair = null;
-        this.currentProjection = 'mercator';  // default projection
+        this.currentProjection = 'geoMercator';  // default projection
+        this.previousProjection = null; // Store the previous projection
         this.initializedRoots = {}; 
         this.GClineSeries = null; // Initialize to null
         this.RLlineSeries = null; // Initialize to null
@@ -34,11 +37,8 @@ class MapComparisonDisplay {
             { id: "geoLagrange", name: "Lagrange" },
             { id: "geoPeirceQuincuncial", name: "PeirceQuincuncial" },
             { id: "geoTransverseMercator", name: "TransverseMercator" },
-            { id: "geoVanDerGrinten", name: "VanDerGrinten" }
-
-            // If geoAzimuthalEquidistant is included, it messes up the positioning of all the maps in the div
-            //{ id: "geoAzimuthalEquidistant", name: "AzimuthalEquidistant" }
-            
+            { id: "geoVanDerGrinten", name: "VanDerGrinten" },
+            { id: "geoAzimuthalEquidistant", name: "AzimuthalEquidistant" }
         ];
       }
     
@@ -53,14 +53,14 @@ class MapComparisonDisplay {
     handleAirportSelection(selectedIndex) {
       const selectedPair = this.suggestionPairs[selectedIndex];
       this.currentAirportPair = selectedPair;
-      //console.log(`Selected Airport Pair: ${selectedPair.id}`);
+      Logger.info('mapComparisonDisplay', `Selected Airport Pair: ${selectedPair.id}`);
     
       // Plot for orthographic map
       const chartObjectOrtho = this.initializedRoots['chartdiv_orthographic_c'];
       if (chartObjectOrtho) {
         this.plotSelectedPair(selectedPair, chartObjectOrtho);
       } else {
-        console.error('No chartObject found for orthographic map');
+        Logger.error('mapComparisonDisplay', 'No chartObject found for orthographic map');
       }
     
       // Plot for projection map
@@ -68,24 +68,65 @@ class MapComparisonDisplay {
       if (chartObjectProj) {
         this.plotSelectedPair(selectedPair, chartObjectProj);
       } else {
-        console.error('No chartObject found for projection map');
+        Logger.error('mapComparisonDisplay', 'No chartObject found for projection map');
       }
     }  
 
     handleProjectionSelection(selectedIndex) {
       const selectedProjection = this.projections[selectedIndex];
+      
+      // Log before updating projections
+      Logger.debug('mapComparisonDisplay', "[PROJECTION_TRACKING] BEFORE handleProjectionSelection - Projections:", {
+        currentProjection: this.currentProjection,
+        previousProjection: this.previousProjection,
+        newProjection: selectedProjection.id
+      });
+      
+      // Store the current projection before updating
+      const oldProjection = this.currentProjection;
+      
+      // Store the current projection as previous before updating
+      this.previousProjection = this.currentProjection;
+      
+      // Now update to the new projection
       this.currentProjection = selectedProjection.id;
-
-      this.updateMapProjections();
+      
+      // Log after updating projections
+      Logger.debug('mapComparisonDisplay', "[PROJECTION_TRACKING] AFTER handleProjectionSelection - Projections:", {
+        currentProjection: this.currentProjection,
+        previousProjection: this.previousProjection,
+        oldProjection: oldProjection
+      });
+      
+      // Pass the old projection to updateMapProjections
+      this.updateMapProjections(oldProjection);
     }
     
-    updateMapProjections() {
-      // Update projection for the map on the right and re-plot only on that map
+    updateMapProjections(oldProjection) {
+      Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] updateMapProjections called. Current projection:", this.currentProjection);
       if (this.projectionMap) {
+        // Determine if we're switching from AE projection using the passed oldProjection
+        const wasAzimuthalEquidistant = oldProjection === 'geoAzimuthalEquidistant';
+        
+        // Log the transition detection
+        Logger.debug('mapComparisonDisplay', "Transition detection:", {
+          oldProjection: oldProjection,
+          wasAzimuthalEquidistant: wasAzimuthalEquidistant
+        });
+        
         this.setProjection(this.projectionMap, this.currentProjection);
         const chartObjectProj = this.initializedRoots['chartdiv_projection_c'];
         if (chartObjectProj) {
           this.plotSelectedPair(this.currentAirportPair, chartObjectProj);
+          
+          // Log before calling setProjectionChartCenter
+          Logger.debug('mapComparisonDisplay', "About to call setProjectionChartCenter from updateMapProjections");
+          
+          // Always call setProjectionChartCenter to ensure proper centering
+          setTimeout(() => {
+            // Pass information about the transition to setProjectionChartCenter
+            this.setProjectionChartCenter(this.currentAirportPair, wasAzimuthalEquidistant);
+          }, 100);
         }
       }
     }
@@ -141,7 +182,7 @@ class MapComparisonDisplay {
             const data = await response.json();
             this.suggestionPairs = data.filter(pair => pair.RhumbLineDisplay !== false);
         } catch (error) {
-            console.error("Failed to fetch suggestion pairs:", error);
+            Logger.error('mapComparisonDisplay', "Failed to fetch suggestion pairs:", error);
             this.suggestionPairs = [];
         }
       }
@@ -275,28 +316,264 @@ class MapComparisonDisplay {
 
     // The setProjection function can also be a method within this class
     setProjection(chart, name) {
-      chart.set("projection", d3[name].call(this));
-  
-      if (name === 'geoOrthographic') {
-          chart.set("panX", "rotateX");
-          chart.set("panY", "rotateY");
-          chart.set("rotationX", 30); //geoOG_rotationX
-          chart.set("rotationY", -55); //geoOG_rotationY
-          chart.set("wheelY","rotateY");
-          chart.set("maxPanOut", 0);
-      } else {
-          chart.set("panX", "none");
-          chart.set("panY", "none");
-          chart.set("wheelY","none");
-          chart.set("wheelX","none");
-      }
-      this.setButtonState("oc-2");
+        Logger.debug('mapComparisonDisplay', "setProjection called with name:", name);
+        
+        // Check if d3 is available
+        if (!d3) {
+            Logger.error('mapComparisonDisplay', "d3 is not available");
+            return;
+        }
+        
+        // Log chart properties before any changes
+        Logger.debug('mapComparisonDisplay', "BEFORE setProjection - Chart properties:", {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut")
+        });
+        
+        // Reset chart properties for the target projection
+        // This ensures clean transitions between projections
+        resetChartPropertiesForProjection(chart, name);
+        
+        if (name === "geoAzimuthalEquidistant") {
+            // For AE projection, use the centerAEProjection method
+            Logger.debug('mapComparisonDisplay', "Calling centerAEProjection from setProjection");
+            this.centerAEProjection(chart);
+        } else {
+            // For non-AE projections, call updateProjection from mapProjection.js
+            const isOrthographic = name === "geoOrthographic";
+            Logger.debug('mapComparisonDisplay', "Calling updateProjectionFromMapProjection with:", {
+                chart: "chart object",
+                name,
+                isOrthographic
+            });
+            
+            const projection = updateProjectionFromMapProjection(chart, name, isOrthographic);
+            Logger.debug('mapComparisonDisplay', "Projection returned:", projection ? "defined" : "undefined");
+        }
+        
+        // Update projection tracking
+        this.previousProjection = this.currentProjection;
+        this.currentProjection = name;
+        
+        // Log chart properties after changes
+        Logger.debug('mapComparisonDisplay', "AFTER setProjection - Chart properties:", {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut"),
+            currentProjection: this.currentProjection,
+            previousProjection: this.previousProjection
+        });
     }
 
+    centerAEProjection(chart) {
+        Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] centerAEProjection called");
+        
+        // Log chart properties before any changes
+        Logger.debug('mapComparisonDisplay', "BEFORE centerAEProjection - Chart properties:", {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut"),
+            projection: chart.get("projection") ? "defined" : "undefined"
+        });
+        
+        // Use the unified AE projection handler from mapProjection.js
+        // Pass false to avoid animation when called from setProjection
+        initializeAEProjection(chart, undefined, false);
+        
+        // Log chart properties after changes
+        Logger.debug('mapComparisonDisplay', "AFTER centerAEProjection - Chart properties:", {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut"),
+            projection: chart.get("projection") ? "defined" : "undefined"
+        });
+        
+        Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] AE projection centered using unified handler");
+    }
+
+    // Add a new method to handle map/globe toggle
+    toggleMapGlobe() {
+        Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] toggleMapGlobe called. Current projection:", this.currentProjection);
+        
+        // Log projections at the start of toggleMapGlobe
+        Logger.debug('mapComparisonDisplay', "[PROJECTION_TRACKING] START of toggleMapGlobe - Projections:", {
+            currentProjection: this.currentProjection,
+            previousProjection: this.previousProjection
+        });
+        
+        const chartObject = this.initializedRoots['chartdiv_projection_c'];
+        if (!chartObject) {
+            Logger.error('mapComparisonDisplay', "[MAP_DEBUG] Projection chart not initialized.");
+            return;
+        }
+
+        // Store the current rotation before toggling
+        const currentRotationX = chartObject.localChart.get("rotationX");
+        const currentRotationY = chartObject.localChart.get("rotationY");
+
+        // Toggle between map and globe view
+        if (this.currentProjection === "geoOrthographic") {
+            // Log before switching from globe
+            Logger.debug('mapComparisonDisplay', "[PROJECTION_TRACKING] BEFORE switching from globe - Projections:", {
+                currentProjection: this.currentProjection,
+                previousProjection: this.previousProjection,
+                newProjection: this.previousProjection || "geoMercator"
+            });
+            
+            // Switch to the previous 2D projection
+            this.currentProjection = this.previousProjection || "geoMercator";
+            
+            // Log after switching from globe
+            Logger.debug('mapComparisonDisplay', "[PROJECTION_TRACKING] AFTER switching from globe - Projections:", {
+                currentProjection: this.currentProjection,
+                previousProjection: this.previousProjection
+            });
+        } else {
+            // Log before switching to globe
+            Logger.debug('mapComparisonDisplay', "[PROJECTION_TRACKING] BEFORE switching to globe - Projections:", {
+                currentProjection: this.currentProjection,
+                previousProjection: this.previousProjection,
+                willBecomePrevious: this.currentProjection
+            });
+            
+            // Store the current 2D projection before switching to globe
+            this.previousProjection = this.currentProjection;
+            this.currentProjection = "geoOrthographic";
+            
+            // Log after switching to globe
+            Logger.debug('mapComparisonDisplay', "[PROJECTION_TRACKING] AFTER switching to globe - Projections:", {
+                currentProjection: this.currentProjection,
+                previousProjection: this.previousProjection
+            });
+        }
+        Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] New projection after toggle:", this.currentProjection);
+
+        // Update the projection
+        this.updateMapProjections();
+        
+        // Ensure proper centering after toggle
+        setTimeout(() => {
+            if (this.currentProjection === "geoAzimuthalEquidistant") {
+                Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] Hard-coding AE projection center to (90,0) after toggle");
+                this.centerAEProjection(chartObject.localChart);
+            } else if (this.currentProjection === "geoOrthographic") {
+                // Restore the previous rotation for the globe view
+                chartObject.localChart.set("rotationX", currentRotationX);
+                chartObject.localChart.set("rotationY", currentRotationY);
+            }
+            this.plotSelectedPair(this.currentAirportPair, chartObject);
+        }, 500); // Increased delay to ensure the projection has fully updated
+    }
+
+    setProjectionChartCenter(pair, wasAzimuthalEquidistant = false) {
+        Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] setProjectionChartCenter called. Current projection:", this.currentProjection);
+        const chartObject = this.initializedRoots['chartdiv_projection_c'];
+        if (!chartObject || !chartObject.localChart) {
+            Logger.error('mapComparisonDisplay', "Chart object not found for setProjectionChartCenter");
+            return;
+        }
+
+        // Log chart properties before any changes
+        Logger.debug('mapComparisonDisplay', "BEFORE setProjectionChartCenter - Chart properties:", {
+            rotationX: chartObject.localChart.get("rotationX"),
+            rotationY: chartObject.localChart.get("rotationY"),
+            panX: chartObject.localChart.get("panX"),
+            panY: chartObject.localChart.get("panY"),
+            wheelY: chartObject.localChart.get("wheelY"),
+            maxPanOut: chartObject.localChart.get("maxPanOut"),
+            currentProjection: this.currentProjection
+        });
+
+        Logger.debug('mapComparisonDisplay', "Pair values for rotation:", {
+            geoOG_rotationX: pair.geoOG_rotationX,
+            geoOG_rotationY: pair.geoOG_rotationY,
+            pairId: pair.id
+        });
+         
+        if (this.currentProjection === "geoAzimuthalEquidistant") {
+          Logger.debug('mapComparisonDisplay', "Calling centerAEProjection from setProjectionChartCenter");
+          // Call centerAEProjection to ensure complete and consistent initialization
+          this.centerAEProjection(chartObject.localChart);
+        } else {
+          // If we just switched from AE projection, ensure chart properties are reset
+          if (wasAzimuthalEquidistant) {
+            Logger.debug('mapComparisonDisplay', "Ensuring chart properties are reset after switching from AE projection");
+            chartObject.localChart.set("rotationX", 0);
+            chartObject.localChart.set("rotationY", 0);
+            chartObject.localChart.set("maxPanOut", 1);
+            
+            // Force a small redraw to ensure settings take effect
+            chartObject.localChart.set("zoomLevel", chartObject.localChart.get("zoomLevel") * 0.99);
+            setTimeout(() => {
+                chartObject.localChart.set("zoomLevel", chartObject.localChart.get("zoomLevel") / 0.99);
+            }, 50);
+          }
+          
+          // Store the current maxPanOut value before animation
+          const currentMaxPanOut = chartObject.localChart.get("maxPanOut");
+          
+          Logger.debug('mapComparisonDisplay', "Animating rotation for non-AE projection. Target rotationX:", pair.geoOG_rotationX);
+          chartObject.localChart.animate({
+            key: "rotationX",
+            to: pair.geoOG_rotationX,
+            duration: 1000,
+            easing: am5.ease.out(am5.ease.cubic)
+          });
+          chartObject.localChart.animate({
+            key: "rotationY",
+            to: 0,
+            duration: 1000,
+            easing: am5.ease.out(am5.ease.cubic)
+          });
+          
+          // Ensure maxPanOut is preserved for non-AE projections
+          if (currentMaxPanOut !== 1 && this.currentProjection !== "geoAzimuthalEquidistant") {
+            Logger.debug('mapComparisonDisplay', "Preserving maxPanOut=1 for non-AE projection after animation");
+            chartObject.localChart.set("maxPanOut", 1);
+          }
+        }
+        
+        // Log chart properties after changes
+        Logger.debug('mapComparisonDisplay', "AFTER setProjectionChartCenter - Chart properties:", {
+            rotationX: chartObject.localChart.get("rotationX"),
+            rotationY: chartObject.localChart.get("rotationY"),
+            panX: chartObject.localChart.get("panX"),
+            panY: chartObject.localChart.get("panY"),
+            wheelY: chartObject.localChart.get("wheelY"),
+            maxPanOut: chartObject.localChart.get("maxPanOut"),
+            currentProjection: this.currentProjection
+        });
+        
+        // Add logging after animation completes
+        setTimeout(() => {
+            Logger.debug('mapComparisonDisplay', "AFTER ANIMATION COMPLETE - Chart properties:", {
+                rotationX: chartObject.localChart.get("rotationX"),
+                rotationY: chartObject.localChart.get("rotationY"),
+                panX: chartObject.localChart.get("panX"),
+                panY: chartObject.localChart.get("panY"),
+                wheelY: chartObject.localChart.get("wheelY"),
+                maxPanOut: chartObject.localChart.get("maxPanOut"),
+                currentProjection: this.currentProjection
+            });
+        }, 1500); // 1500ms delay to ensure animation (1000ms) has completed
+    }
 
     plotSelectedPair(pair, chartObject) {
       if (!pair || !chartObject) {
-          console.error('Invalid input provided to plotSelectedPair');
+          Logger.error('mapComparisonDisplay', 'Invalid input provided to plotSelectedPair');
           return;
       }
       const { localRoot, localChart, GClineSeries, RLlineSeries } = chartObject;
@@ -330,7 +607,7 @@ class MapComparisonDisplay {
 
       this.updateRoutes(chartObject, "rhumb-line");
 
-      this.setProjectionChartCenter(this.currentAirportPair);
+      this.setProjectionChartCenter(pair);
     }
 
     calculateAndStoreRhumbLinePoints(startLocation, endLocation, numPoints) {
@@ -443,7 +720,7 @@ class MapComparisonDisplay {
     setOrthographicChartCenter(pair) {
       const chartObject = this.initializedRoots['chartdiv_orthographic_c'];
       if (!chartObject || !chartObject.localChart) {
-          console.error("Orthographic chart not initialized.");
+          Logger.error('mapComparisonDisplay', "Orthographic chart not initialized.");
           return;
       }
       chartObject.localChart.set("rotationX", pair.geoOG_rotationX);
@@ -451,131 +728,103 @@ class MapComparisonDisplay {
     }
   
 
-    setProjectionChartCenter(pair) {
-        const chartObject = this.initializedRoots['chartdiv_projection_c'];
-        if (!chartObject) {
-            console.error("Projection chart not initialized.");
+    updateRoutes(chart, lineType) {
+        // Check if chart is available
+        if (!chart) {
+            Logger.error('mapComparisonDisplay', "Chart object not provided to updateRoutes");
             return;
         }
-             
-        if (this.currentProjection === "geoAzimuthalEquidistant") {
-          chartObject.localChart.set("rotationX", 0);
-          chartObject.localChart.set("rotationY", -90);
-        } else {
-          chartObject.localChart.set("rotationX", pair.geoOG_rotationX);
-          chartObject.localChart.set("rotationY", 0);
+    
+        // Check if series exists
+        if (!chart.localChart.series) {
+            Logger.error('mapComparisonDisplay', "Series property missing in the localChart object.");
+            return;
         }
-    }
-
-    updateRoutes(chart, lineType) {
-      // Check if chart is available
-      if (!chart) {
-          console.error("Chart object not provided to updateRoutes");
-          return;
-      }
-  
-      // Check if series exists
-      if (!chart.localChart.series) {
-          console.error("Series property missing in the localChart object.");
-          return;
-      }
-  
-      // Initialize Line Series based on the chart
-      let lineSeries;
-      if (!chart.GClineSeries) {
-          chart.GClineSeries = chart.localChart.series.push(am5map.MapLineSeries.new(chart.localChart._root, { calculateDistance: true }));
-      }
-      if (!chart.RLlineSeries) {
-          chart.RLlineSeries = chart.localChart.series.push(am5map.MapLineSeries.new(chart.localChart._root, { calculateDistance: true }));
-      }
-  
-      // Determine which line series to use
-      lineSeries = lineType === 'great-circle' ? chart.GClineSeries : chart.RLlineSeries;
-  
-      // Apply styles
-      lineSeries.mapLines.template.setAll({
-          stroke: am5.color(lineType === 'great-circle' ? 0xFF0000 : 0x000000),
-          strokeWidth: 4
-      });
-    }
-
-
-    addCity(pointSeries, coords, title, code, country) {
-      const dataItem = pointSeries.pushDataItem({
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-        airportName: title,
-        code: code,
-        country: country
-      });
-      dataItem.tooltipText = "{airportName} ({code})\nCountry: {country}\nLatitude: {latitude}\nLongitude: {longitude}";
-      return dataItem;
+    
+        // Initialize Line Series based on the chart
+        let lineSeries;
+        if (!chart.GClineSeries) {
+            chart.GClineSeries = chart.localChart.series.push(am5map.MapLineSeries.new(chart.localChart._root, { calculateDistance: true }));
+        }
+        if (!chart.RLlineSeries) {
+            chart.RLlineSeries = chart.localChart.series.push(am5map.MapLineSeries.new(chart.localChart._root, { calculateDistance: true }));
+        }
+    
+        // Determine which line series to use
+        lineSeries = lineType === 'great-circle' ? chart.GClineSeries : chart.RLlineSeries;
+    
+        // Apply styles
+        lineSeries.mapLines.template.setAll({
+            stroke: am5.color(lineType === 'great-circle' ? 0xFF0000 : 0x000000),
+            strokeWidth: 4
+        });
     }
 
     createPointSeries(chartObject) {
-      const { localRoot, localChart } = chartObject;
-      if (!localRoot || !localChart) {
-        console.error("Chart object or localChart not found");
-        return;
-      }
-  
-      const root = chartObject.localRoot;
-      const chart = chartObject.localChart;
-      
-      // Create the point series
-      const pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
-      pointSeries.bullets.push(() => {
-        const circle = am5.Circle.new(root, {
-          radius: 7,
-          cursorOverStyle: "pointer",
-          tooltipY: 0,
-          fill: am5.color(0xffba00),
-          stroke: root.interfaceColors.get("background"),
-          strokeWidth: 2,
-          draggable: false
-        });
-        circle.events.on("dragged", function (event) {
-          const dataItem = event.target.dataItem;
-          const projection = chart.get("projection");
-          const geoPoint = chart.invert({ x: circle.x(), y: circle.y() });
-          dataItem.setAll({
-            longitude: geoPoint.longitude,
-            latitude: geoPoint.latitude
+        const { localRoot, localChart } = chartObject;
+        if (!localRoot || !localChart) {
+          Logger.error('mapComparisonDisplay', "Chart object or localChart not found");
+          return;
+        }
+    
+        const root = chartObject.localRoot;
+        const chart = chartObject.localChart;
+        
+        // Create the point series
+        const pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
+        pointSeries.bullets.push(() => {
+          const circle = am5.Circle.new(root, {
+            radius: 7,
+            cursorOverStyle: "pointer",
+            tooltipY: 0,
+            fill: am5.color(0xffba00),
+            stroke: root.interfaceColors.get("background"),
+            strokeWidth: 2,
+            draggable: false
+          });
+          circle.events.on("dragged", function (event) {
+            const dataItem = event.target.dataItem;
+            const projection = chart.get("projection");
+            const geoPoint = chart.invert({ x: circle.x(), y: circle.y() });
+            dataItem.setAll({
+              longitude: geoPoint.longitude,
+              latitude: geoPoint.latitude
+            });
+          });
+          circle.set("tooltipText", "{airportName} ({code})\nCountry: {country}\nLatitude: {latitude}\nLongitude: {longitude}");
+          return am5.Bullet.new(root, {
+            sprite: circle
           });
         });
-        circle.set("tooltipText", "{airportName} ({code})\nCountry: {country}\nLatitude: {latitude}\nLongitude: {longitude}");
-        return am5.Bullet.new(root, {
-          sprite: circle
-        });
-      });
+        
+        // Store the created pointSeries for later use
+        this.pointSeries = pointSeries;
+        return pointSeries;
+    }
       
-      // Store the created pointSeries for later use
-      this.pointSeries = pointSeries;
-      return pointSeries;
-    }
-    
     plotAirportLocation(chartObject, location, pair) {
-      const { localRoot, localChart } = chartObject;
-    
-      if (!localRoot || !localChart) {
-        console.error("Chart object or localChart not provided to plotAirportLocation");
-        return;
-      }
-    
-      // Check if pointSeries exists, create if not
-      if (!chartObject.pointSeries) {
-        chartObject.pointSeries = this.createPointSeries(chartObject); // <-- Now it should work
-      }
-
-      let city;
-    
-      if (location.latitude === pair.airportALat && location.longitude === pair.airportALon) {
-        city = this.addCity(chartObject.pointSeries, location, pair.airportAName, pair.airportACode, pair.airportACountryFull); // <-- Note the update here
-      } else if (location.latitude === pair.airportBLat && location.longitude === pair.airportBLon) {
-        city = this.addCity(chartObject.pointSeries, location, pair.airportBName, pair.airportBCode, pair.airportBCountryFull); // <-- Note the update here
-      }
-    
-      return city;
+        const { localRoot, localChart } = chartObject;
+      
+        if (!localRoot || !localChart) {
+          Logger.error('mapComparisonDisplay', "Chart object or localChart not provided to plotAirportLocation");
+          return;
+        }
+      
+        // Check if pointSeries exists, create if not
+        if (!chartObject.pointSeries) {
+          chartObject.pointSeries = this.createPointSeries(chartObject);
+        }
+  
+        let city;
+      
+        if (location.latitude === pair.airportALat && location.longitude === pair.airportALon) {
+          city = addCity(chartObject.localChart._root, chartObject.localChart, chartObject.pointSeries, location, pair.airportAName, pair.airportACode, pair.airportACountryFull);
+        } else if (location.latitude === pair.airportBLat && location.longitude === pair.airportBLon) {
+          city = addCity(chartObject.localChart._root, chartObject.localChart, chartObject.pointSeries, location, pair.airportBName, pair.airportBCode, pair.airportBCountryFull);
+        }
+      
+        return city;
     }
-  }
-  export const mapComparison = new MapComparisonDisplay('accordionOc');  // assuming 'accordionOc' is the id you want to pass.
+}
+
+export const mapComparison = new MapComparisonDisplay('accordionOc');  // assuming 'accordionOc' is the id you want to pass.
