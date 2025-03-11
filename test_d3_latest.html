@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmCharts with Diagnostic Information (Side-by-Side)</title>
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+            height: 100vh;
+        }
+
+        #chartdiv {
+            width: 70%;
+            height: 100%;
+        }
+
+        #info-panel {
+            width: 30%;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            background: #f7f7f7;
+            border-left: 1px solid #ccc;
+        }
+
+        #coordinates {
+            font-size: 16px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+        }
+
+        #instructions {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        #chartdiv, #info-panel {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="chartdiv"></div>
+        <div id="info-panel">
+            <div id="coordinates">Map Center: Checking...</div>
+            <div id="instructions">
+                Arrow keys move the map in 1° increments (no dragging).<br>
+                Up/Down changes latitude by ±1°, Left/Right changes longitude by ±1°.<br>
+                Diagnostic info is displayed below the map center coordinates.<br><br>
+                Attempting a full 1° "nudge" and revert after chart is ready, to mimic the first arrow press programmatically.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        am5.ready(function () {
+            const root = am5.Root.new("chartdiv");
+            root.setThemes([am5themes_Animated.new(root)]);
+
+            let currentLat = 90;
+            let currentLon = 0;
+
+            const projection = d3.geoAzimuthalEquidistant()
+                .rotate([-currentLon, -currentLat, 0]) 
+                .scale(25);
+
+            const chart = root.container.children.push(
+                am5map.MapChart.new(root, {
+                    projection: projection,
+                    panX: "none",
+                    panY: "none",
+                    wheelY: "none"
+                })
+            );
+
+            // ** INSERTED HERE **
+            chart.set("rotationY", -90);
+            chart.set("rotationX", 0);
+
+            const backgroundSeries = chart.series.unshift(
+                am5map.MapPolygonSeries.new(root, {})
+            );
+            backgroundSeries.mapPolygons.template.setAll({
+                fill: am5.color(0xedf7fa),
+                stroke: am5.color(0xedf7fa),
+            });
+            backgroundSeries.data.push({
+                geometry: am5map.getGeoRectangle(90, 180, -90, -180)
+            });
+
+            const polygonSeries = chart.series.push(
+                am5map.MapPolygonSeries.new(root, {
+                    geoJSON: am5geodata_worldLow
+                })
+            );
+
+            const pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
+            pointSeries.data.setAll([{
+                geometry: { type: "Point", coordinates: [0, 90] },
+                title: "North Pole"
+            }]);
+
+            pointSeries.bullets.push(function (root, series, dataItem) {
+                return am5.Bullet.new(root, {
+                    sprite: am5.Circle.new(root, {
+                        radius: 6,
+                        fill: am5.color(0xff0000)
+                    })
+                });
+            });
+
+            pointSeries.bulletsContainer.set("tooltipText", "{title}");
+
+            const coordinatesLabel = document.getElementById("coordinates");
+
+            function updateCoordinates() {
+                projection.rotate([-currentLon, -currentLat, 0]);
+                chart.set("projection", projection);
+                chart.markDirtyProjection();
+
+                const pixelCenter = [chart.width() / 2, chart.height() / 2];
+                const mapCenter = projection.invert(pixelCenter);
+
+                const rotate = projection.rotate();
+                const scale = projection.scale();
+                const rotX = chart.get("rotationX");
+                const rotY = chart.get("rotationY");
+
+                // Additional projection info (if available)
+                const clipAngle = projection.clipAngle ? projection.clipAngle() : "N/A";
+                const precision = projection.precision ? projection.precision() : "N/A";
+
+                let diagnosticInfo = `\n--- Diagnostic Info ---\n`;
+                diagnosticInfo += `Projection.rotate(): [${rotate.join(", ")}]\n`;
+                diagnosticInfo += `Projection.scale(): ${scale}\n`;
+                diagnosticInfo += `Projection.clipAngle(): ${clipAngle}\n`;
+                diagnosticInfo += `Projection.precision(): ${precision}\n`;
+                diagnosticInfo += `Chart.rotationX: ${rotX !== undefined ? rotX : "N/A"}\n`;
+                diagnosticInfo += `Chart.rotationY: ${rotY !== undefined ? rotY : "N/A"}\n`;
+                diagnosticInfo += `Chart pixel center: (${pixelCenter[0]}, ${pixelCenter[1]})\n`;
+                diagnosticInfo += `currentLat: ${currentLat}\n`;
+                diagnosticInfo += `currentLon: ${currentLon}\n`;
+
+                if (mapCenter) {
+                    const [centerLon, centerLat] = mapCenter;
+                    coordinatesLabel.textContent = `Map Center: Latitude = ${centerLat.toFixed(2)}, Longitude = ${centerLon.toFixed(2)}`;
+                    
+                    if (Math.abs(centerLat - 90) < 0.01 && Math.abs(centerLon) < 0.01) {
+                        coordinatesLabel.textContent += " (North Pole is at the center!)";
+                    }
+
+                    diagnosticInfo += `Inverted center from projection: Lat=${centerLat.toFixed(2)}, Lon=${centerLon.toFixed(2)}\n`;
+
+                    // Difference from target (90,0)
+                    const latDiff = (centerLat - 90).toFixed(2);
+                    const lonDiff = (centerLon - 0).toFixed(2);
+                    diagnosticInfo += `Difference from target (90,0): dLat=${latDiff}, dLon=${lonDiff}\n`;
+                } else {
+                    coordinatesLabel.textContent = "Unable to determine map center.";
+                }
+
+                // Chart and root dimensions
+                diagnosticInfo += `Chart.width(): ${chart.width()}\n`;
+                diagnosticInfo += `Chart.height(): ${chart.height()}\n`;
+                diagnosticInfo += `root.dom.clientWidth: ${root.dom.clientWidth}\n`;
+                diagnosticInfo += `root.dom.clientHeight: ${root.dom.clientHeight}\n`;
+                if (root.pixelRatio) {
+                    diagnosticInfo += `root.pixelRatio: ${root.pixelRatio}\n`;
+                }
+
+                coordinatesLabel.textContent += diagnosticInfo;
+            }
+
+            document.addEventListener("keydown", (e) => {
+                const step = 1;
+                switch (e.key) {
+                    case "ArrowUp":
+                        if (currentLat < 90) currentLat += step;
+                        break;
+                    case "ArrowDown":
+                        if (currentLat > -90) currentLat -= step;
+                        break;
+                    case "ArrowLeft":
+                        currentLon -= step;
+                        if (currentLon < -180) currentLon += 360;
+                        break;
+                    case "ArrowRight":
+                        currentLon += step;
+                        if (currentLon > 180) currentLon -= 360;
+                        break;
+                    default:
+                        return; 
+                }
+                updateCoordinates();
+            });
+
+            // Initial update
+            updateCoordinates();
+
+            // After the chart is fully ready, try a 1° "nudge" and revert
+            chart.events.on("ready", function() {
+                currentLat += 1;
+                updateCoordinates();
+                currentLat -= 1;
+                updateCoordinates();
+            });
+        });
+    </script>
+</body>
+</html>

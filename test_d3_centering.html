@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AE Projection Centering Test</title>
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <style>
+        #chartdiv {
+            width: 100%;
+            height: 500px;
+            border: 1px solid red;
+        }
+        #controls, #info, #dimensions, #fallback {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chartdiv">
+        <div id="fallback" style="display: none;">Failed to load the chart. Please check the console for errors.</div>
+    </div>
+    <div id="controls">
+        <button id="toggleProjection">Toggle Projection</button>
+    </div>
+    <div id="info"></div>
+    <div id="dimensions"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded");
+            
+            // Check if amCharts is loaded
+            if (typeof am5 === 'undefined') {
+                console.error("amCharts library not loaded");
+                document.getElementById('fallback').style.display = 'block';
+                return;
+            }
+            
+            am5.ready(function () {
+                console.log("am5 ready");
+                const root = am5.Root.new("chartdiv");
+                root.setThemes([am5themes_Animated.new(root)]);
+
+                let currentProjection = "AE";
+                let chart;
+
+                function createSimpleChart() {
+                    console.log("Creating simple chart");
+                    const simpleChart = root.container.children.push(
+                        am5xy.XYChart.new(root, {
+                            panX: "none",
+                            panY: "none",
+                            wheelX: "none",
+                            wheelY: "none"
+                        })
+                    );
+
+                    const data = [{
+                        category: "Test",
+                        value: 50
+                    }];
+
+                    const xAxis = simpleChart.xAxes.push(
+                        am5xy.CategoryAxis.new(root, {
+                            categoryField: "category",
+                            renderer: am5xy.AxisRendererX.new(root, {})
+                        })
+                    );
+                    xAxis.data.setAll(data);
+
+                    const yAxis = simpleChart.yAxes.push(
+                        am5xy.ValueAxis.new(root, {
+                            renderer: am5xy.AxisRendererY.new(root, {})
+                        })
+                    );
+
+                    const series = simpleChart.series.push(
+                        am5xy.ColumnSeries.new(root, {
+                            xAxis: xAxis,
+                            yAxis: yAxis,
+                            valueYField: "value",
+                            categoryXField: "category"
+                        })
+                    );
+                    series.data.setAll(data);
+
+                    console.log("Simple chart created");
+                }
+
+                function createBasicMap() {
+                    console.log("Creating basic map");
+                    try {
+                        const basicMap = am5map.MapChart.new(root, {
+                            panX: "translateX",
+                            panY: "translateY",
+                            projection: am5map.geoMercator()
+                        });
+                        console.log("Basic map created:", basicMap);
+                        return basicMap;
+                    } catch (error) {
+                        console.error("Error creating basic map:", error);
+                        document.getElementById("error-info").innerHTML += `<br>Error creating basic map: ${error.message}`;
+                        throw error;
+                    }
+                }
+
+                function createAEProjection() {
+                    console.log("Creating AE projection");
+                    try {
+                        const aeProjection = am5map.MapChart.new(root, {
+                            projection: am5map.geoAzimuthalEquidistant(),
+                            panX: "rotateX",
+                            panY: "rotateY",
+                            wheelY: "none"
+                        });
+                        console.log("AE projection created:", aeProjection);
+                        return aeProjection;
+                    } catch (error) {
+                        console.error("Error creating AE projection:", error);
+                        document.getElementById("error-info").innerHTML += `<br>Error creating AE projection: ${error.message}`;
+                        throw error;
+                    }
+                }
+
+                function createOrthographicProjection() {
+                    console.log("Creating Orthographic projection");
+                    try {
+                        const orthoProjection = am5map.MapChart.new(root, {
+                            projection: am5map.geoOrthographic(),
+                            panX: "rotateX",
+                            panY: "rotateY",
+                            wheelY: "none"
+                        });
+                        console.log("Orthographic projection created:", orthoProjection);
+                        return orthoProjection;
+                    } catch (error) {
+                        console.error("Error creating Orthographic projection:", error);
+                        document.getElementById("error-info").innerHTML += `<br>Error creating Orthographic projection: ${error.message}`;
+                        throw error;
+                    }
+                }
+
+                function createChart() {
+                    console.log("Creating chart");
+                    if (chart) {
+                        console.log("Disposing old chart");
+                        chart.dispose();
+                    }
+
+                    try {
+                        // First, try to create a basic map
+                        chart = createBasicMap();
+
+                        // If basic map creation succeeds, try the specific projection
+                        if (currentProjection === "AE") {
+                            chart.set("projection", am5map.geoAzimuthalEquidistant());
+                            chart.set("rotationY", -90);
+                            chart.set("rotationX", 0);
+                            console.log("AE projection set and centered");
+                        } else if (currentProjection === "Orthographic") {
+                            chart.set("projection", am5map.geoOrthographic());
+                            console.log("Orthographic projection set");
+                        }
+
+                        const polygonSeries = chart.series.push(
+                            am5map.MapPolygonSeries.new(root, {
+                                geoJSON: am5geodata_worldLow
+                            })
+                        );
+                        console.log("Polygon series added");
+
+                        const pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
+                        pointSeries.data.setAll([{
+                            geometry: { type: "Point", coordinates: [0, 90] },
+                            title: "North Pole"
+                        }]);
+                        console.log("Point series added");
+
+                        pointSeries.bullets.push(function (root, series, dataItem) {
+                            return am5.Bullet.new(root, {
+                                sprite: am5.Circle.new(root, {
+                                    radius: 5,
+                                    fill: am5.color(0xff0000)
+                                })
+                            });
+                        });
+
+                        updateInfo();
+
+                        chart.events.on("dragged", updateInfo);
+
+                        console.log("Chart dimensions:", chart.width(), "x", chart.height());
+                        document.getElementById("dimensions").innerHTML = `Chart dimensions: ${chart.width()} x ${chart.height()}`;
+
+                    } catch (error) {
+                        console.error("Error creating chart:", error);
+                        document.getElementById("error-info").innerHTML += `<br>Error creating chart: ${error.message}`;
+                        createSimpleChart();
+                    }
+                }
+
+                function updateInfo() {
+                    const info = document.getElementById("info");
+                    if (chart) {
+                        const rotation = chart.get("rotation") || [0, 0, 0];
+                        info.innerHTML = `Current Projection: ${currentProjection}<br>` +
+                                         `Rotation: X=${rotation[0].toFixed(2)}, Y=${rotation[1].toFixed(2)}, Z=${rotation[2].toFixed(2)}`;
+                    } else {
+                        info.innerHTML = "Chart not initialized";
+                    }
+                }
+
+                function toggleProjection() {
+                    console.log("Toggling projection");
+                    currentProjection = currentProjection === "AE" ? "Orthographic" : "AE";
+                    createChart();
+                }
+
+                createChart();
+
+                document.getElementById("toggleProjection").addEventListener("click", toggleProjection);
+            });
+        });
+    </script>
+</body>
+</html>
