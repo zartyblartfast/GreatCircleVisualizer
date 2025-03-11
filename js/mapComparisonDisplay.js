@@ -15,6 +15,7 @@ class MapComparisonDisplay {
         this.RLlineSeries = null; // Initialize to null
         this.rhumbLinePoints = []; 
         this.planeSeriesArray = null;
+        this.isTogglingMapGlobe = false; // Flag to track when a toggle operation is in progress
     
         // Initialize the data properties to null
         this.suggestionPairs = null;
@@ -108,10 +109,11 @@ class MapComparisonDisplay {
         // Determine if we're switching from AE projection using the passed oldProjection
         const wasAzimuthalEquidistant = oldProjection === 'geoAzimuthalEquidistant';
         
-        // Log the transition detection
+        // Log the transition detection and toggle state
         Logger.debug('mapComparisonDisplay', "Transition detection:", {
           oldProjection: oldProjection,
-          wasAzimuthalEquidistant: wasAzimuthalEquidistant
+          wasAzimuthalEquidistant: wasAzimuthalEquidistant,
+          isTogglingMapGlobe: this.isTogglingMapGlobe || false
         });
         
         this.setProjection(this.projectionMap, this.currentProjection);
@@ -119,14 +121,20 @@ class MapComparisonDisplay {
         if (chartObjectProj) {
           this.plotSelectedPair(this.currentAirportPair, chartObjectProj);
           
-          // Log before calling setProjectionChartCenter
-          Logger.debug('mapComparisonDisplay', "About to call setProjectionChartCenter from updateMapProjections");
-          
-          // Always call setProjectionChartCenter to ensure proper centering
-          setTimeout(() => {
-            // Pass information about the transition to setProjectionChartCenter
-            this.setProjectionChartCenter(this.currentAirportPair, wasAzimuthalEquidistant);
-          }, 100);
+          // Only call setProjectionChartCenter if we're not in the middle of a toggle operation
+          // This prevents conflicts with the toggle-specific centering logic
+          if (!this.isTogglingMapGlobe) {
+            // Log before calling setProjectionChartCenter
+            Logger.debug('mapComparisonDisplay', "About to call setProjectionChartCenter from updateMapProjections");
+            
+            // Always call setProjectionChartCenter to ensure proper centering
+            setTimeout(() => {
+              // Pass information about the transition to setProjectionChartCenter
+              this.setProjectionChartCenter(this.currentAirportPair, wasAzimuthalEquidistant);
+            }, 100);
+          } else {
+            Logger.debug('mapComparisonDisplay', "Skipping setProjectionChartCenter call because toggle is in progress");
+          }
         }
       }
     }
@@ -408,21 +416,40 @@ class MapComparisonDisplay {
     toggleMapGlobe() {
         Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] toggleMapGlobe called. Current projection:", this.currentProjection);
         
+        // Add a flag to track when a toggle operation is in progress
+        this.isTogglingMapGlobe = true;
+        
         // Log projections at the start of toggleMapGlobe
         Logger.debug('mapComparisonDisplay', "[PROJECTION_TRACKING] START of toggleMapGlobe - Projections:", {
             currentProjection: this.currentProjection,
-            previousProjection: this.previousProjection
+            previousProjection: this.previousProjection,
+            isTogglingMapGlobe: this.isTogglingMapGlobe
         });
         
         const chartObject = this.initializedRoots['chartdiv_projection_c'];
         if (!chartObject) {
             Logger.error('mapComparisonDisplay', "[MAP_DEBUG] Projection chart not initialized.");
+            this.isTogglingMapGlobe = false;
             return;
         }
+
+        // Log chart properties before toggle
+        Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] Chart properties BEFORE toggle:", {
+            rotationX: chartObject.localChart.get("rotationX"),
+            rotationY: chartObject.localChart.get("rotationY"),
+            panX: chartObject.localChart.get("panX"),
+            panY: chartObject.localChart.get("panY"),
+            wheelY: chartObject.localChart.get("wheelY"),
+            maxPanOut: chartObject.localChart.get("maxPanOut")
+        });
 
         // Store the current rotation before toggling
         const currentRotationX = chartObject.localChart.get("rotationX");
         const currentRotationY = chartObject.localChart.get("rotationY");
+        
+        // Store if we're toggling from AE projection
+        const wasAzimuthalEquidistant = this.currentProjection === "geoAzimuthalEquidistant";
+        Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] Toggling with wasAzimuthalEquidistant:", wasAzimuthalEquidistant);
 
         // Toggle between map and globe view
         if (this.currentProjection === "geoOrthographic") {
@@ -461,21 +488,74 @@ class MapComparisonDisplay {
         }
         Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] New projection after toggle:", this.currentProjection);
 
-        // Update the projection
-        this.updateMapProjections();
+        // Reset chart properties before changing projection
+        // This ensures clean transitions between projections
+        Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] About to reset chart properties for projection:", this.currentProjection);
+        resetChartPropertiesForProjection(chartObject.localChart, this.currentProjection);
         
-        // Ensure proper centering after toggle
+        // Log chart properties after reset
+        Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] Chart properties AFTER reset:", {
+            rotationX: chartObject.localChart.get("rotationX"),
+            rotationY: chartObject.localChart.get("rotationY"),
+            panX: chartObject.localChart.get("panX"),
+            panY: chartObject.localChart.get("panY"),
+            wheelY: chartObject.localChart.get("wheelY"),
+            maxPanOut: chartObject.localChart.get("maxPanOut")
+        });
+        
+        // Update the projection
+        Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] Calling updateMapProjections with oldProjection:", wasAzimuthalEquidistant ? "geoAzimuthalEquidistant" : null);
+        this.updateMapProjections(wasAzimuthalEquidistant ? "geoAzimuthalEquidistant" : null);
+        
+        // Ensure proper centering after toggle with improved reliability
         setTimeout(() => {
+            Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] Toggle timeout handler executing");
+            
+            // Log chart properties in timeout before any changes
+            Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] Chart properties in timeout BEFORE changes:", {
+                rotationX: chartObject.localChart.get("rotationX"),
+                rotationY: chartObject.localChart.get("rotationY"),
+                panX: chartObject.localChart.get("panX"),
+                panY: chartObject.localChart.get("panY"),
+                wheelY: chartObject.localChart.get("wheelY"),
+                maxPanOut: chartObject.localChart.get("maxPanOut"),
+                currentProjection: this.currentProjection
+            });
+            
             if (this.currentProjection === "geoAzimuthalEquidistant") {
-                Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] Hard-coding AE projection center to (90,0) after toggle");
-                this.centerAEProjection(chartObject.localChart);
+                Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] Ensuring AE projection is centered on North Pole after toggle");
+                // Use initializeAEProjection directly with animation for smoother transition
+                initializeAEProjection(chartObject.localChart, undefined, true);
+                
+                // Log AE specific properties after initialization
+                Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] AE projection initialized, rotationY:", chartObject.localChart.get("rotationY"));
             } else if (this.currentProjection === "geoOrthographic") {
                 // Restore the previous rotation for the globe view
+                Logger.debug('mapComparisonDisplay', "[MAP_DEBUG] Restoring globe rotation after toggle:", {
+                    rotationX: currentRotationX,
+                    rotationY: currentRotationY
+                });
                 chartObject.localChart.set("rotationX", currentRotationX);
                 chartObject.localChart.set("rotationY", currentRotationY);
             }
+            
+            // Log chart properties after all changes
+            Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] Chart properties in timeout AFTER changes:", {
+                rotationX: chartObject.localChart.get("rotationX"),
+                rotationY: chartObject.localChart.get("rotationY"),
+                panX: chartObject.localChart.get("panX"),
+                panY: chartObject.localChart.get("panY"),
+                wheelY: chartObject.localChart.get("wheelY"),
+                maxPanOut: chartObject.localChart.get("maxPanOut")
+            });
+            
+            // Replot the current airport pair to ensure routes are preserved
             this.plotSelectedPair(this.currentAirportPair, chartObject);
-        }, 500); // Increased delay to ensure the projection has fully updated
+            
+            // Clear the toggle flag after the operation is complete
+            this.isTogglingMapGlobe = false;
+            Logger.debug('mapComparisonDisplay', "[TOGGLE_TRACKING] Toggle operation complete, flag reset:", this.isTogglingMapGlobe);
+        }, 600); // Increased delay to ensure the projection has fully updated
     }
 
     setProjectionChartCenter(pair, wasAzimuthalEquidistant = false) {
