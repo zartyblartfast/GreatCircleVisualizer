@@ -226,19 +226,128 @@ export function initializeAEProjection(chart, projectionFunction = d3.geoAzimuth
 }
 
 /**
+ * Restores the Azimuthal Equidistant projection to ensure the North Pole is properly centered
+ * This function is specifically designed to be called when returning to AE projection
+ * from other projections, ensuring consistent centering regardless of context
+ * 
+ * @param {Object} chart - The chart object to restore the AE projection on
+ * @param {boolean} useAnimation - Whether to use animation for rotation
+ * @param {boolean} verifyCenter - Whether to verify the North Pole centering
+ * @returns {boolean} Success status of the restoration
+ */
+export function restoreAEProjection(chart, useAnimation = false, verifyCenter = true) {
+    Logger.debug('mapProjection', "[AE_RESTORE] Restoring AE projection with useAnimation:", useAnimation);
+    
+    // Log chart properties before restoration
+    Logger.debug('mapProjection', "[AE_RESTORE] Chart properties BEFORE restoration:", {
+        rotationX: chart.get("rotationX"),
+        rotationY: chart.get("rotationY"),
+        panX: chart.get("panX"),
+        panY: chart.get("panY"),
+        wheelY: chart.get("wheelY"),
+        maxPanOut: chart.get("maxPanOut"),
+        projection: chart.get("projection") ? "defined" : "undefined"
+    });
+    
+    try {
+        // First, ensure we have the correct projection function
+        const projectionFunction = d3.geoAzimuthalEquidistant;
+        
+        // Create AE projection with North Pole centered
+        const newProjection = projectionFunction()
+            .rotate([0, -90, 0]) // Rotate to center the North Pole
+            .translate([chart.width() / 2, chart.height() / 2]) // Center in the viewport
+            .scale(chart.height() / 2); // Scale to fit the circular map
+        
+        // Apply the projection
+        chart.set("projection", newProjection);
+        
+        // Set specific rotation for AE projection
+        chart.set("rotationX", 0);
+        
+        if (useAnimation) {
+            // Use animation for rotationY (for smoother transitions)
+            Logger.debug('mapProjection', "[AE_RESTORE] Using animation for rotationY");
+            chart.animate({
+                key: "rotationY",
+                to: -90,
+                duration: 1000,
+                easing: am5.ease.out(am5.ease.cubic)
+            });
+        } else {
+            // Set rotationY directly (for immediate effect)
+            Logger.debug('mapProjection', "[AE_RESTORE] Setting rotationY directly to -90");
+            chart.set("rotationY", -90);
+        }
+        
+        // Set AE-specific chart properties
+        chart.set("panX", "rotateX");
+        chart.set("panY", "rotateY");
+        chart.set("wheelY", "rotateY");
+        chart.set("maxPanOut", 0);
+        
+        // Log chart properties after restoration
+        Logger.debug('mapProjection', "[AE_RESTORE] Chart properties AFTER restoration:", {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut")
+        });
+        
+        // Update the projection state
+        updateProjectionState("geoAzimuthalEquidistant", {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut")
+        });
+        
+        // Verify North Pole centering if requested
+        if (verifyCenter) {
+            const currentRotationY = chart.get("rotationY");
+            // Check if rotationY is close to -90 (allowing for small floating-point differences)
+            const isNorthPoleCentered = Math.abs(currentRotationY + 90) < 0.1;
+            
+            Logger.debug('mapProjection', "[AE_RESTORE] North Pole centering verification:", {
+                currentRotationY: currentRotationY,
+                isNorthPoleCentered: isNorthPoleCentered
+            });
+            
+            // If not centered correctly, force it
+            if (!isNorthPoleCentered && !useAnimation) {
+                Logger.warn('mapProjection', "[AE_RESTORE] North Pole not centered correctly, forcing centering");
+                chart.set("rotationY", -90);
+                return true;
+            }
+            
+            return isNorthPoleCentered;
+        }
+        
+        return true;
+    } catch (error) {
+        Logger.error('mapProjection', "[AE_RESTORE] Error restoring AE projection:", error);
+        return false;
+    }
+}
+
+/**
  * Updates the map projection
  * @param {Object} chart - The chart object to update the projection on
  * @param {string} projectionName - The name of the projection to update to
  * @param {boolean} isRotatable - Whether the projection is rotatable
  * @returns {Object} The updated projection object
  */
-export function updateProjection(chart, projectionName, isRotatable) {
-    if (isRotatable === undefined) {
-        isRotatable = false;
-    }
-
-    Logger.debug('mapProjection', "[DEBUG] updateProjection called with projectionName:", projectionName);
+export function updateProjection(chart, projectionName, isRotatable = true) {
+    Logger.debug('mapProjection', "[DEBUG] updateProjection called with projectionName:", projectionName, "isRotatable:", isRotatable);
     
+    // Disable interactions during projection update
+    chart.set("interactionsEnabled", false);
+    
+    // Extract the projection function name from the full projection string
     let projectionFunctionName = projectionName;
     // If the name includes 'd3.' at the beginning and '()' at the end, remove them
     if (projectionName.startsWith('d3.') && projectionName.endsWith('()')) {
@@ -263,8 +372,10 @@ export function updateProjection(chart, projectionName, isRotatable) {
         let newProjection;
 
         if (projectionFunctionName === 'geoAzimuthalEquidistant') {
-            // Use the unified AE projection handler
-            newProjection = initializeAEProjection(chart, projectionFunction, true);
+            // Use the restoreAEProjection function for more reliable centering
+            restoreAEProjection(chart, true, true);
+            newProjection = projectionFunction();
+            chart.set("projection", newProjection);
         } else {
             // Reset chart properties before updating the projection
             chart = resetChartPropertiesForProjection(chart, projectionFunctionName);

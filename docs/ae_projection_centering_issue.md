@@ -135,34 +135,40 @@ To solve this issue in a systematic and testable way, we'll follow this incremen
    - Add verification checks to confirm the North Pole is centered
    - Test that all map elements are correctly positioned after restoration
 
+9. **Step 3.3: Update the updateProjection function in mapProjection.js**
+   - Modify the updateProjection function to use restoreAEProjection instead of initializeAEProjection
+   - Ensure consistent handling of AE projection across both sections of the application
+   - Fix the direct call to initializeAEProjection in the projectionSelect event handler
+   - Test that both sections of the application properly handle AE projection transitions
+
 ### Phase 4: Fix the Second Section
 
-9. **Step 4.1: Update map_animations_along_lines.js**
-   - Ensure it uses the new unified projection handling functions
-   - Add proper reset logic when changing projections
-   - Implement consistent property handling
-   - Verify that all routes and animations still work correctly
+10. **Step 4.1: Update map_animations_along_lines.js**
+    - Ensure it uses the new unified projection handling functions
+    - Add proper reset logic when changing projections
+    - Implement consistent property handling
+    - Verify that all routes and animations still work correctly
 
-10. **Step 4.2: Standardize chart initialization**
+11. **Step 4.2: Standardize chart initialization**
     - Ensure both sections initialize charts with consistent default properties
     - Standardize how projections are applied to charts
     - Test that map elements are displayed correctly in both sections
 
 ### Phase 5: Preserve Map Elements Functionality
 
-11. **Step 5.1: Implement safeguards for map elements**
+12. **Step 5.1: Implement safeguards for map elements**
     - Add code to ensure map series (pointSeries, lineSeries) are preserved during projection changes
     - Verify that all elements remain visible and correctly positioned
     - Add specific handling for AE projection to ensure elements are properly displayed
     - Test with various data points to ensure all map elements render correctly
 
-12. **Step 5.2: Enhance route drawing logic**
+13. **Step 5.2: Enhance route drawing logic**
     - Review and update the code that draws routes on the maps
     - Ensure routes are correctly displayed on all projections, especially after switching from AE
     - Add specific checks for route visibility after projection changes
     - Test with various route combinations to ensure correct rendering
 
-13. **Step 5.3: Validate existing functionality**
+14. **Step 5.3: Validate existing functionality**
     - Test that all interactive features (tooltips, clicks, hovers) still work correctly
     - Verify that annotations and labels are correctly positioned
     - Test with various data sets to ensure consistent behavior
@@ -170,32 +176,32 @@ To solve this issue in a systematic and testable way, we'll follow this incremen
 
 ### Phase 6: Testing and Validation
 
-14. **Step 6.1: Test AE projection initialization**
+15. **Step 6.1: Test AE projection initialization**
     - Verify that the AE projection centers correctly on first selection
     - Check that the North Pole is properly centered
     - Validate that all properties are set correctly
     - Confirm that all map elements (locations, routes, annotations) display correctly
 
-15. **Step 6.2: Test transitions from AE to other projections**
+16. **Step 6.2: Test transitions from AE to other projections**
     - Test transitioning from AE to each other projection
     - Verify that all projections display correctly after viewing AE
     - Confirm that no properties from AE persist inappropriately
     - Verify that all map elements remain visible and correctly positioned
 
-16. **Step 6.3: Test transitions to AE from other projections**
+17. **Step 6.3: Test transitions to AE from other projections**
     - Test selecting AE after viewing each other projection
     - Verify that AE centers correctly in all cases
     - Confirm that the North Pole is properly centered
     - Check that all map elements are correctly displayed
 
-17. **Step 6.4: Test the toggle functionality**
+18. **Step 6.4: Test the toggle functionality**
     - Verify that toggling between globe and map views works correctly
     - Test that AE centers correctly after toggling with North Pole at center
     - Confirm that other projections display correctly after toggling
     - Specifically test the rotationY value after toggle operations
     - Verify that all map elements are preserved during toggle operations
 
-18. **Step 6.5: Comprehensive functionality testing**
+19. **Step 6.5: Comprehensive functionality testing**
     - Test all interactive features (tooltips, clicks, hovers)
     - Verify that annotations and labels are correctly positioned
     - Test with various data sets to ensure consistent behavior
