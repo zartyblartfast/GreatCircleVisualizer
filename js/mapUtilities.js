@@ -135,45 +135,63 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
 
     var currentProjection = chart.get("projection");
 
-    switchButton.on("active", function() {
-        var projectionSelect = document.getElementById('projectionSelect'); // Assuming the ID of the dropdown element is 'projectionSelect'
+    switchButton.on("active", function () {
+        var projectionSelect = document.getElementById("projectionSelect");
+    
         if (!switchButton.get("active")) {
+            // Switching to map view
             labelMap.set("visible", true);
             labelGlobe.set("visible", false);
     
-            chart.set("projection", currentProjection);
-    
             if (currentProjectionName === "geoAzimuthalEquidistant") {
+                // Set the AE map projection
+                let aeProjection = d3.geoAzimuthalEquidistant().rotate([0, -90, 0]);
+                chart.set("projection", aeProjection);
+    
+                // Apply AE-specific settings
                 chart.set("panX", "rotateX");
                 chart.set("panY", "rotateY");
                 chart.set("rotationY", 1);
-                chart.set("wheelY","rotateY")
-                chart.set("wheelSensitivity", 0.3)
+                chart.set("wheelY", "rotateY");
+                chart.set("wheelSensitivity", 0.3);
+    
+                // Reset map view
+                setTimeout(() => {
+                    chart.goHome(false); // Reset without animations
+                }, 50);
             } else {
+                // Apply other map projections
+                chart.set("projection", currentProjection);
                 chart.set("panX", "rotateX");
-                //chart.set("panY", "translateY");
                 chart.set("panY", "none");
                 chart.set("rotationY", 0);
-                chart.set("wheelY","none")
+                chart.set("wheelY", "none");
             }
-            chart.goHome();
+    
             projectionSelect.disabled = false; // Enable the dropdown
         } else {
+            // Switching to globe view
             labelMap.set("visible", false);
             labelGlobe.set("visible", true);
     
-            currentProjection = chart.get("projection");
-            chart.set("projection", am5map.geoOrthographic());
+            // Set a fresh globe projection
+            let globeProjection = am5map.geoOrthographic();
+            chart.set("projection", globeProjection);
+    
+            // Apply globe-specific settings
+            chart.set("panX", "none");
             chart.set("panY", "rotateY");
-            //chart.set("panY", "none");
-            chart.set("wheelY","rotateY")
-            chart.set("wheelSensitivity", 0.3)
-            chart.goHome();
+            chart.set("wheelY", "rotateY");
+            chart.set("wheelSensitivity", 0.3);
+    
+            // Reset globe view
+            setTimeout(() => {
+                chart.goHome(false); // Reset without animations
+            }, 50);
     
             projectionSelect.disabled = true; // Disable the dropdown
         }
     });
-    
 }
 
 

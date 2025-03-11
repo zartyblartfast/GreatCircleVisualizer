@@ -37,6 +37,9 @@ var planeSeriesArray = [];
 // Get the projection function from the D3 object
 let projectionFunction = d3[currentProjectionName];
 
+// Placeholder for the initial projection (set dynamically)
+let initialProjection = am5map.geoMercator(); // Or dynamically assign based on user settings
+
 function initializeMap() {
     //console.log("Inside initializeMap()")
     // Update the projection and get the projection function
@@ -107,20 +110,16 @@ function initializeMap() {
 // Initialize map on page load
 chart = root.container.children.push(am5map.MapChart.new(root, {
     panX: "rotateX",
-    //panX: "none",
-    //panY: "translateY",
-    panY: "none",
+    panY: "none", // Default interactivity
     rotationY: 0,
-    projection: am5map.geoMercator(),
+    projection: initialProjection,
     minZoomLevel: 1.0,
     maxZoomLevel: 1.25
 }));
 
 //console.log("Chart after initialization:", chart);
 
-
 initializeMap();
-
 
 document.addEventListener('pairExpandCollapse', function(event) {
     const { pairId, expanded } = event.detail;

@@ -116,3 +116,7 @@ document.getElementById("selector-next-oc-2").addEventListener("click", function
     mapComparison.setIndex(1, "oc-2"); 
 });
 
+// Add event listener for the map/globe toggle button
+document.getElementById("toggle-map-globe").addEventListener("click", function() {
+    mapComparison.toggleMapGlobe();
+});
