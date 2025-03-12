@@ -4,9 +4,9 @@
 
 ### Section 1 (Main Section with Toggle Button)
 
-1. **Initial Positioning Issue**: When the AE map first opens, it's not positioned correctly and the bottom of the map is cut off.
+1. **Vertical Scrolling/Panning Problem**: The AE map can be vertically scrolled/panned, meaning that if a user clicks on the map and drags, the map doesn't move position but it distorts internally. This behavior should not occur.
 
-2. **Vertical Scrolling/Panning Problem**: The AE map can be vertically scrolled/panned, meaning that if a user clicks on the map and drags, the map doesn't move position but it distorts internally. This behavior should not occur.
+2. **Initial Positioning Issue**: When the AE map first opens, it's not positioned correctly and the bottom of the map is cut off.
 
 3. **Projection Transition Issue**: After selecting the AE map, all other map projections selected afterward are out of position in the viewing area.
 
@@ -23,20 +23,13 @@ The Azimuthal Equidistant projection requires specific chart properties to displ
 
 These properties need to be consistently applied when initializing the AE projection and properly reset when switching to other projections.
 
+The D3.js projection object's properties (scale, translate, rotate) significantly affect the positioning and appearance of the map. When transitioning between projections, these properties must be properly reset to ensure correct display.
+
 ## Proposed Fixes
 
 Based on code analysis, here are the specific fixes for each issue:
 
-### Fix 1: Initial Positioning Issue in Section 1
-
-**Problem**: The AE map is not positioned correctly when first opened because `rotationY` is being set via animation, causing a delay in proper centering.
-
-**Solution**:
-1. Modify `updateProjection` function in `mapProjection.js` (line 375):
-   - Change `restoreAEProjection(chart, true, true);` to `restoreAEProjection(chart, false, true);`
-   - This ensures the North Pole is centered immediately without animation delay
-
-### Fix 2: Vertical Scrolling/Panning Problem in Both Sections
+### Fix 1: Vertical Scrolling/Panning Problem in Both Sections
 
 **Problem**: The AE map can be vertically scrolled/panned, causing internal distortion.
 
@@ -44,6 +37,15 @@ Based on code analysis, here are the specific fixes for each issue:
 1. Modify `restoreAEProjection` function in `mapProjection.js` (line 284):
    - Change `chart.set("panY", "rotateY");` to `chart.set("panY", "none");`
    - This prevents vertical panning/distortion while still allowing horizontal rotation
+
+### Fix 2: Initial Positioning Issue in Section 1
+
+**Problem**: The AE map is not positioned correctly when first opened because `rotationY` is being set via animation, causing a delay in proper centering.
+
+**Solution**:
+1. Modify `updateProjection` function in `mapProjection.js` (line 375):
+   - Change `restoreAEProjection(chart, true, true);` to `restoreAEProjection(chart, false, true);`
+   - This ensures the North Pole is centered immediately without animation delay
 
 ### Fix 3: Projection Transition Issue in Section 1
 
