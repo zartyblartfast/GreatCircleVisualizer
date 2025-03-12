@@ -91,6 +91,39 @@ export function resetChartPropertiesForProjection(chart, targetProjection) {
         }
     });
     
+    // Special handling for transitions FROM AE to other projections
+    if (wasAE && !isAE) {
+        // Force reset all properties when transitioning from AE
+        Logger.debug('mapProjection', '[RESET_PROPERTIES] Detected transition FROM AE - forcing complete reset');
+        chart.set("rotationX", 0);
+        chart.set("rotationY", 0);
+        chart.set("panX", targetProjection === "geoOrthographic" ? "rotateX" : "none");
+        chart.set("panY", targetProjection === "geoOrthographic" ? "rotateY" : "none");
+        chart.set("wheelY", targetProjection === "geoOrthographic" ? "rotateY" : "none");
+        chart.set("maxPanOut", 1);
+        
+        // Update the projection state
+        updateProjectionState(targetProjection, {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut")
+        });
+        
+        Logger.debug('mapProjection', '[RESET_PROPERTIES] Chart properties after reset:', {
+            rotationX: chart.get("rotationX"),
+            rotationY: chart.get("rotationY"),
+            panX: chart.get("panX"),
+            panY: chart.get("panY"),
+            wheelY: chart.get("wheelY"),
+            maxPanOut: chart.get("maxPanOut")
+        });
+        
+        return chart;
+    }
+    
     // Default properties for non-AE projections
     if (!isAE) {
         // Set default properties for non-AE projections
@@ -281,9 +314,9 @@ export function restoreAEProjection(chart, useAnimation = false, verifyCenter = 
         }
         
         // Set AE-specific chart properties
-        chart.set("panX", "rotateX");
-        chart.set("panY", "rotateY");
-        chart.set("wheelY", "rotateY");
+        chart.set("panX", "none");
+        chart.set("panY", "none");
+        chart.set("wheelY", "none");
         chart.set("maxPanOut", 0);
         
         // Log chart properties after restoration
@@ -373,7 +406,7 @@ export function updateProjection(chart, projectionName, isRotatable = true) {
 
         if (projectionFunctionName === 'geoAzimuthalEquidistant') {
             // Use the restoreAEProjection function for more reliable centering
-            restoreAEProjection(chart, true, true);
+            restoreAEProjection(chart, false, true);
             newProjection = projectionFunction();
             chart.set("projection", newProjection);
         } else {
@@ -388,6 +421,7 @@ export function updateProjection(chart, projectionName, isRotatable = true) {
             chart.set("panX", isRotatable ? "rotateX" : "none");
             chart.set("panY", isRotatable ? "rotateY" : "none");
             chart.set("wheelY", isRotatable ? "rotateY" : "none");
+            chart.set("maxPanOut", 1);
             chart.set("rotationY", isRotatable ? 1 : 0);
         }
 

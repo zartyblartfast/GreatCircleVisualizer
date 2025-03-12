@@ -121,7 +121,7 @@ class MapComparisonDisplay {
           isTogglingMapGlobe: this.isTogglingMapGlobe || false
         });
         
-        this.setProjection(this.projectionMap, this.currentProjection);
+        this.setProjection(this.projectionMap, this.currentProjection, oldProjection);
         const chartObjectProj = this.initializedRoots['chartdiv_projection_c'];
         if (chartObjectProj) {
           this.plotSelectedPair(this.currentAirportPair, chartObjectProj);
@@ -306,7 +306,7 @@ class MapComparisonDisplay {
           });
 
           // Depending on your implementation, you might want to call setProjection here
-          this.setProjection(localChart, projectionType);
+          this.setProjection(localChart, projectionType, projectionType);
   
           this.initializedRoots[divId] = {
             localRoot,
@@ -328,7 +328,7 @@ class MapComparisonDisplay {
     }
 
     // The setProjection function can also be a method within this class
-    setProjection(chart, name) {
+    setProjection(chart, name, oldProjection) {
         Logger.debug('mapComparisonDisplay', "setProjection called with name:", name);
         
         // Check if d3 is available
@@ -350,7 +350,7 @@ class MapComparisonDisplay {
         // Reset chart properties for the target projection
         // This ensures clean transitions between projections
         resetChartPropertiesForProjection(chart, name);
-        
+
         if (name === "geoAzimuthalEquidistant") {
             // For AE projection, use the restoreAEProjection function instead of centerAEProjection
             Logger.debug('mapComparisonDisplay', "Calling restoreAEProjection from setProjection");
@@ -377,6 +377,21 @@ class MapComparisonDisplay {
             }
         }
         
+        // Check if we're switching FROM AE projection to another projection
+        // This must be done at the end to ensure our settings are the final ones applied
+        const switchingFromAE = oldProjection === 'geoAzimuthalEquidistant' && name !== 'geoAzimuthalEquidistant';
+
+        // If we're switching from AE to another projection, ensure all properties are properly reset
+        if (switchingFromAE) {
+            Logger.debug('mapComparisonDisplay', "FINAL CHECK: Detected transition FROM AE projection - forcing complete property reset");
+            // Force a complete reset of all properties as the final step
+            chart.set("rotationX", 0);
+            chart.set("rotationY", 0);
+            chart.set("panX", name === "geoOrthographic" ? "rotateX" : "none");
+            chart.set("panY", name === "geoOrthographic" ? "rotateY" : "none");
+            chart.set("wheelY", name === "geoOrthographic" ? "rotateY" : "none");
+            chart.set("maxPanOut", 1);
+}
         // Update projection tracking
         this.previousProjection = this.currentProjection;
         this.currentProjection = name;
