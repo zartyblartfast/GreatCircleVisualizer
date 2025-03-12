@@ -10,9 +10,13 @@
 
 3. **Projection Transition Issue**: After selecting the AE map, all other map projections selected afterward are out of position in the viewing area.
 
+4. **Mercator Map Distortion and Positioning Issue**: The Mercator map shows distorted grid lines (latitude and longitude) that are not exactly straight and parallel. Users can distort the map internally using mousepad/scroll wheel, which should not be possible. Additionally, after viewing the AE projection, the Mercator map is the most severely affected by positioning issues - often appearing completely outside the viewport area.
+
 ### Section 2 (Comparison Section without Toggle Button)
 
 1. **Vertical Scrolling/Panning Problem**: The AE map exhibits the same issue as in Section 1, where it can be vertically scrolled/panned, causing internal distortion rather than proper movement.
+
+2. **Mercator Map Distortion and Positioning Issue**: Similar to Section 1, the Mercator map displays distorted grid lines and allows unwanted internal distortion via mousepad/scroll wheel. The map should maintain straight, parallel grid lines and resist user manipulation of its internal geometry.
 
 ## Technical Analysis
 
