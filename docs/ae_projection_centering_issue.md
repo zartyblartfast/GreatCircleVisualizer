@@ -34,9 +34,20 @@ Based on code analysis, here are the specific fixes for each issue:
 **Problem**: The AE map can be vertically scrolled/panned, causing internal distortion.
 
 **Solution**:
-1. Modify `restoreAEProjection` function in `mapProjection.js` (line 284):
-   - Change `chart.set("panY", "rotateY");` to `chart.set("panY", "none");`
-   - This prevents vertical panning/distortion while still allowing horizontal rotation
+1. Modify `restoreAEProjection` function in `mapProjection.js` (lines 283-285):
+   ```javascript
+   // Change from:
+   chart.set("panX", "rotateX");
+   chart.set("panY", "rotateY");
+   chart.set("wheelY", "rotateY");
+   
+   // To:
+   chart.set("panX", "none");
+   chart.set("panY", "none");
+   chart.set("wheelY", "none");
+   ```
+   - This completely disables panning and wheel interactions, matching the behavior in the test_d3_latest.html file
+   - The test file shows that disabling all interactions prevents the distortion problem while still displaying the map correctly
 
 ### Fix 2: Initial Positioning Issue in Section 1
 
