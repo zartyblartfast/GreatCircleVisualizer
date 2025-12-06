@@ -1,4 +1,4 @@
-//import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.4.0/latlon-spherical.min.js';
+﻿//import LatLon from 'https://cdn.jsdelivr.net/npm/geodesy@2.4.0/latlon-spherical.min.js';
 
 export class LocationPair {
   constructor() {
@@ -180,8 +180,8 @@ export class LocationPair {
         <span class="distance-info">Distances (km):</span>
       </div>
       <div class="distance-info">
-        <p>Great Circle: ${pair.GreatCircleDistKm.toFixed(1)}</p>
-        <p>Rhumb Line: ${pair.RhumbLineDistKm.toFixed(1)} (${signedPercentageDifference}%)</p>
+        <p>Great Circle: ${Number(pair.GreatCircleDistKm).toFixed(1)}</p>
+        <p>Rhumb Line: ${Number(pair.RhumbLineDistKm).toFixed(1)} (${signedPercentageDifference}%)</p>
       </div>
     </div>`
   
