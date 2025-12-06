@@ -391,7 +391,30 @@ class MapComparisonDisplay {
             chart.set("panY", name === "geoOrthographic" ? "rotateY" : "none");
             chart.set("wheelY", name === "geoOrthographic" ? "rotateY" : "none");
             chart.set("maxPanOut", 1);
-}
+            
+            // Add a delayed force-set of critical properties using setTimeout
+            // This ensures our settings take precedence over any AMCharts defaults
+            // that might be applied during initialization
+            Logger.debug('mapComparisonDisplay', "Setting up delayed force-set of properties for AE transition");
+            setTimeout(() => {
+                Logger.debug('mapComparisonDisplay', "DELAYED FORCE-SET: Applying critical properties after AE transition");
+                chart.set("rotationX", 0);
+                chart.set("rotationY", 0);
+                chart.set("panX", name === "geoOrthographic" ? "rotateX" : "none");
+                chart.set("panY", name === "geoOrthographic" ? "rotateY" : "none");
+                chart.set("wheelY", name === "geoOrthographic" ? "rotateY" : "none");
+                chart.set("maxPanOut", 1);
+                
+                Logger.debug('mapComparisonDisplay', "AFTER DELAYED FORCE-SET - Chart properties:", {
+                    rotationX: chart.get("rotationX"),
+                    rotationY: chart.get("rotationY"),
+                    panX: chart.get("panX"),
+                    panY: chart.get("panY"),
+                    wheelY: chart.get("wheelY"),
+                    maxPanOut: chart.get("maxPanOut")
+                });
+            }, 100); // 100ms delay should be enough for AMCharts to complete its initialization
+        }
         // Update projection tracking
         this.previousProjection = this.currentProjection;
         this.currentProjection = name;

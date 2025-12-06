@@ -1,0 +1,291 @@
+{
+  "geoMercator": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoAiry": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoAugust": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoBaker": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoBoggs": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoBromley": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoCollignon": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoConicEquidistant": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoCraig": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoEquirectangular": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoFahey": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoFoucaut": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoFoucautSinusoidal": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoNaturalEarth1": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoLaskowski": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoLagrange": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoPeirceQuincuncial": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoTransverseMercator": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoVanDerGrinten": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false
+  },
+  "geoAzimuthalEquidistant": {
+    "rotationX": 0,
+    "rotationY": -90,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": true
+  },
+  "geoConicConformal": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 1
+  },
+  "geoConicEqualArea": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 1
+  },
+  "geoConicEquidistantScaled": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 1
+  },
+  "geoEquirectangularScaled": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 1
+  },
+  "geoGnomonic": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 1
+  },
+  "geoIdentity": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 1
+  },
+  "geoNaturalEarth1Scaled": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 1
+  },
+  "geoStereographic": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 1
+  },
+  "geoTransverseMercatorScaled": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 1
+  },
+  "geoOrthographic": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "rotateX",
+    "panY": "rotateY",
+    "wheelY": "rotateY",
+    "maxPanOut": 0,
+    "allowRotation": true
+  },
+  "default": {
+    "rotationX": 0,
+    "rotationY": 0,
+    "panX": "none",
+    "panY": "none",
+    "wheelY": "none",
+    "maxPanOut": 0,
+    "allowRotation": false,
+    "scale": 100
+  }
+}

@@ -34,6 +34,15 @@
 </head>
 
 <body>
+  <script>
+    window.addEventListener('unhandledrejection', (event) => {
+      const msg = String((event && event.reason && event.reason.message) || (event && event.reason) || '');
+      if (msg.includes('MetaMask') || msg.includes('ethereum')) {
+        event.preventDefault();
+        return;
+      }
+    });
+  </script>
   <!--<header class="headroom">-->
   <header>
   <!--<header>-->

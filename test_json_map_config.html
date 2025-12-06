@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Map Configuration Test</title>
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
+            height: 100vh;
+        }
+
+        #chartdiv {
+            width: 70%;
+            height: 100%;
+        }
+
+        #controls-panel {
+            width: 30%;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            background: #f7f7f7;
+            border-left: 1px solid #ccc;
+            height: 100vh;
+        }
+
+        #coordinates {
+            font-size: 16px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+        }
+
+        #instructions {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        select, button {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+
+        #log {
+            font-family: monospace;
+            font-size: 12px;
+            background: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        #map-properties {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        #map-properties h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .property-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .property-table th, .property-table td {
+            text-align: left;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .property-table th {
+            background-color: #f2f2f2;
+        }
+
+        .refresh-button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="chartdiv"></div>
+        <div id="controls-panel">
+            <h3>Map Configuration Test</h3>
+            
+            <div class="control-group">
+                <label for="projection-select">Select Projection:</label>
+                <select id="projection-select"></select>
+            </div>
+            
+            <div class="control-group">
+                <button id="toggle-map-globe">Toggle Map/Globe</button>
+            </div>
+            
+            <div class="control-group">
+                <button id="refresh-config">Refresh Configuration</button>
+            </div>
+            
+            <div id="coordinates">Map Center: Checking...</div>
+            
+            <div id="instructions">
+                This test page demonstrates the JSON-based map configuration system.
+                Select different projections from the dropdown to see how the configuration is applied.
+                Use the Toggle Map/Globe button to switch between map and globe views.
+            </div>
+            
+            <div id="map-properties">
+                <h3>Current Map Properties</h3>
+                <table class="property-table">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody id="properties-body">
+                        <!-- Properties will be populated here -->
+                    </tbody>
+                </table>
+                <button class="refresh-button" id="refresh-properties">Refresh Properties</button>
+            </div>
+            
+            <div id="log"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Simple logger for the test page
+        const Logger = {
+            log(message, data) {
+                const logElement = document.getElementById('log');
+                const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+                const logMessage = `[${timestamp}] ${message}`;
+                
+                console.log(logMessage, data);
+                
+                const logEntry = document.createElement('div');
+                logEntry.textContent = data ? `${logMessage}: ${JSON.stringify(data)}` : logMessage;
+                logElement.appendChild(logEntry);
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        };
+
+        // Global chart reference for use in property display
+        let globalChart = null; 
+        let projectionConfigs = null; 
+
+        // Function to load the JSON configuration
+        async function loadProjectionConfigs() {
+            try {
+                // Add cache-busting parameter to ensure we get the latest version
+                const cacheBuster = new Date().getTime();
+                const response = await fetch(`./data/projections2.json?_=${cacheBuster}`, {
+                    cache: 'no-store' // Force fetch to bypass cache
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load projections: ${response.status} ${response.statusText}`);
+                }
+                
+                const projections = await response.json();
+                Logger.log(`Successfully loaded ${projections.length} projections from JSON`);
+                return projections;
+            } catch (error) {
+                Logger.log(`Error loading projections: ${error.message}`);
+                // Return empty array if loading fails
+                return [];
+            }
+        }
+
+        // Function to get configuration for a specific projection
+        function getProjectionConfig(projectionValue) { 
+            Logger.log(`Looking for configuration for ${projectionValue}`);
+            if (!projectionConfigs || projectionConfigs.length === 0) {
+                 Logger.log(`Projection configs array is missing or empty.`);
+                 return getDefaultConfig(); 
+            }
+            // Find the config where the D3 name derived from p.projection matches the input projectionValue
+            const config = projectionConfigs.find(p => {
+                // Ensure p.projection exists and is a string before trying to match
+                if (!p.projection || typeof p.projection !== 'string') return false;
+                const match = p.projection.match(/d3\.([\w]+)\(/);
+                // Check if match was successful and compare the extracted D3 name (match[1])
+                return match && match[1] === projectionValue;
+            });
+            if (config) {
+                Logger.log(`Found configuration: ${JSON.stringify(config)}`);
+                return config;
+            }
+            Logger.log(`Configuration not found for ${projectionValue}, using default`);
+            return getDefaultConfig(); 
+        }
+
+        // Helper function for default configuration
+        function getDefaultConfig() {
+            return {
+                rotation: [0, 0, 0], 
+                center: [0, 0],     
+                scale: 1,           
+                panX: "rotateX",
+                panY: "rotateY",
+                wheelY: "zoom",
+                maxPanOut: 0.7,
+                allowRotation: false,
+                homeGeoPoint: { longitude: 0, latitude: 0 },
+                homeZoomLevel: 1
+            };
+        }
+
+        // Function to apply configuration to a chart
+        function applyProjectionConfig(chart, config) {
+             Logger.log(`Applying chart configuration:`, config);
+             // Apply amCharts-specific settings from config
+             chart.setAll({
+                panX: config.panX !== undefined ? config.panX : "rotateX", // Default to rotateX if not set
+                panY: config.panY !== undefined ? config.panY : "rotateY", // Default to rotateY if not set
+                wheelY: config.wheelY !== undefined ? config.wheelY : "zoom",   // Default to zoom if not set
+                maxPanOut: config.maxPanOut !== undefined ? config.maxPanOut : 0.7, // Default if not set
+                homeGeoPoint: config.homeGeoPoint || { longitude: config.center ? config.center[0] : 0, latitude: config.center ? config.center[1] : 0 }, // Use default center if needed
+                homeZoomLevel: config.homeZoomLevel || 1,
+                // Apply amCharts rotation if present in config (JSON uses these names)
+                rotationX: config.rotationX !== undefined ? config.rotationX : 0,
+                rotationY: config.rotationY !== undefined ? config.rotationY : 0
+             });
+             // Note: allowRotation might control amCharts rotation behavior, but d3 rotation is separate
+             // chart.set("allowRotation", config.allowRotation !== undefined ? config.allowRotation : false); // Consider if needed
+
+             // Don't need the displayMapProperties call here, it's called after setProjection completes
+             // if (globalChart) { setTimeout(displayMapProperties, 100); } 
+             return chart;
+        }
+        
+        // Add a helper function to reset the map to a good default state
+        function resetMapPosition(chart, isAE = false) {
+            // Reset rotation (but handle AE specially)
+            chart.set("rotationX", 0);
+            
+            if (isAE) {
+                chart.set("rotationY", -90);
+                chart.set("zoom", 1);
+            } else {
+                // Reset zoom and position for non-AE projections
+                chart.goHome();
+            }
+            
+            // Force redraw
+            chart.markDirtyProjection();
+        }
+
+        // Function to get and display current map properties
+        function displayMapProperties() {
+            if (!globalChart) {
+                Logger.log("Cannot display properties: chart is not initialized yet");
+                return;
+            }
+            
+            const propertiesToDisplay = [
+                "projection",
+                "scale",
+                "zoom",
+                "rotationX",
+                "rotationY",
+                "panX",
+                "panY",
+                "wheelY",
+                "maxPanOut",
+                "visible",
+                "centerMapOnZoomOut",
+                "maxZoomLevel",
+                "zoomStep"
+            ];
+            
+            const tbody = document.getElementById("properties-body");
+            tbody.innerHTML = ""; // Clear existing rows
+            
+            propertiesToDisplay.forEach(prop => {
+                const row = document.createElement("tr");
+                
+                const propCell = document.createElement("td");
+                propCell.textContent = prop;
+                
+                const valueCell = document.createElement("td");
+                let value = globalChart.get(prop);
+                
+                // Special handling for projection which is an object
+                if (prop === "projection" && value) {
+                    value = value.constructor.name || "Unknown";
+                }
+                
+                valueCell.textContent = value !== undefined ? value : "undefined";
+                
+                row.appendChild(propCell);
+                row.appendChild(valueCell);
+                tbody.appendChild(row);
+            });
+            
+            Logger.log("Map properties refreshed", getMapPropertiesObject());
+        }
+        
+        // Function to get map properties as an object (for logging)
+        function getMapPropertiesObject() {
+            if (!globalChart) {
+                return { error: "Chart not initialized" };
+            }
+            
+            return {
+                projection: globalChart.get("projection") ? globalChart.get("projection").constructor.name : "undefined",
+                scale: globalChart.get("scale"),
+                zoom: globalChart.get("zoom"),
+                rotationX: globalChart.get("rotationX"),
+                rotationY: globalChart.get("rotationY"),
+                panX: globalChart.get("panX"),
+                panY: globalChart.get("panY"),
+                wheelY: globalChart.get("wheelY"),
+                maxPanOut: globalChart.get("maxPanOut"),
+                visible: globalChart.get("visible"),
+                centerMapOnZoomOut: globalChart.get("centerMapOnZoomOut"),
+                maxZoomLevel: globalChart.get("maxZoomLevel"),
+                zoomStep: globalChart.get("zoomStep")
+            };
+        }
+
+        // Helper function to calculate the appropriate scale for a D3 projection
+        function calculateProjectionScale(projection, width, height) { 
+            // Define the bounding box for the world in geographic coordinates
+            const geoJsonBounds = {
+                type: "FeatureCollection",
+                features: [{
+                    type: "Feature",
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [[[-180, -90], [-180, 90], [180, 90], [180, -90], [-180, -90]]]
+                    }
+                }]
+            };
+
+            // Calculate the projected bounds of the world
+            const path = d3.geoPath().projection(projection);
+            const bounds = path.bounds(geoJsonBounds); // [[x0, y0], [x1, y1]]
+
+            // Calculate the scale factor needed to fit the bounds within the width/height
+            const dx = bounds[1][0] - bounds[0][0];
+            const dy = bounds[1][1] - bounds[0][1];
+            const x = (bounds[0][0] + bounds[1][0]) / 2;
+            const y = (bounds[0][1] + bounds[1][1]) / 2;
+
+            // Calculate scale based purely on fitting bounds
+            let scale = projection.scale() * Math.min(width / dx, height / dy); 
+
+            // Handle potential division by zero or invalid bounds
+            if (!isFinite(scale) || scale <= 0) {
+                Logger.warn(`Invalid scale calculated (${scale}). Using default scale 100.`);
+                scale = 100; // Default fallback scale
+            }
+
+            Logger.log(`Calculated bounds: ${JSON.stringify(bounds)}, dx: ${dx}, dy: ${dy}, current projection scale: ${projection.scale()}, viewport: ${width}x${height}`);
+            return scale;
+        }
+
+        // Wait for AM5 to be ready
+        am5.ready(async function() {
+            // Load projection configurations
+            const projections = await loadProjectionConfigs();
+            projectionConfigs = projections; // Store for later use
+            
+            // Log the loaded configurations for verification
+            Logger.log("Loaded Projection Configurations:", projectionConfigs); 
+            
+            // Initialize the root and chart
+            const root = am5.Root.new("chartdiv");
+            root.setThemes([am5themes_Animated.new(root)]);
+            
+            // Create initial projection (Mercator)
+            let currentProjection = "geoMercator";
+            let previousProjection = null;
+            let isGlobe = false;
+            
+            // Create the projection function
+            const projectionFunction = d3[currentProjection];
+            const projection = projectionFunction();
+            
+            // Apply appropriate scale and translation based on projection type
+            if (currentProjection === "geoAzimuthalEquidistant") {
+                // For AE projection
+                projection.scale(root.dom.clientHeight / 2)
+                         .translate([root.dom.clientWidth / 2, root.dom.clientHeight / 2]);
+            } else {
+                // For non-AE projections like Mercator
+                projection.scale(1)
+                         .translate([root.dom.clientWidth / 2, root.dom.clientHeight / 2]);
+            }
+            
+            // Create the chart with minimal settings, relying on JSON config for the rest
+            const chartSettings = {
+                projection: projection
+            };
+            
+            const chart = root.container.children.push(
+                am5map.MapChart.new(root, chartSettings)
+            );
+            
+            // Store chart in global variable for access outside this scope
+            globalChart = chart;
+            
+            // Apply initial configuration
+            const initialConfig = getProjectionConfig(currentProjection);
+            Logger.log("Initial configuration for " + currentProjection, initialConfig);
+            
+            // Apply configuration
+            applyProjectionConfig(chart, initialConfig);
+            
+            // Force a direct application of critical properties for AE projection
+            if (currentProjection === "geoAzimuthalEquidistant") {
+                Logger.log("Applying AE-specific chart settings");
+                // Apply settings needed for AE view
+                chart.setAll({
+                    panX: "none",
+                    panY: "none",
+                    wheelY: "none",
+                    maxPanOut: 0,
+                    rotationY: -90 // Common AE rotation for North Pole view
+                });
+                // Optionally set zoom specific to AE if needed
+                // chart.set("zoomLevel", 1); 
+
+                // Ensure map is redrawn with these settings
+                chart.markDirtyProjection(); // Use markDirtyProjection after changing projection props
+            } else {
+                // For non-AE projections, ensure map is properly positioned in the viewport
+                chart.goHome();
+            }
+            
+            // Create background series
+            const backgroundSeries = chart.series.unshift(
+                am5map.MapPolygonSeries.new(root, {})
+            );
+            backgroundSeries.mapPolygons.template.setAll({
+                fill: am5.color(0xedf7fa),
+                stroke: am5.color(0xedf7fa),
+            });
+            backgroundSeries.data.push({
+                geometry: am5map.getGeoRectangle(90, 180, -90, -180)
+            });
+            
+            // Create polygon series (countries)
+            const polygonSeries = chart.series.push(
+                am5map.MapPolygonSeries.new(root, {
+                    geoJSON: am5geodata_worldLow
+                })
+            );
+            
+            // Create point series (North Pole marker)
+            const pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
+            pointSeries.data.setAll([{
+                geometry: { type: "Point", coordinates: [0, 90] },
+                title: "North Pole"
+            }]);
+            
+            pointSeries.bullets.push(function(root, series, dataItem) {
+                return am5.Bullet.new(root, {
+                    sprite: am5.Circle.new(root, {
+                        radius: 6,
+                        fill: am5.color(0xff0000)
+                    })
+                });
+            });
+            
+            pointSeries.bulletsContainer.set("tooltipText", "{title}");
+            
+            // Function to update the coordinates display
+            function updateCoordinates() {
+                const coordinatesLabel = document.getElementById("coordinates");
+                
+                // Get chart properties
+                const rotX = chart.get("rotationX");
+                const rotY = chart.get("rotationY");
+                const panX = chart.get("panX");
+                const panY = chart.get("panY");
+                const wheelY = chart.get("wheelY");
+                const maxPanOut = chart.get("maxPanOut");
+                
+                // Display current settings
+                let info = `Current Projection: ${currentProjection}\n`;
+                info += `Previous Projection: ${previousProjection || "None"}\n`;
+                info += `Is Globe View: ${isGlobe}\n\n`;
+                info += `--- Chart Properties ---\n`;
+                info += `rotationX: ${rotX}\n`;
+                info += `rotationY: ${rotY}\n`;
+                info += `panX: ${panX}\n`;
+                info += `panY: ${panY}\n`;
+                info += `wheelY: ${wheelY}\n`;
+                info += `maxPanOut: ${maxPanOut}\n`;
+                
+                coordinatesLabel.textContent = info;
+            }
+            
+            // Populate projection dropdown
+            const projectionSelect = document.getElementById("projection-select");
+            
+            // Clear any existing options
+            projectionSelect.innerHTML = "";
+            
+            // Add a function to check if a projection exists in D3
+            function projectionExists(projName) {
+                return typeof d3[projName] === 'function';
+            }
+            
+            // Log available projections for debugging
+            Logger.log("Processing projections from JSON");
+            let availableProjectionsCount = 0;
+            
+            // Process each projection from the loaded JSON
+            projections.forEach(proj => {
+                // Extract the D3 function name without the d3. prefix and ()
+                const projId = proj.projection ? proj.projection.replace("d3.", "").replace("()", "") : "";
+                const exists = projectionExists(projId);
+                
+                Logger.log(`Projection ${projId}: ${exists ? 'Available' : 'Not available'}`);
+                
+                // Only add projections that exist in D3
+                if (exists) {
+                    availableProjectionsCount++;
+                    const option = document.createElement("option");
+                    option.value = projId;
+                    option.textContent = proj.name;
+                    if (projId === currentProjection) {
+                        option.selected = true;
+                    }
+                    projectionSelect.appendChild(option);
+                }
+            });
+            
+            Logger.log(`Populated dropdown with ${availableProjectionsCount} projections`);
+            
+            // Function to set projection
+            function setProjection(projectionValue, oldProjectionName = null) {
+                try {
+                    Logger.log(`Changing projection from ${oldProjectionName || 'initial'} to ${projectionValue}`);
+                    const width = chart.plotContainer.width();  
+                    const height = chart.plotContainer.height(); 
+                    const config = getProjectionConfig(projectionValue);
+                    if (!config) {
+                        Logger.log(`Configuration for projection ${projectionValue} not found.`);
+                        return;
+                    }
+                    Logger.log(`Retrieved config object for ${projectionValue}:`);
+                    console.log(config); // Log the whole object to console for inspection
+                    Logger.log(`Value of config.projection property: ${config.projection}`);
+
+                    // Extract the D3 function name (e.g., "geoMercator")
+                    const projectionName = config.projection.match(/d3\.([\w]+)\(/)[1];
+                    const d3ProjectionFunction = d3[projectionName];
+
+                    // Get viewport dimensions
+                    Logger.log(`Checking chart object before accessing plotContainer:`);
+                    console.log(chart);
+                    Logger.log(`Checking chart.plotContainer object:`);
+                    console.log(chart.plotContainer);
+
+                    if (!d3ProjectionFunction) {
+                        Logger.log(`D3 projection function ${projectionName} not found.`);
+                        return; // Exit if the D3 function isn't valid
+                    }
+
+                    let d3Projection = d3ProjectionFunction(); // Instantiate the D3 projection object
+
+                    // --- D3 Projection Setup (Scale, Translate, Rotate) ---
+                    if (projectionName === "geoAzimuthalEquidistant") {
+                        // --- AE Specific D3 Setup ---
+                        Logger.log("Applying AE-specific D3 projection setup (rotate, translate, scale)");
+                        // Rotate to center on North Pole BEFORE setting scale/translate
+                        d3Projection.rotate([0, -90]);
+                        // Center in viewport
+                        d3Projection.translate([width / 2, height / 2]);
+                        // Calculate scale to fit viewport diameter (simplified)
+                        const aeScale = Math.min(width, height) / 2 * 0.95; // 0.95 factor for padding
+                        d3Projection.scale(aeScale);
+                        Logger.log(`Set AE d3Projection: rotate=[0,-90], translate=[${width / 2}, ${height / 2}], scale=${aeScale}`);
+
+                    } else {
+                        // --- Standard D3 Setup ---
+                        Logger.log(`Applying standard D3 projection setup for ${projectionName}`);
+                        // Set the translation to the center of the viewport
+                        d3Projection.translate([width / 2, height / 2]);
+                        // Calculate scale using the helper function
+                        const calculatedScale = calculateProjectionScale(d3Projection, width, height); // Use updated helper
+                        d3Projection.scale(calculatedScale);
+                        Logger.log(`Set standard d3Projection: translate=[${width / 2}, ${height / 2}], scale=${calculatedScale}`);
+                    }
+
+                    // --- Set amCharts Projection ---
+                    chart.set("projection", d3Projection);
+
+                    // --- Apply Config & Overrides ---
+                    // Apply base config settings (might include initial zoom/rotation for some projections)
+                    Logger.log(`Applying chart configuration:: ${JSON.stringify(config)}`);
+                    applyProjectionConfig(config);
+
+                    // Apply final interaction/view overrides based on projection type
+                    if (projectionName === "geoAzimuthalEquidistant") {
+                         Logger.log(`Applying AE-specific final chart overrides (interaction=none, fixed view)`);
+                         // Ensure AE is non-interactive and view is locked
+                         chart.setAll({
+                             panX: "none",
+                             panY: "none",
+                             wheelY: "none",
+                             maxPanOut: 0,
+                             // Set rotations based on D3 setup, ensure they are fixed
+                             rotationX: 0,   // AE is typically viewed head-on
+                             rotationY: -90, // Matches the D3 rotate for North Pole center
+                             zoomLevel: 1    // Keep zoom fixed
+                         });
+                         chart.markDirtyProjection();
+                    } else {
+                        // --- Non-AE View Reset and Interaction ---
+                        Logger.log(`Manually resetting view for non-AE ${projectionName}`);
+                        chart.set("zoomLevel", chart.get("homeZoomLevel") || 1); // Reset zoom
+                        chart.set("rotationX", chart.get("rotationX") || 0);     // Reset rotation X
+                        chart.set("rotationY", chart.get("rotationY") || 0);     // Reset rotation Y
+
+                        // Apply interaction settings from config AFTER resetting view
+                        Logger.log(`Applying interaction controls for non-AE projection ${projectionName} from config`);
+                        chart.setAll({
+                            panX: config.panX || "rotateX", // Use config value or default
+                            panY: config.panY || "rotateY", // Use config value or default
+                            wheelY: config.wheelY || "zoom",   // Use config value or default
+                            maxPanOut: config.maxPanOut !== undefined ? config.maxPanOut : 0.7 // Use config value or default
+                        }); // Apply interaction from config *last*
+
+                        chart.markDirtyProjection(); // Mark dirty after manual reset
+                        chart.invalidateLayout();    // Force layout recalculation
+                    }
+
+                    // Update global state if you track it
+                    currentProjectionName = projectionValue; // Store the 'friendly' name or D3 name? Check usage. Let's use D3 name for consistency here.
+                    currentProjectionD3 = projectionName; // Store D3 name
+
+                    Logger.log(`Projection changed successfully to ${projectionValue} (D3: ${projectionName})`);
+
+                } catch (error) {
+                    Logger.log(`Error changing projection to ${projectionValue}: ${error.message}`); 
+                    console.error("Projection change error:", error); // Log full error to console
+                }
+            }
+            
+            // Handle projection selection change
+            projectionSelect.addEventListener("change", function(event) {
+                const selectedProjectionValue = event.target.value;
+                const currentProjectionName = chart.get("projection") instanceof am5.GeoProjection ? getD3ProjectionName(chart.get("projection").d3Projection) : 'geoMercator'; // Assuming Mercator if not a D3 object
+
+                Logger.log(`Event listener triggered for: ${selectedProjectionValue}`);
+                Logger.log(`Checking chart object validity before calling setProjection:`);
+                console.log(chart || 'Chart undefined'); // Log the chart object itself
+                Logger.log(`Checking chart.plotContainer validity before calling setProjection:`);
+                console.log(chart ? chart.plotContainer : 'Chart undefined'); // Keep check
+
+                setProjection(selectedProjectionValue, currentProjectionName); 
+            });
+            
+            // Handle map/globe toggle
+            const toggleButton = document.getElementById("toggle-map-globe");
+            toggleButton.textContent = "Switch to Globe View"; // Initial text
+            
+            toggleButton.addEventListener("click", function() {
+                const oldProjection = currentProjection;
+                
+                // Toggle between current projection and Orthographic (globe)
+                if (isGlobe) {
+                    // Switch back to previous flat map projection
+                    const targetProjection = previousProjection && previousProjection !== "geoOrthographic" 
+                        ? previousProjection 
+                        : "geoMercator";
+                    
+                    setProjection(targetProjection, "geoOrthographic");
+                    isGlobe = false;
+                    this.textContent = "Switch to Globe View";
+                } else {
+                    // Switch to globe view
+                    setProjection("geoOrthographic", oldProjection);
+                    isGlobe = true;
+                    this.textContent = "Switch to Map View";
+                }
+            });
+            
+            // Handle refresh button
+            document.getElementById("refresh-config").addEventListener("click", async function() {
+                Logger.log("Manually refreshing configuration");
+                
+                // Reload the configuration
+                const newConfigs = await loadProjectionConfigs();
+                
+                // Apply the current projection's configuration
+                const config = getProjectionConfig(currentProjection);
+                applyProjectionConfig(chart, config);
+                
+                // Update the display
+                updateCoordinates();
+                
+                Logger.log("Configuration refreshed and applied", config);
+            });
+            
+            // Handle refresh properties button
+            document.getElementById("refresh-properties").addEventListener("click", function() {
+                displayMapProperties();
+            });
+            
+            // Initial update
+            updateCoordinates();
+            
+            // Display initial map properties
+            setTimeout(displayMapProperties, 1000);
+            
+            // Log initial state
+            Logger.log("Chart initialized", {
+                projection: currentProjection,
+                rotationX: chart.get("rotationX"),
+                rotationY: chart.get("rotationY"),
+                panX: chart.get("panX"),
+                panY: chart.get("panY"),
+                wheelY: chart.get("wheelY"),
+                maxPanOut: chart.get("maxPanOut")
+            });
+        });
+    </script>
+</body>
+</html>
