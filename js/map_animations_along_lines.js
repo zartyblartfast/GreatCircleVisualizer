@@ -6,6 +6,7 @@ import {
     stopAnimationsAndClearData,
 } from './mapUtilities.js';
 import { setupProjectionDropdown, updateProjection} from './mapProjection.js';
+import { loadProjectionConfig } from './projectionConfig.js';
 
 "use strict";
 
@@ -40,7 +41,7 @@ let projectionFunction = d3[currentProjectionName];
 function initializeMap() {
     //console.log("Inside initializeMap()")
     // Update the projection and get the projection function
-    updateProjection(chart, 'd3.' + currentProjectionName + '()');
+    updateProjection(chart, currentProjectionName);
 
     var backgroundSeries = chart.series.unshift(
         am5map.MapPolygonSeries.new(root, {})
@@ -101,7 +102,7 @@ function initializeMap() {
 
     //console.log("linesMap: ",linesMap)
     // Setup projection dropdown
-    setupProjectionDropdown(chart);
+    setupProjectionDropdown(chart); // now async, returns promise
 }
 
 // Initialize map on page load
@@ -118,9 +119,9 @@ chart = root.container.children.push(am5map.MapChart.new(root, {
 
 //console.log("Chart after initialization:", chart);
 
-
+// Preload projection config before initializing map
+await loadProjectionConfig();
 initializeMap();
-
 
 document.addEventListener('pairExpandCollapse', function(event) {
     const { pairId, expanded } = event.detail;

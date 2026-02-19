@@ -1,6 +1,7 @@
-// mapUtilities.jsrtLocation
+// mapUtilities.js
 //import { currentProjectionName } from './mapProjection.js';
 import { currentProjectionName, updateProjection } from './mapProjection.js';
+import { applyProjectionConfig, applyOrthographic } from './projectionConfig.js';
 
 export function addCity(root, chart, pointSeries, coords, title, code, country) {
 
@@ -133,44 +134,32 @@ export function createSlider(root, chart, backgroundSeries, projectionFunction) 
         })
     }));
 
-    var currentProjection = chart.get("projection");
+    // Save the initial projection object for restore when toggling back from globe
+    var savedProjection = chart.get("projection");
 
     switchButton.on("active", function() {
-        var projectionSelect = document.getElementById('projectionSelect'); // Assuming the ID of the dropdown element is 'projectionSelect'
+        var projectionSelect = document.getElementById('projectionSelect');
         if (!switchButton.get("active")) {
+            // --- Switching BACK to Map mode ---
             labelMap.set("visible", true);
             labelGlobe.set("visible", false);
-    
-            chart.set("projection", currentProjection);
-    
-            if (currentProjectionName === "geoAzimuthalEquidistant") {
-                chart.set("panX", "rotateX");
-                chart.set("panY", "rotateY");
-                chart.set("rotationY", 1);
-                chart.set("wheelY","rotateY")
-                chart.set("wheelSensitivity", 0.3)
-            } else {
-                chart.set("panX", "rotateX");
-                //chart.set("panY", "translateY");
-                chart.set("panY", "none");
-                chart.set("rotationY", 0);
-                chart.set("wheelY","none")
-            }
-            chart.goHome();
-            projectionSelect.disabled = false; // Enable the dropdown
+
+            // Restore projection via unified config (full state reset)
+            applyProjectionConfig(chart, currentProjectionName);
+
+            projectionSelect.disabled = false;
         } else {
+            // --- Switching TO Globe mode ---
             labelMap.set("visible", false);
             labelGlobe.set("visible", true);
-    
-            currentProjection = chart.get("projection");
-            chart.set("projection", am5map.geoOrthographic());
-            chart.set("panY", "rotateY");
-            //chart.set("panY", "none");
-            chart.set("wheelY","rotateY")
-            chart.set("wheelSensitivity", 0.3)
-            chart.goHome();
-    
-            projectionSelect.disabled = true; // Disable the dropdown
+
+            // Save current projection object before switching
+            savedProjection = chart.get("projection");
+
+            // Apply orthographic via unified config
+            applyOrthographic(chart);
+
+            projectionSelect.disabled = true;
         }
     });
     

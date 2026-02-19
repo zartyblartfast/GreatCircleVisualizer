@@ -4,6 +4,7 @@ import { mapComparison } from './mapComparisonDisplay.js';
 /*                 Load & Populate the two dropdown boxes                       /
 /*******************************************************************************/
 await mapComparison.loadSuggestionPairs();
+await mapComparison.loadProjections();
 mapComparison.populateAirportDropdown();
 mapComparison.populateProjectionDropdown();
 

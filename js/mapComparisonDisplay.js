@@ -1,4 +1,5 @@
 import { calculateRhumbLinePoints, addRhumbLine } from './mapUtilities.js';
+import { loadProjectionConfig, getConfigCache, applyProjectionConfig, applyOrthographic } from './projectionConfig.js';
 
 class MapComparisonDisplay {
     constructor(rootElementId) {
@@ -15,39 +16,25 @@ class MapComparisonDisplay {
     
         // Initialize the data properties to null
         this.suggestionPairs = null;
-        this.projections = [
-            { id: "geoMercator", name: "Mercator" },
-            { id: "geoAiry", name: "Airy" },
-            { id: "geoAugust", name: "August" },
-            { id: "geoBaker", name: "Baker" },
-            { id: "geoBoggs", name: "Boggs" },
-            { id: "geoBromley", name: "Bromley" },
-            { id: "geoCollignon", name: "Collignon" },
-            { id: "geoConicEquidistant", name: "ConicEquidistant" },
-            { id: "geoCraig", name: "Craig" },
-            { id: "geoEquirectangular", name: "Equirectangular" },
-            { id: "geoFahey", name: "Fahey" },
-            { id: "geoFoucaut", name: "Foucaut" },
-            { id: "geoFoucautSinusoidal", name: "FoucautSinusoidal" },
-            { id: "geoNaturalEarth1", name: "NaturalEarth1" },
-            { id: "geoLaskowski", name: "Laskowski" },
-            { id: "geoLagrange", name: "Lagrange" },
-            { id: "geoPeirceQuincuncial", name: "PeirceQuincuncial" },
-            { id: "geoTransverseMercator", name: "TransverseMercator" },
-            { id: "geoVanDerGrinten", name: "VanDerGrinten" }
-
-            // If geoAzimuthalEquidistant is included, it messes up the positioning of all the maps in the div
-            //{ id: "geoAzimuthalEquidistant", name: "AzimuthalEquidistant" }
-            
-        ];
+        this.projections = null; // Loaded from projections.json via loadProjections()
       }
     
       initialize() {
         this.currentAirportPair = this.suggestionPairs[0]; // Set default to the first pair
-        this.currentProjection = this.projections[0].id; // Set default to the first projection
+        this.currentProjection = this.projections[0].id; // Set default to the first projection (d3Name)
         // ... other initializations
         this.handleAirportSelection(0);  // Index of the first airport pair
         this.handleProjectionSelection(0);  // Index of the first projection
+      }
+
+      async loadProjections() {
+        const allProjections = await loadProjectionConfig();
+        // Filter to only show projections marked for dropdown, exclude interrupted/polyhedral
+        this.projections = allProjections
+            .filter(p => p.showInDropdown !== false)
+            .filter(p => !['interrupted', 'polyhedral'].includes(p.family))
+            .sort((a, b) => a.id - b.id)
+            .map(p => ({ id: p.d3Name, name: p.name }));
       }
 
     handleAirportSelection(selectedIndex) {
@@ -273,22 +260,12 @@ class MapComparisonDisplay {
       });
     }
 
-    // The setProjection function can also be a method within this class
+    // Unified projection setter — delegates to projectionConfig.js
     setProjection(chart, name) {
-      chart.set("projection", d3[name].call(this));
-  
       if (name === 'geoOrthographic') {
-          chart.set("panX", "rotateX");
-          chart.set("panY", "rotateY");
-          chart.set("rotationX", 30); //geoOG_rotationX
-          chart.set("rotationY", -55); //geoOG_rotationY
-          chart.set("wheelY","rotateY");
-          chart.set("maxPanOut", 0);
+          applyOrthographic(chart);
       } else {
-          chart.set("panX", "none");
-          chart.set("panY", "none");
-          chart.set("wheelY","none");
-          chart.set("wheelX","none");
+          applyProjectionConfig(chart, name);
       }
       this.setButtonState("oc-2");
     }
@@ -457,10 +434,13 @@ class MapComparisonDisplay {
             console.error("Projection chart not initialized.");
             return;
         }
-             
-        if (this.currentProjection === "geoAzimuthalEquidistant") {
-          chartObject.localChart.set("rotationX", 0);
-          chartObject.localChart.set("rotationY", -90);
+
+        // Use config to determine if this projection has a fixed rotation (e.g., azimuthal)
+        const config = getConfigCache()?.find(p => p.d3Name === this.currentProjection);
+        if (config && config.family === "azimuthal") {
+          // Azimuthal projections use their config-defined centering
+          chartObject.localChart.set("rotationX", config.rotationX);
+          chartObject.localChart.set("rotationY", config.rotationY);
         } else {
           chartObject.localChart.set("rotationX", pair.geoOG_rotationX);
           chartObject.localChart.set("rotationY", 0);
