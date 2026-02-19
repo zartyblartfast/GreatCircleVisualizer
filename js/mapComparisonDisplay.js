@@ -1,5 +1,5 @@
 import { calculateRhumbLinePoints, addRhumbLine } from './mapUtilities.js';
-import { loadProjectionConfig, getConfigCache, applyProjectionConfig, applyOrthographic } from './projectionConfig.js';
+import { loadProjectionConfig, getConfigCache, applyProjectionConfig } from './projectionConfig.js';
 
 class MapComparisonDisplay {
     constructor(rootElementId) {
@@ -260,10 +260,19 @@ class MapComparisonDisplay {
       });
     }
 
-    // Unified projection setter — delegates to projectionConfig.js
+    // Unified projection setter
     setProjection(chart, name) {
       if (name === 'geoOrthographic') {
-          applyOrthographic(chart);
+          // Inline orthographic setup (not applyOrthographic) because
+          // this runs during initial chart creation before first render,
+          // where goHome() would fail on zero-dimension containers.
+          chart.set("projection", d3.geoOrthographic());
+          chart.set("panX", "rotateX");
+          chart.set("panY", "rotateY");
+          chart.set("rotationX", 30);
+          chart.set("rotationY", -55);
+          chart.set("wheelY", "rotateY");
+          chart.set("maxPanOut", 0);
       } else {
           applyProjectionConfig(chart, name);
       }
