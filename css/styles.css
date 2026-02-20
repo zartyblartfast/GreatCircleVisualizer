@@ -289,6 +289,63 @@ td, th { border: 1px solid #000; }
   margin-right: 5px;
 }
 
+/* Globe toggle switch */
+.globe-toggle-container {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+  gap: 6px;
+}
+
+.globe-toggle-label {
+  font-family: sans-serif;
+  font-size: 0.85em;
+  font-weight: 500;
+  min-width: 36px;
+}
+
+.globe-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.globe-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.globe-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 20px;
+}
+
+.globe-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.globe-toggle-switch input:checked + .globe-toggle-slider {
+  background-color: #6593f5;
+}
+
+.globe-toggle-switch input:checked + .globe-toggle-slider:before {
+  transform: translateX(20px);
+}
+
 #chartdiv1 {
   width: 100%;
   min-width: 800px;

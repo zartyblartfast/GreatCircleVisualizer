@@ -29,7 +29,7 @@ export function getConfigById(id) {
 // Full state reset + apply config from JSON for a given d3Name.
 // This is THE single function all code paths should call when switching projections.
 // It ensures no properties leak from a previous projection.
-export function applyProjectionConfig(chart, d3Name) {
+export function applyProjectionConfig(chart, d3Name, rotationXOverride = null) {
     const config = getConfigByD3Name(d3Name);
     if (!config) {
         console.error(`projectionConfig: no config found for "${d3Name}"`);
@@ -50,9 +50,12 @@ export function applyProjectionConfig(chart, d3Name) {
     // amCharts' internal center-preservation (prev.invert → projection → translate)
     // produces Infinity values if the old projection was pole-centered (e.g., AE rotationY=-90)
     // and the new projection can't represent poles (e.g., Mercator).
+    // rotationY is always neutralized to 0 (prevents pole Infinity).
+    // rotationX is set to the desired new value so center-preservation produces translate≈0.
+    const effectiveRotationX = rotationXOverride !== null ? rotationXOverride : config.rotationX;
     const oldProjection = chart.get("projection");
     if (oldProjection && oldProjection.rotate) {
-        oldProjection.rotate([0, 0, 0]);
+        oldProjection.rotate([effectiveRotationX, 0, 0]);
     }
     chart.set("rotationX", 0);
     chart.set("rotationY", 0);
@@ -62,19 +65,28 @@ export function applyProjectionConfig(chart, d3Name) {
     chart.set("wheelY", "none");
     chart.set("wheelX", "none");
     chart.set("maxPanOut", 0);
+    chart.set("zoomLevel", 1);
 
     // --- Apply config from JSON ---
     chart.set("panX", config.panX);
     chart.set("panY", config.panY);
     chart.set("wheelY", config.wheelY);
-    chart.set("rotationX", config.rotationX);
+    chart.set("rotationX", effectiveRotationX);
     chart.set("rotationY", config.rotationY);
     chart.set("maxPanOut", config.maxPanOut);
 
-    // For azimuthal projections, use goHome after a short delay to fix centering
+    // Set home properties so goHome() targets the correct center
     if (config.family === "azimuthal") {
+        if (config.homeGeoPoint) {
+            chart.set("homeGeoPoint", config.homeGeoPoint);
+        }
+        chart.set("homeRotationX", config.rotationX);
+        chart.set("homeRotationY", config.rotationY);
         setTimeout(() => { chart.goHome(); }, 100);
     } else {
+        chart.set("homeGeoPoint", { latitude: 0, longitude: 0 });
+        chart.set("homeRotationX", 0);
+        chart.set("homeRotationY", 0);
         chart.appear(1000, 100);
     }
 
@@ -94,6 +106,9 @@ export function applyOrthographic(chart) {
     chart.set("rotationX", 0);
     chart.set("rotationY", 0);
     chart.set("maxPanOut", 0);
+    chart.set("homeGeoPoint", { latitude: 0, longitude: 0 });
+    chart.set("homeRotationX", 0);
+    chart.set("homeRotationY", 0);
     chart.goHome();
     return projection;
 }

@@ -1,15 +1,13 @@
 import { 
     addCity, 
     addLineAndPlane, 
-    createSlider, 
     createPointSeries, 
     stopAnimationsAndClearData,
 } from './mapUtilities.js';
-import { setupProjectionDropdown, updateProjection} from './mapProjection.js';
-import { loadProjectionConfig } from './projectionConfig.js';
+import { setupProjectionDropdown, updateProjection, currentProjectionName } from './mapProjection.js';
+import { loadProjectionConfig, applyProjectionConfig, applyOrthographic } from './projectionConfig.js';
 
 "use strict";
-
 
 // Access the global instance
 var globalLocationPair = window.globalLocationPair;
@@ -25,7 +23,6 @@ var root = am5.Root.new("chartdiv1");
 // Set themes
 root.setThemes([am5themes_Animated.new(root)]);
 
-var currentProjectionName = "geoMercator";
 var chart;
 var backgroundSeries;
 var polygonSeries;
@@ -34,9 +31,6 @@ var lineSeries;
 var pointSeries;
 var rhumbLineSeries;
 var planeSeriesArray = [];
-
-// Get the projection function from the D3 object
-let projectionFunction = d3[currentProjectionName];
 
 function initializeMap() {
     //console.log("Inside initializeMap()")
@@ -58,8 +52,8 @@ function initializeMap() {
         geometry: am5map.getGeoRectangle(90, 180, -90, -180)
       });
 
-    // Call the function to create the slider
-    createSlider(root, chart, backgroundSeries, projectionFunction);
+    // Globe toggle is now an HTML element (see index.html #globe-toggle)
+    // Canvas-based createSlider removed for Brave browser compatibility
 
 
     // Create main polygon series for countries
@@ -123,6 +117,24 @@ chart = root.container.children.push(am5map.MapChart.new(root, {
 await loadProjectionConfig();
 initializeMap();
 
+// --- HTML Globe Toggle ---
+var globeToggle = document.getElementById('globe-toggle');
+var globeToggleLabel = document.getElementById('globe-toggle-label');
+globeToggle.addEventListener('change', function() {
+    var projectionSelect = document.getElementById('projectionSelect');
+    if (globeToggle.checked) {
+        // Switch TO Globe
+        globeToggleLabel.textContent = 'Globe';
+        applyOrthographic(chart);
+        projectionSelect.disabled = true;
+    } else {
+        // Switch BACK to Map
+        globeToggleLabel.textContent = 'Map';
+        applyProjectionConfig(chart, currentProjectionName);
+        projectionSelect.disabled = false;
+    }
+});
+
 document.addEventListener('pairExpandCollapse', function(event) {
     const { pairId, expanded } = event.detail;
     const lineReference = linesMap.get(pairId);
@@ -156,6 +168,10 @@ document.getElementById('make-maps-button').addEventListener('click', function()
     
     var projectionSelect = document.getElementById('projectionSelect'); // Assuming the ID of the dropdown element is 'projectionSelect'
     projectionSelect.disabled = false; // Enable the dropdown
+
+    // Reset globe toggle to Map mode
+    document.getElementById('globe-toggle').checked = false;
+    document.getElementById('globe-toggle-label').textContent = 'Map';
 
     // Stop animations and clear the data from each series in the planeSeriesArray
     stopAnimationsAndClearData(planeSeriesArray);

@@ -196,8 +196,8 @@ class MapComparisonDisplay {
               panY: projectionType === "geoOrthographic" ? "rotateY" : "none",
               wheelY: projectionType === "geoOrthographic" ? "rotateY" : "none",
               zoomLevel: 1,
-              maxZoomLevel: 0,
-              minZoomLevel: 0,
+              maxZoomLevel: 1,
+              minZoomLevel: 1,
               pinchZoomX: "none",
               pinchZoomY: "none",
               maxPanOut: 0
@@ -274,7 +274,12 @@ class MapComparisonDisplay {
           chart.set("wheelY", "rotateY");
           chart.set("maxPanOut", 0);
       } else {
-          applyProjectionConfig(chart, name);
+          const config = getConfigCache()?.find(p => p.d3Name === name);
+          const rotX = (config && config.family === "azimuthal")
+              ? config.rotationX
+              : (this.currentAirportPair?.geoOG_rotationX || 0);
+          applyProjectionConfig(chart, name, rotX);
+          chart.set("maxPanOut", 0);
       }
       this.setButtonState("oc-2");
     }
