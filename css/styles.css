@@ -96,7 +96,8 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0px 0px; 
+  padding: 0px 0px;
+  cursor: pointer;
 }
 
 .info-icon svg {
@@ -142,6 +143,7 @@ header {
   right: 2px;
   top: 50%;
   transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .tags-header-info-icon svg {
@@ -175,6 +177,7 @@ header {
   width: var(--field-width);
   height: var(--field-height);
   margin-top: 1px;
+  cursor: pointer;
   margin-bottom: 5px;
 }
 
@@ -287,6 +290,7 @@ td, th { border: 1px solid #000; }
 
 #projectionSelect {
   margin-right: 5px;
+  cursor: pointer;
 }
 
 /* Globe toggle switch */

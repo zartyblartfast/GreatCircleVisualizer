@@ -42,21 +42,25 @@ export function initCorridorSeries(root, chart) {
     atobSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
     atobSeries.mapLines.template.setAll({
         stroke: am5.color(ATOB_COLOR),
-        strokeWidth: 4,
+        strokeWidth: 6,
         strokeOpacity: 0.7,
-        strokeDasharray: [6, 4],
-        interactive: true
+        strokeDasharray: [16, 6],
+        interactive: true,
+        cursorOverStyle: "pointer"
     });
+    atobSeries.mapLines.template.set("tooltip", am5.Tooltip.new(root, {}));
 
     // B→A direction series
     btoaSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
     btoaSeries.mapLines.template.setAll({
         stroke: am5.color(BTOA_COLOR),
-        strokeWidth: 4,
+        strokeWidth: 6,
         strokeOpacity: 0.7,
-        strokeDasharray: [6, 4],
-        interactive: true
+        strokeDasharray: [16, 6],
+        interactive: true,
+        cursorOverStyle: "pointer"
     });
+    btoaSeries.mapLines.template.set("tooltip", am5.Tooltip.new(root, {}));
 }
 
 /**
@@ -107,8 +111,10 @@ export function hideCorridor() {
  */
 function clearSeries(series) {
     if (!series) return;
-    while (series.dataItems.length > 0) {
-        series.disposeDataItem(series.dataItems[0]);
+    // Snapshot the items to avoid mutating the array during iteration
+    const items = [...series.dataItems];
+    for (const item of items) {
+        series.disposeDataItem(item);
     }
 }
 
@@ -168,8 +174,7 @@ function drawMedianLine(series, dataset, origin, dest) {
             geometry: {
                 type: "LineString",
                 coordinates: seg
-            },
-            tooltipText: tooltipText
+            }
         });
     }
 

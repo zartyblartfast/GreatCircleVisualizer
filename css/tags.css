@@ -15,6 +15,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  cursor: pointer;
   /*background-color: #6593f5;*/
   background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);
   /*background-color: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027); */

@@ -68,6 +68,7 @@
     position: absolute;  /* Makes it absolute relative to the parent container */
     left: 25%;  /* 25% from the left of .legend-container */
     top: 50%;  /* Centers it vertically */
+    cursor: pointer;
     transform: translateY(-50%);  /* Fixes the vertical centering */
     display: flex;
     align-items: center;
@@ -89,6 +90,7 @@
     display: flex;
     align-items: center;
     margin-left: 5px;
+    cursor: pointer;
 }
 
 .GC_RL_Explainer-info-icon-container svg {
