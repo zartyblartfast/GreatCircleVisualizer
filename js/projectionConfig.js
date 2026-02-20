@@ -87,7 +87,6 @@ export function applyProjectionConfig(chart, d3Name, rotationXOverride = null) {
         chart.set("homeGeoPoint", { latitude: 0, longitude: 0 });
         chart.set("homeRotationX", 0);
         chart.set("homeRotationY", 0);
-        chart.appear(1000, 100);
     }
 
     return true;
