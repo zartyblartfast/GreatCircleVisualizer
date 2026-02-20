@@ -11,3 +11,5 @@
 ./yarn.lock
 ./data/projections copy.json
 node_modules
+tools/corridors/dist
+data/tracks

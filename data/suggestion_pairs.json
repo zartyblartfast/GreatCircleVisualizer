@@ -17,7 +17,13 @@
       "RhumbLineDistKm": 17153.212402577898,
       "RhumbLineDisplay": false,
       "geoOG_rotationX": null,
-      "geoOG_rotationY": null
+      "geoOG_rotationY": null,
+      "verification": {
+        "directScheduled": "unknown"
+      },
+      "corridor": {
+        "available": false
+      }
     },
     {
       "id": "HBA-QET",
@@ -37,7 +43,13 @@
       "RhumbLineDistKm": 8728.663235674474,
       "RhumbLineDisplay": true,
       "geoOG_rotationX": -100.0,
-      "geoOG_rotationY": 7.0
+      "geoOG_rotationY": 7.0,
+      "verification": {
+        "directScheduled": "unknown"
+      },
+      "corridor": {
+        "available": false
+      }
     },
     {
       "id": "LAX-DXB",
@@ -57,7 +69,13 @@
       "RhumbLineDistKm": 16802.602071247315,
       "RhumbLineDisplay": true,
       "geoOG_rotationX": 30,
-      "geoOG_rotationY": -85
+      "geoOG_rotationY": -85,
+      "verification": {
+        "directScheduled": "unknown"
+      },
+      "corridor": {
+        "available": false
+      }
     },
     {
       "id": "HBA-USH",
@@ -77,7 +95,13 @@
       "RhumbLineDistKm": 10567.277602879296,
       "RhumbLineDisplay": true,
       "geoOG_rotationX": 140,
-      "geoOG_rotationY": 73
+      "geoOG_rotationY": 73,
+      "verification": {
+        "directScheduled": "unknown"
+      },
+      "corridor": {
+        "available": false
+      }
     },
     {
       "id": "LBV-UIO",
@@ -97,7 +121,13 @@
       "RhumbLineDistKm": 9759.345126144412,
       "RhumbLineDisplay": false,
       "geoOG_rotationX": null,
-      "geoOG_rotationY": null
+      "geoOG_rotationY": null,
+      "verification": {
+        "directScheduled": "unknown"
+      },
+      "corridor": {
+        "available": false
+      }
     },
     {
       "id": "LBV-TTE", 
@@ -117,7 +147,13 @@
       "RhumbLineDistKm": 13116.820809705237,
       "RhumbLineDisplay": false,
       "geoOG_rotationX": null,
-      "geoOG_rotationY": null
+      "geoOG_rotationY": null,
+      "verification": {
+        "directScheduled": "unknown"
+      },
+      "corridor": {
+        "available": false
+      }
     },
     {
       "id": "NZIR-CPT",
@@ -137,7 +173,13 @@
       "RhumbLineDistKm": 9222.591252356407,
       "RhumbLineDisplay": true,
       "geoOG_rotationX": -20,
-      "geoOG_rotationY": 30
+      "geoOG_rotationY": 30,
+      "verification": {
+        "directScheduled": "unknown"
+      },
+      "corridor": {
+        "available": false
+      }
     },
     {
       "id": "NZSP-CYLT",
@@ -157,6 +199,12 @@
       "RhumbLineDistKm": 19183.130612712583,
       "RhumbLineDisplay": false,
       "geoOG_rotationX": null,
-      "geoOG_rotationY": null
+      "geoOG_rotationY": null,
+      "verification": {
+        "directScheduled": "unknown"
+      },
+      "corridor": {
+        "available": false
+      }
     }
   ]
