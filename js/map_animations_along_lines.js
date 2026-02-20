@@ -6,6 +6,7 @@ import {
 } from './mapUtilities.js';
 import { setupProjectionDropdown, updateProjection, currentProjectionName } from './mapProjection.js';
 import { loadProjectionConfig, applyProjectionConfig, applyOrthographic } from './projectionConfig.js';
+import { initCorridorSeries, showCorridor, hideCorridor } from './corridorRenderer.js';
 
 "use strict";
 
@@ -95,6 +96,9 @@ function initializeMap() {
     });
 
     //console.log("linesMap: ",linesMap)
+    // Create corridor line series (for median flight path overlay)
+    initCorridorSeries(root, chart);
+
     // Setup projection dropdown
     setupProjectionDropdown(chart); // now async, returns promise
 }
@@ -146,10 +150,12 @@ document.addEventListener('pairExpandCollapse', function(event) {
             lineReference._settings.mapLine.set("stroke", am5.color("#FF0000"));
             lineReference._settings.mapLine.set("strokeWidth", 5);
             lineReference._settings.mapLine.set("strokeOpacity", 0.5);
+            showCorridor(pairId);
         } else {
             lineReference._settings.mapLine.set("stroke", am5.color("#000000"));
             lineReference._settings.mapLine.set("strokeWidth", 4);
             lineReference._settings.mapLine.set("strokeOpacity", 0.3);
+            hideCorridor();
         }
         
         // Update chart to reflect changes
