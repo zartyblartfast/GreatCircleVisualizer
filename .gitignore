@@ -13,3 +13,6 @@
 node_modules
 tools/corridors/dist
 data/tracks
+.env.json
+*.env.json
+credentials.json
