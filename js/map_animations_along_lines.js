@@ -6,6 +6,7 @@ import {
 } from './mapUtilities.js';
 import { setupProjectionDropdown, updateProjection, currentProjectionName } from './mapProjection.js';
 import { loadProjectionConfig, applyProjectionConfig, applyOrthographic } from './projectionConfig.js';
+import { initCorridorSeries, showCorridor, hideCorridor } from './corridorRenderer.js';
 
 "use strict";
 
@@ -73,10 +74,12 @@ function initializeMap() {
     lineSeries = chart.series.push(am5map.MapLineSeries.new(root, {}));
     lineSeries.mapLines.template.setAll({
         stroke: root.interfaceColors.get("alternativeBackground"),
-        strokeWidth: 4,
+        strokeWidth: 6,
         strokeOpacity: 0.3,
-        interactive: true
+        interactive: true,
+        cursorOverStyle: "pointer"
     });
+    lineSeries.mapLines.template.set("tooltip", am5.Tooltip.new(root, {}));
 
     // Create point series for markers
     pointSeries = createPointSeries(root, chart);
@@ -95,6 +98,9 @@ function initializeMap() {
     });
 
     //console.log("linesMap: ",linesMap)
+    // Create corridor line series (for median flight path overlay)
+    initCorridorSeries(root, chart);
+
     // Setup projection dropdown
     setupProjectionDropdown(chart); // now async, returns promise
 }
@@ -103,8 +109,7 @@ function initializeMap() {
 chart = root.container.children.push(am5map.MapChart.new(root, {
     panX: "rotateX",
     //panX: "none",
-    //panY: "translateY",
-    panY: "none",
+    panY: "translateY",
     rotationY: 0,
     projection: am5map.geoMercator(),
     minZoomLevel: 1.0,
@@ -144,12 +149,18 @@ document.addEventListener('pairExpandCollapse', function(event) {
 
         if (expanded) {
             lineReference._settings.mapLine.set("stroke", am5.color("#FF0000"));
-            lineReference._settings.mapLine.set("strokeWidth", 5);
+            lineReference._settings.mapLine.set("strokeWidth", 7);
             lineReference._settings.mapLine.set("strokeOpacity", 0.5);
+            // Only fetch corridors for pairs that have corridor data
+            const pair = globalLocationPair.locationPairs.find(p => p.id === pairId);
+            if (pair && pair.corridor && pair.corridor.available) {
+                showCorridor(pairId);
+            }
         } else {
             lineReference._settings.mapLine.set("stroke", am5.color("#000000"));
-            lineReference._settings.mapLine.set("strokeWidth", 4);
+            lineReference._settings.mapLine.set("strokeWidth", 6);
             lineReference._settings.mapLine.set("strokeOpacity", 0.3);
+            hideCorridor();
         }
         
         // Update chart to reflect changes

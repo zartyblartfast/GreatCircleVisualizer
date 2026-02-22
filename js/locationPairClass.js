@@ -125,7 +125,37 @@ export class LocationPair {
         mainLabel.textContent = `${pair.airportACode} - ${pair.airportBCode}`;
       }
       mainContent.appendChild(mainLabel);
-  
+
+      // Flight route indicator icon (plane) for pairs with corridor data
+      if (pair.corridor && pair.corridor.available) {
+        const corridorIcon = document.createElement('span');
+        corridorIcon.classList.add('corridor-icon');
+        corridorIcon.textContent = '✈';
+
+        // Build tooltip text with direction key
+        const datasets = pair.corridor.datasets || {};
+        const codeA = pair.airportACode;
+        const codeB = pair.airportBCode;
+        const lines = ['Flight route data available:'];
+        if (datasets.AtoB) {
+          lines.push(`── Blue dashed: ${codeA} → ${codeB}`);
+        }
+        if (datasets.BtoA) {
+          lines.push(`── Green dashed: ${codeB} → ${codeA}`);
+        }
+        corridorIcon.setAttribute('title', lines.join('\n'));
+
+        mainContent.appendChild(corridorIcon);
+      } else if (pair.isSuggested) {
+        const corridorIcon = document.createElement('span');
+        corridorIcon.classList.add('corridor-icon', 'corridor-icon-unavailable');
+        corridorIcon.textContent = '✈';
+        corridorIcon.setAttribute('title',
+          'Scheduled flight data not available.\nRoute only used by private or chartered flights.');
+
+        mainContent.appendChild(corridorIcon);
+      }
+
       const deleteButtonWrapper = document.createElement('div');
       deleteButtonWrapper.classList.add('delete-button-wrapper');
       mainContent.appendChild(deleteButtonWrapper);
@@ -183,8 +213,36 @@ export class LocationPair {
         <p>Great Circle: ${pair.GreatCircleDistKm.toFixed(1)}</p>
         <p>Rhumb Line: ${pair.RhumbLineDistKm.toFixed(1)} (${signedPercentageDifference}%)</p>
       </div>
-    </div>`
-  
+      ${pair.corridor && pair.corridor.available ? (() => {
+        const ds = pair.corridor.datasets || {};
+        const atob = ds.AtoB;
+        const btoa = ds.BtoA;
+        const totalFlights = (atob ? atob.nFlights : 0) + (btoa ? btoa.nFlights : 0);
+        const allFlights = [...new Set([
+          ...(atob && atob.flights ? atob.flights : []),
+          ...(btoa && btoa.flights ? btoa.flights : [])
+        ])];
+        const dateFrom = [atob && atob.dateFrom, btoa && btoa.dateFrom].filter(Boolean).sort()[0] || '';
+        const dateTo = [atob && atob.dateTo, btoa && btoa.dateTo].filter(Boolean).sort().pop() || '';
+        return '<div class="header">' +
+          '<hr class="separator">' +
+          '<span class="distance-info">✈ Flight Routes:</span>' +
+          '</div>' +
+          '<div class="corridor-info">' +
+          (atob
+            ? '<p><span class="corridor-key-blue">──</span> ' + pair.airportACode + ' → ' + pair.airportBCode + ' (' + atob.nFlights + ' flights)</p>' : '') +
+          (btoa
+            ? '<p><span class="corridor-key-green">──</span> ' + pair.airportBCode + ' → ' + pair.airportACode + ' (' + btoa.nFlights + ' flights)</p>' : '') +
+          '<p class="corridor-provenance">Method: median of ' + totalFlights + ' real ADS-B tracks</p>' +
+          (allFlights.length > 0
+            ? '<p class="corridor-provenance">Flights: ' + allFlights.join(', ') + '</p>' : '') +
+          (dateFrom && dateTo
+            ? '<p class="corridor-provenance">Period: ' + dateFrom + ' to ' + dateTo + '</p>' : '') +
+          '<p class="corridor-provenance">Source: <a href="https://opensky-network.org" target="_blank" rel="noopener">OpenSky Network</a></p>' +
+          '</div>';
+      })() : ''}
+    </div>`;
+
       tag.appendChild(additionalInfo);
 
       tag.addEventListener('click', () => {

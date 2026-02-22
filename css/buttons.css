@@ -65,6 +65,7 @@
   right: 7px; 
   top: 50%;
   transform: translateY(-45%);
+  cursor: pointer;
 }
 
 .button-info-icon svg {

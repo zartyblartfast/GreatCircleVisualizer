@@ -15,6 +15,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  cursor: pointer;
   /*background-color: #6593f5;*/
   background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);
   /*background-color: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027); */
@@ -35,7 +36,12 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* Change this from center to flex-start */
+  align-items: center;
+}
+
+.tag .main-content > span:first-child {
+  flex: 1;
+  min-width: 0;
 }
 
 .tag .main-content .iata-codes {
@@ -51,6 +57,31 @@
   justify-content: center;
   font-size: 1em; /* Adjust this as needed */
   line-height: 1; /* Adjust this as needed */
+}
+
+.tag .corridor-icon {
+  margin-left: 6px;
+  margin-right: 8px;
+  font-size: 1.1em;
+  cursor: help;
+  color: #FFD700;
+  flex-shrink: 0;
+  text-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+
+.tag .corridor-icon:hover {
+  color: #FFF176;
+  text-shadow: 0 0 4px rgba(0,0,0,0.7);
+}
+
+.tag .corridor-icon-unavailable {
+  color: #666;
+  text-shadow: none;
+}
+
+.tag .corridor-icon-unavailable:hover {
+  color: #888;
+  text-shadow: none;
 }
 
 .tag .delete-button-wrapper button {
@@ -118,6 +149,45 @@
   padding: 1px 0;
   border-top: none; /* Add this line to remove the border */
   border-bottom: none; /* Add this line to remove the border */
+}
+
+.tag-content .corridor-info {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.tag-content .corridor-info p {
+  margin: 0;
+  padding: 1px 0;
+}
+
+.corridor-key-blue {
+  color: #2563EB;
+  font-weight: bold;
+  letter-spacing: -2px;
+  margin-right: 4px;
+}
+
+.corridor-key-green {
+  color: #0D9488;
+  font-weight: bold;
+  letter-spacing: -2px;
+  margin-right: 4px;
+}
+
+.corridor-provenance {
+  font-size: 0.85em;
+  opacity: 0.8;
+  margin: 1px 0 !important;
+}
+
+.corridor-provenance a {
+  color: #b3ccdd;
+  text-decoration: underline;
+}
+
+.corridor-provenance a:hover {
+  color: #fff;
 }
 
 .tag .delete-button-wrapper button {
