@@ -152,12 +152,12 @@ async function fetchDataset(origin, dest) {
 
 /**
  * Draw a median polyline on a MapLineSeries using explicit LineString geometry.
- * Splits at the antimeridian to avoid wraparound artefacts.
+ * Each consecutive pair of points is rendered as its own 2-point segment,
+ * mirroring the rhumb line renderer approach. Antimeridian crossings are
+ * handled by inserting boundary points at ±180° inline.
  */
 function drawMedianLine(series, dataset, origin, dest) {
     if (!dataset || !dataset.median || dataset.median.length < 2) return;
-
-    const segments = splitAtAntimeridian(dataset.median);
 
     const tooltipText =
         `[bold]Typical Route: ${origin}→${dest}[/]` +
@@ -167,87 +167,54 @@ function drawMedianLine(series, dataset, origin, dest) {
             : "") +
         `\n${dataset.kPoints} track points`;
 
-    for (const seg of segments) {
-        if (seg.length < 2) continue;
+    // Build a point list with antimeridian crossings handled inline
+    // (same pattern as calculateRhumbLinePoints in mapUtilities.js)
+    const pts = dataset.median; // [lon, lat] pairs
 
-        series.pushDataItem({
-            geometry: {
-                type: "LineString",
-                coordinates: seg
+    for (let i = 1; i < pts.length; i++) {
+        const lon0 = pts[i - 1][0];
+        const lat0 = pts[i - 1][1];
+        const lon1 = pts[i][0];
+        const lat1 = pts[i][1];
+
+        // Check for antimeridian crossing (lon jump > 180°)
+        if (Math.abs(lon1 - lon0) > 180) {
+            // Interpolate the crossing latitude
+            let uLon0 = lon0;
+            let uLon1 = lon1;
+            if (uLon0 > 0 && uLon1 < 0) {
+                uLon1 += 360;
+            } else if (uLon0 < 0 && uLon1 > 0) {
+                uLon1 -= 360;
             }
-        });
+            const target = uLon0 > 0 ? 180 : -180;
+            const t = (uLon1 !== uLon0) ? (target - uLon0) / (uLon1 - uLon0) : 0.5;
+            const latCross = lat0 + t * (lat1 - lat0);
+
+            // Segment up to boundary
+            if (lon0 > 0) {
+                pushSegment(series, [lon0, lat0], [180, latCross]);
+                pushSegment(series, [-180, latCross], [lon1, lat1]);
+            } else {
+                pushSegment(series, [lon0, lat0], [-180, latCross]);
+                pushSegment(series, [180, latCross], [lon1, lat1]);
+            }
+        } else {
+            pushSegment(series, [lon0, lat0], [lon1, lat1]);
+        }
     }
 
     series.mapLines.template.set("tooltipText", tooltipText);
 }
 
 /**
- * Split a polyline at antimeridian (±180°) crossings.
- * Returns array of segments, each safe to render without wraparound.
- *
- * @param {Array<[number, number]>} points  Array of [lon, lat]
- * @returns {Array<Array<[number, number]>>}
+ * Push a single 2-point LineString segment onto a MapLineSeries.
  */
-function splitAtAntimeridian(points) {
-    if (points.length < 2) return [points];
-
-    const segments = [];
-    let current = [[normLon(points[0][0]), points[0][1]]];
-
-    for (let i = 1; i < points.length; i++) {
-        const prev = current[current.length - 1];
-        const next = [normLon(points[i][0]), points[i][1]];
-
-        if (Math.abs(next[0] - prev[0]) > 180) {
-            // Crossing detected — interpolate boundary points
-            const cross = interpolateCrossing(prev, next);
-
-            if (prev[0] > 0) {
-                current.push(cross.atPlus180);
-                segments.push(current);
-                current = [cross.atMinus180, next];
-            } else {
-                current.push(cross.atMinus180);
-                segments.push(current);
-                current = [cross.atPlus180, next];
-            }
-        } else {
-            current.push(next);
+function pushSegment(series, coordA, coordB) {
+    series.pushDataItem({
+        geometry: {
+            type: "LineString",
+            coordinates: [coordA, coordB]
         }
-    }
-
-    if (current.length > 0) {
-        segments.push(current);
-    }
-
-    return segments;
-}
-
-function normLon(lon) {
-    while (lon > 180) lon -= 360;
-    while (lon <= -180) lon += 360;
-    return lon;
-}
-
-function interpolateCrossing(a, b) {
-    let lonA = a[0];
-    let lonB = b[0];
-    const latA = a[1];
-    const latB = b[1];
-
-    if (lonA > 0 && lonB < 0) {
-        lonB += 360;
-    } else if (lonA < 0 && lonB > 0) {
-        lonA += 360;
-    }
-
-    const target = lonA > 180 ? 540 : 180;
-    const denom = lonB - lonA;
-    const t = denom !== 0 ? (target - lonA) / denom : 0.5;
-    const latCross = latA + t * (latB - latA);
-
-    return {
-        atPlus180: [180, latCross],
-        atMinus180: [-180, latCross]
-    };
+    });
 }

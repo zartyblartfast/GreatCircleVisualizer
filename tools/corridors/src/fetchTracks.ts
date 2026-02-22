@@ -78,7 +78,7 @@ let tokenExpiresAt = 0;
 const IATA_TO_ICAO: Record<string, string> = {
   JFK: "KJFK", SIN: "WSSS", PER: "YPPH", LHR: "EGLL", LAX: "KLAX",
   DXB: "OMDB", JNB: "FAOR", ATL: "KATL", SYD: "YSSY", SCL: "SCEL",
-  NRT: "RJAA", HND: "RJTT", GRU: "SBGR",
+  NRT: "RJAA", HND: "RJTT", GRU: "SBGR", AKL: "NZAA",
 };
 
 // ---------------------------------------------------------------------------
@@ -321,13 +321,16 @@ async function main(): Promise<void> {
     readFileSync(SUGGESTIONS_PATH, "utf-8")
   );
 
-  let directPairs = pairs.filter(p => p.verification?.directScheduled === "yes");
+  let directPairs: SuggestionPair[];
   if (PAIR_FILTER) {
-    directPairs = directPairs.filter(p => p.id === PAIR_FILTER);
+    // When explicitly filtering, allow any pair (including directScheduled=unknown)
+    directPairs = pairs.filter(p => p.id === PAIR_FILTER);
     if (directPairs.length === 0) {
-      console.error(`  ✗ No pair matching "${PAIR_FILTER}" with directScheduled=yes`);
+      console.error(`  ✗ No pair matching "${PAIR_FILTER}" in suggestion_pairs.json`);
       process.exit(1);
     }
+  } else {
+    directPairs = pairs.filter(p => p.verification?.directScheduled === "yes");
   }
 
   console.log(`  Pairs to process: ${directPairs.map(p => p.id).join(", ")}`);

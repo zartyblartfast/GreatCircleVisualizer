@@ -317,5 +317,96 @@
         }
       }
     }
+  },
+  {
+    "id": "PER-JNB",
+    "airportAName": "Perth International Airport",
+    "airportACode": "PER",
+    "airportACountry": "AU",
+    "airportACountryFull": "Australia",
+    "airportALat": -31.9403,
+    "airportALon": 115.967,
+    "airportBName": "O.R. Tambo International Airport",
+    "airportBCode": "JNB",
+    "airportBCountry": "ZA",
+    "airportBCountryFull": "South Africa",
+    "airportBLat": -26.1392,
+    "airportBLon": 28.246,
+    "GreatCircleDistKm": 8309.635136,
+    "RhumbLineDistKm": 8546.358079,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": -72,
+    "geoOG_rotationY": 29,
+    "verification": {
+      "directScheduled": "yes"
+    },
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "AtoB": {
+          "datasetId": "PER-JNB-v1",
+          "kind": "median",
+          "nFlights": 3,
+          "kPoints": 200,
+          "dateFrom": "2026-02-17",
+          "dateTo": "2026-02-20",
+          "flights": [
+            "QFA65",
+            "SAA281"
+          ]
+        },
+        "BtoA": {
+          "datasetId": "JNB-PER-v1",
+          "kind": "median",
+          "nFlights": 6,
+          "kPoints": 200,
+          "dateFrom": "2026-02-15",
+          "dateTo": "2026-02-20",
+          "flights": [
+            "QFA66",
+            "SAA280"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "AKL-SCL",
+    "airportAName": "Auckland Airport",
+    "airportACode": "AKL",
+    "airportACountry": "NZ",
+    "airportACountryFull": "New Zealand",
+    "airportALat": -37.0082,
+    "airportALon": 174.785,
+    "airportBName": "Arturo Merino Benítez International Airport",
+    "airportBCode": "SCL",
+    "airportBCountry": "CL",
+    "airportBCountryFull": "Chile",
+    "airportBLat": -33.393,
+    "airportBLon": -70.7858,
+    "GreatCircleDistKm": 9653.424485,
+    "RhumbLineDistKm": 10401.559646,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": 128,
+    "geoOG_rotationY": 35,
+    "verification": {
+      "directScheduled": "yes"
+    },
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "BtoA": {
+          "datasetId": "SCL-AKL-v1",
+          "kind": "median",
+          "nFlights": 2,
+          "kPoints": 200,
+          "dateFrom": "2026-02-15",
+          "dateTo": "2026-02-18",
+          "flights": [
+            "LAN801"
+          ]
+        }
+      }
+    }
   }
 ]
