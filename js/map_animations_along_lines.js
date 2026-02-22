@@ -109,8 +109,7 @@ function initializeMap() {
 chart = root.container.children.push(am5map.MapChart.new(root, {
     panX: "rotateX",
     //panX: "none",
-    //panY: "translateY",
-    panY: "none",
+    panY: "translateY",
     rotationY: 0,
     projection: am5map.geoMercator(),
     minZoomLevel: 1.0,
@@ -152,7 +151,11 @@ document.addEventListener('pairExpandCollapse', function(event) {
             lineReference._settings.mapLine.set("stroke", am5.color("#FF0000"));
             lineReference._settings.mapLine.set("strokeWidth", 7);
             lineReference._settings.mapLine.set("strokeOpacity", 0.5);
-            showCorridor(pairId);
+            // Only fetch corridors for pairs that have corridor data
+            const pair = globalLocationPair.locationPairs.find(p => p.id === pairId);
+            if (pair && pair.corridor && pair.corridor.available) {
+                showCorridor(pairId);
+            }
         } else {
             lineReference._settings.mapLine.set("stroke", am5.color("#000000"));
             lineReference._settings.mapLine.set("strokeWidth", 6);

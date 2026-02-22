@@ -20,7 +20,7 @@ import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 
 import { resolve, join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { SuggestionPair, FlightTrack, CorridorDataset } from "./types.js";
-import { filterTracks, toLonLat } from "./lib/filter.js";
+import { filterTracks, toLonLat, type FilterConfig } from "./lib/filter.js";
 import { resampleTrack } from "./lib/resample.js";
 import { computeMedianPolyline } from "./lib/aggregate.js";
 import { haversineDistance } from "./lib/spherical.js";
@@ -39,7 +39,16 @@ const CORRIDORS_DIR = join(PROJECT_ROOT, "data", "corridors");
 // Config
 // ---------------------------------------------------------------------------
 const K_POINTS = parseInt(process.env.K_POINTS || "200", 10);
-const MIN_FLIGHTS = parseInt(process.env.MIN_FLIGHTS || "5", 10);
+const MIN_FLIGHTS = parseInt(process.env.MIN_FLIGHTS || "2", 10);
+const MAX_GAP_FRAC = parseFloat(process.env.MAX_GAP_FRAC || "0.95");
+const MIN_COVERAGE_FRAC = parseFloat(process.env.MIN_COVERAGE_FRAC || "0.15");
+const MIN_POINTS = parseInt(process.env.MIN_POINTS || "20", 10);
+
+const filterConfig: FilterConfig = {
+  minPoints: MIN_POINTS,
+  minCoverageFraction: MIN_COVERAGE_FRAC,
+  maxGapFraction: MAX_GAP_FRAC,
+};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -90,6 +99,44 @@ function loadTracksFromDir(dirPath: string): FlightTrack[] {
 }
 
 /**
+ * Anchor a track's [lon,lat] points to the expected origin and destination.
+ *
+ * If the first point is far from the origin, prepend the origin coords.
+ * If the last point is far from the destination, append the destination coords.
+ * This ensures incomplete tracks (e.g. ADS-B coverage drops over oceans)
+ * span the full route so that resampled points align across all tracks.
+ *
+ * @param lonlats    Track points [lon, lat]
+ * @param originLon  Expected origin airport longitude
+ * @param originLat  Expected origin airport latitude
+ * @param destLon    Expected destination airport longitude
+ * @param destLat    Expected destination airport latitude
+ * @param threshold  Distance in metres beyond which an anchor is added (default 200km)
+ */
+function anchorTrack(
+  lonlats: [number, number][],
+  originLon: number,
+  originLat: number,
+  destLon: number,
+  destLat: number,
+  threshold: number = 200_000
+): [number, number][] {
+  const result = [...lonlats];
+
+  const firstDist = haversineDistance(result[0], [originLon, originLat]);
+  if (firstDist > threshold) {
+    result.unshift([originLon, originLat]);
+  }
+
+  const lastDist = haversineDistance(result[result.length - 1], [destLon, destLat]);
+  if (lastDist > threshold) {
+    result.push([destLon, destLat]);
+  }
+
+  return result;
+}
+
+/**
  * Extract date range from track metadata.
  */
 function getDateRange(tracks: FlightTrack[]): { dateFrom?: string; dateTo?: string } {
@@ -108,7 +155,7 @@ function getDateRange(tracks: FlightTrack[]): { dateFrom?: string; dateTo?: stri
 
 function build(): void {
   console.log("buildCorridors: starting");
-  console.log(`  K_POINTS=${K_POINTS}, MIN_FLIGHTS=${MIN_FLIGHTS}`);
+  console.log(`  K_POINTS=${K_POINTS}, MIN_FLIGHTS=${MIN_FLIGHTS}, MAX_GAP_FRAC=${MAX_GAP_FRAC}, MIN_COVERAGE_FRAC=${MIN_COVERAGE_FRAC}`);
 
   if (!existsSync(SUGGESTIONS_PATH)) {
     console.error("  ✗ suggestion_pairs.json not found");
@@ -181,7 +228,8 @@ function build(): void {
         rawTracks,
         dir.origin,
         dir.dest,
-        expectedDistM
+        expectedDistM,
+        filterConfig
       );
 
       console.log(`    Passed filter: ${passed.length}, rejected: ${rejected.length}`);
@@ -199,12 +247,13 @@ function build(): void {
         continue;
       }
 
-      // Resample each track to K points
+      // Anchor + Resample each track to K points
       const resampled: [number, number][][] = [];
       for (const track of passed) {
         const lonlats: [number, number][] = track.points.map(toLonLat);
+        const anchored = anchorTrack(lonlats, dir.originLon, dir.originLat, dir.destLon, dir.destLat);
         try {
-          resampled.push(resampleTrack(lonlats, K_POINTS));
+          resampled.push(resampleTrack(anchored, K_POINTS));
         } catch (err) {
           console.warn(
             `    ⚠ Resample failed for ${track.flightId || "?"}: ${(err as Error).message}`
@@ -231,6 +280,15 @@ function build(): void {
       const dateRange = getDateRange(passed);
       const datasetId = `${dirKey}-v1`;
 
+      // Collect unique callsigns from the tracks that passed filtering
+      const flights = [
+        ...new Set(
+          passed
+            .map((t) => t.callsign || t.flightId || "")
+            .filter(Boolean)
+        ),
+      ];
+
       const dataset: CorridorDataset = {
         id: datasetId,
         origin: dir.origin,
@@ -240,6 +298,7 @@ function build(): void {
         ...(dateRange.dateFrom && { dateFrom: dateRange.dateFrom }),
         ...(dateRange.dateTo && { dateTo: dateRange.dateTo }),
         kPoints: K_POINTS,
+        flights,
         median: median.map(roundPt),
       };
 

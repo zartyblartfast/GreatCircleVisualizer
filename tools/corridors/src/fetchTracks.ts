@@ -39,7 +39,7 @@ const DAYS_BACK = parseInt(process.env.DAYS_BACK || "1", 10);
 const MIN_TRACKS = parseInt(process.env.MIN_TRACKS || "3", 10);
 const RATE_DELAY_MS = parseInt(process.env.RATE_DELAY_MS || "25000", 10);
 const BASE_URL = "https://opensky-network.org/api";
-const CREDENTIALS_PATH = join(__dirname, "..", "credentials.json");
+const CREDENTIALS_PATH = join(PROJECT_ROOT, "data", "corridors", "credentials2.json");
 
 // Credit tracking
 let creditsRemaining: number | null = null;
@@ -78,6 +78,7 @@ let tokenExpiresAt = 0;
 const IATA_TO_ICAO: Record<string, string> = {
   JFK: "KJFK", SIN: "WSSS", PER: "YPPH", LHR: "EGLL", LAX: "KLAX",
   DXB: "OMDB", JNB: "FAOR", ATL: "KATL", SYD: "YSSY", SCL: "SCEL",
+  NRT: "RJAA", HND: "RJTT", GRU: "SBGR",
 };
 
 // ---------------------------------------------------------------------------
@@ -237,6 +238,11 @@ async function getArrivals(icao: string, begin: number, end: number): Promise<Op
   return (await fetchJSON<OpenSkyFlight[]>(url)) || [];
 }
 
+async function getDepartures(icao: string, begin: number, end: number): Promise<OpenSkyFlight[]> {
+  const url = `${BASE_URL}/flights/departure?airport=${icao}&begin=${begin}&end=${end}`;
+  return (await fetchJSON<OpenSkyFlight[]>(url)) || [];
+}
+
 async function getTrack(icao24: string, time: number): Promise<OpenSkyTrack | null> {
   return fetchJSON<OpenSkyTrack>(`${BASE_URL}/tracks/all?icao24=${icao24}&time=${time}`);
 }
@@ -360,9 +366,10 @@ async function main(): Promise<void> {
       }
       console.log(`\n  ${dirKey} (${originIcao} → ${destIcao}): ${existing} tracks on disk, need ≥${MIN_TRACKS}`);
 
-      // Query arrivals at destination only (saves credits vs dual strategy)
+      // Strategy 1: Query arrivals at destination
       const flightMap = new Map<string, OpenSkyFlight>();
       let chunkStart = begin;
+      let totalArrivals = 0;
 
       while (chunkStart < now) {
         const chunkEnd = Math.min(chunkStart + 86400, now);
@@ -370,6 +377,7 @@ async function main(): Promise<void> {
 
         console.log(`    [${dateLabel}] Arrivals at ${destIcao}...`);
         const arrivals = await getArrivals(destIcao, chunkStart, chunkEnd);
+        totalArrivals += arrivals.length;
         const matched = arrivals.filter(f => f.estDepartureAirport === originIcao);
         for (const f of matched) {
           flightMap.set(`${f.icao24}-${f.firstSeen}`, f);
@@ -380,15 +388,44 @@ async function main(): Promise<void> {
         chunkStart = chunkEnd;
       }
 
+      // Strategy 2: If destination has very poor coverage, try departures from origin
+      if (flightMap.size === 0 && totalArrivals < 20) {
+        console.log(`    ⚠ Destination ${destIcao} has poor coverage (${totalArrivals} total arrivals). Trying departures from ${originIcao}...`);
+        chunkStart = begin;
+        while (chunkStart < now) {
+          const chunkEnd = Math.min(chunkStart + 86400, now);
+          const dateLabel = new Date(chunkStart * 1000).toISOString().slice(0, 10);
+
+          console.log(`    [${dateLabel}] Departures from ${originIcao}...`);
+          const departures = await getDepartures(originIcao, chunkStart, chunkEnd);
+          const matched = departures.filter(f => f.estArrivalAirport === destIcao);
+          for (const f of matched) {
+            flightMap.set(`${f.icao24}-${f.firstSeen}`, f);
+          }
+          console.log(`    [${dateLabel}] ${matched.length} matched (of ${departures.length} total departures)`);
+          await sleep(RATE_DELAY_MS);
+
+          chunkStart = chunkEnd;
+        }
+      }
+
       const flights = [...flightMap.values()];
       console.log(`    Unique flights: ${flights.length}`);
       if (flights.length === 0) continue;
 
-      // Fetch tracks
+      // Fetch tracks — save incrementally after each successful download
       const outDir = join(TRACKS_DIR, dirKey);
       if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+      const outPath = join(outDir, `${dirKey}-tracks.json`);
 
-      const tracks: FlightTrack[] = [];
+      // Load existing tracks for dedup
+      let savedTracks: FlightTrack[] = [];
+      if (existsSync(outPath)) {
+        try { savedTracks = JSON.parse(readFileSync(outPath, "utf-8")) as FlightTrack[]; } catch { /* start fresh */ }
+      }
+      const seenKeys = new Set(savedTracks.map(t => `${t.flightId}-${t.date}`));
+      let newThisDir = 0;
+
       for (const flight of flights) {
         const cs = (flight.callsign || "").trim();
         console.log(`    Track ${flight.icao24} (${cs})...`);
@@ -400,29 +437,23 @@ async function main(): Promise<void> {
         const ft = toFlightTrack(track, flight, dir.originIata, dir.destIata);
         if (!ft) { console.log(`      ✗ too short`); continue; }
 
-        tracks.push(ft);
         console.log(`      ✓ ${ft.points.length} pts, ${ft.date}`);
+
+        const key = `${ft.flightId}-${ft.date}`;
+        if (!seenKeys.has(key)) {
+          savedTracks.push(ft);
+          seenKeys.add(key);
+          newThisDir++;
+          // Save immediately so progress is never lost
+          writeFileSync(outPath, JSON.stringify(savedTracks, null, 2) + "\n", "utf-8");
+        }
       }
 
-      if (tracks.length > 0) {
-        // Append to existing file or create new
-        const outPath = join(outDir, `${dirKey}-tracks.json`);
-        let allTracks = tracks;
-        if (existsSync(outPath)) {
-          try {
-            const prev = JSON.parse(readFileSync(outPath, "utf-8")) as FlightTrack[];
-            // Deduplicate by flightId + date
-            const seen = new Set(prev.map(t => `${t.flightId}-${t.date}`));
-            const newOnly = tracks.filter(t => !seen.has(`${t.flightId}-${t.date}`));
-            allTracks = [...prev, ...newOnly];
-            console.log(`    Merged: ${prev.length} existing + ${newOnly.length} new = ${allTracks.length}`);
-          } catch { /* overwrite if parse fails */ }
-        }
-        writeFileSync(outPath, JSON.stringify(allTracks, null, 2) + "\n", "utf-8");
-        console.log(`    ✓ Saved ${allTracks.length} track(s) → ${outPath}`);
-        totalNew += tracks.length;
+      if (newThisDir > 0) {
+        console.log(`    ✓ ${dirKey}: ${savedTracks.length} total tracks (${newThisDir} new) → ${outPath}`);
+        totalNew += newThisDir;
       } else {
-        console.log(`    ⚠ No usable tracks for ${dirKey}`);
+        console.log(`    ⚠ No new usable tracks for ${dirKey}`);
       }
     }
   }

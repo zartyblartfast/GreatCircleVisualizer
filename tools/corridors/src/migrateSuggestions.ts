@@ -82,6 +82,7 @@ function makeRef(ds: CorridorDataset): CorridorDatasetRef {
   };
   if (ds.dateFrom) ref.dateFrom = ds.dateFrom;
   if (ds.dateTo) ref.dateTo = ds.dateTo;
+  if (ds.flights && ds.flights.length > 0) ref.flights = ds.flights;
   return ref;
 }
 

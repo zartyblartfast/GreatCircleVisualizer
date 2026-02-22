@@ -35,6 +35,7 @@ async function processSuggestions() {
           RhumbLineDisplay: pair.RhumbLineDisplay,  // added 
           geoOG_rotationX: pair.geoOG_rotationX,    // added
           geoOG_rotationY: pair.geoOG_rotationY,    // added
+          corridor: pair.corridor || { available: false },
           isSuggested: true
         };
 

@@ -1,210 +1,321 @@
 [
-    {
-      "id": "JFK-SIN",
-      "airportAName": "John F Kennedy International Airport",
-      "airportACode": "JFK",
-      "airportACountry": "US",
-      "airportACountryFull": "United States of America (the)",
-      "airportALat": 40.639447,
-      "airportALon": -73.779317,
-      "airportBName": "Singapore Changi Airport",
-      "airportBCode": "SIN",
-      "airportBCountry": "SG",
-      "airportBCountryFull": "Singapore",
-      "airportBLat": 1.35019,
-      "airportBLon": 103.994003,
-      "GreatCircleDistKm": 15340.621517121188,
-      "RhumbLineDistKm": 18501.291003563227,
-      "RhumbLineDisplay": true,
-      "geoOG_rotationX": -15,
-      "geoOG_rotationY": -75,
-      "verification": {
-        "directScheduled": "yes"
-      },
-      "corridor": {
-        "available": false
-      }
+  {
+    "id": "PER-LHR",
+    "airportAName": "Perth International Airport",
+    "airportACode": "PER",
+    "airportACountry": "AU",
+    "airportACountryFull": "Australia",
+    "airportALat": -31.94029998779297,
+    "airportALon": 115.96700286865234,
+    "airportBName": "London Heathrow Airport",
+    "airportBCode": "LHR",
+    "airportBCountry": "GB",
+    "airportBCountryFull": "United Kingdom of Great Britain and Northern Ireland (the)",
+    "airportBLat": 51.4706,
+    "airportBLon": -0.461941,
+    "GreatCircleDistKm": 14508.332113993265,
+    "RhumbLineDistKm": 14767.750474888848,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": -58,
+    "geoOG_rotationY": -10,
+    "verification": {
+      "directScheduled": "yes"
     },
-    {
-      "id": "PER-LHR",
-      "airportAName": "Perth International Airport",
-      "airportACode": "PER",
-      "airportACountry": "AU",
-      "airportACountryFull": "Australia",
-      "airportALat": -31.94029998779297,
-      "airportALon": 115.96700286865234,
-      "airportBName": "London Heathrow Airport",
-      "airportBCode": "LHR",
-      "airportBCountry": "GB",
-      "airportBCountryFull": "United Kingdom of Great Britain and Northern Ireland (the)",
-      "airportBLat": 51.4706,
-      "airportBLon": -0.461941,
-      "GreatCircleDistKm": 14508.332113993265,
-      "RhumbLineDistKm": 14767.750474888848,
-      "RhumbLineDisplay": true,
-      "geoOG_rotationX": -58,
-      "geoOG_rotationY": -10,
-      "verification": {
-        "directScheduled": "yes"
-      },
-      "corridor": {
-        "available": false
-      }
-    },
-    {
-      "id": "LAX-DXB",
-      "airportAName": "Los Angeles / Tom Bradley International Airport",
-      "airportACode": "LAX",
-      "airportACountry": "US",
-      "airportACountryFull": "United States of America (the)",
-      "airportALat": 33.942501,
-      "airportALon": -118.407997,
-      "airportBName": "Dubai International Airport",
-      "airportBCode": "DXB",
-      "airportBCountry": "AE",
-      "airportBCountryFull": "United Arab Emirates (the)",
-      "airportBLat": 25.2527999878,
-      "airportBLon": 55.3643989563,
-      "GreatCircleDistKm": 13400.095543708267,
-      "RhumbLineDistKm": 16802.602071247315,
-      "RhumbLineDisplay": true,
-      "geoOG_rotationX": 30,
-      "geoOG_rotationY": -85,
-      "verification": {
-        "directScheduled": "yes"
-      },
-      "corridor": {
-        "available": false
-      }
-    },
-    {
-      "id": "JNB-ATL",
-      "airportAName": "OR Tambo International Airport",
-      "airportACode": "JNB",
-      "airportACountry": "ZA",
-      "airportACountryFull": "South Africa",
-      "airportALat": -26.1392,
-      "airportALon": 28.246,
-      "airportBName": "Hartsfield Jackson Atlanta International Airport",
-      "airportBCode": "ATL",
-      "airportBCountry": "US",
-      "airportBCountryFull": "United States of America (the)",
-      "airportBLat": 33.6367,
-      "airportBLon": -84.428101,
-      "GreatCircleDistKm": 13582.607065230082,
-      "RhumbLineDistKm": 13644.406414340207,
-      "RhumbLineDisplay": false,
-      "geoOG_rotationX": 28,
-      "geoOG_rotationY": -4,
-      "verification": {
-        "directScheduled": "yes"
-      },
-      "corridor": {
-        "available": false
-      }
-    },
-    {
-      "id": "SYD-SCL",
-      "airportAName": "Sydney Kingsford Smith International Airport",
-      "airportACode": "SYD",
-      "airportACountry": "AU",
-      "airportACountryFull": "Australia",
-      "airportALat": -33.94609832763672,
-      "airportALon": 151.177001953125,
-      "airportBName": "Comodoro Arturo Merino Benítez International Airport",
-      "airportBCode": "SCL",
-      "airportBCountry": "CL",
-      "airportBCountryFull": "Chile",
-      "airportBLat": -33.393001556396484,
-      "airportBLon": -70.78579711914062,
-      "GreatCircleDistKm": 11340.36000010754,
-      "RhumbLineDistKm": 12774.290835372924,
-      "RhumbLineDisplay": true,
-      "geoOG_rotationX": 140,
-      "geoOG_rotationY": 55,
-      "verification": {
-        "directScheduled": "yes"
-      },
-      "corridor": {
-        "available": false
-      }
-    },
-    {
-      "id": "TTE-UIO",
-      "airportAName": "Sultan Babullah Airport",
-      "airportACode": "TTE",
-      "airportACountry": "ID",
-      "airportACountryFull": "Indonesia",
-      "airportALat": 0.831012,
-      "airportALon": 127.381611,
-      "airportBName": "Mariscal Sucre International Airport",
-      "airportBCode": "UIO",
-      "airportBCountry": "EC",
-      "airportBCountryFull": "Ecuador",
-      "airportBLat": -0.125399,
-      "airportBLon": -78.354306,
-      "GreatCircleDistKm": 17152.451179488857,
-      "RhumbLineDistKm": 17153.212402577898,
-      "RhumbLineDisplay": false,
-      "geoOG_rotationX": null,
-      "geoOG_rotationY": null,
-      "verification": {
-        "directScheduled": "no"
-      },
-      "corridor": {
-        "available": false
-      }
-    },
-    {
-      "id": "SVO-YVR",
-      "airportAName": "Sheremetyevo International Airport",
-      "airportACode": "SVO",
-      "airportACountry": "RU",
-      "airportACountryFull": "Russian Federation (the)",
-      "airportALat": 55.972599,
-      "airportALon": 37.4146,
-      "airportBName": "Vancouver International Airport",
-      "airportBCode": "YVR",
-      "airportBCountry": "CA",
-      "airportBCountryFull": "Canada",
-      "airportBLat": 49.193901062,
-      "airportBLon": -123.183998108,
-      "GreatCircleDistKm": 8183.629719443062,
-      "RhumbLineDistKm": 10848.726132599575,
-      "RhumbLineDisplay": true,
-      "geoOG_rotationX": 43,
-      "geoOG_rotationY": -75,
-      "verification": {
-        "directScheduled": "no"
-      },
-      "corridor": {
-        "available": false
-      }
-    },
-    {
-      "id": "HBA-USH",
-      "airportAName": "Hobart International Airport",
-      "airportACode": "HBA",
-      "airportACountry": "AU",
-      "airportACountryFull": "Australia",
-      "airportALat": -42.836101532,
-      "airportALon": 147.509994507,
-      "airportBName": "Malvinas Argentinas Airport",
-      "airportBCode": "USH",
-      "airportBCountry": "AR",
-      "airportBCountryFull": "Argentina",
-      "airportBLat": -54.8433,
-      "airportBLon": -68.2958,
-      "GreatCircleDistKm": 8637.236249161773,
-      "RhumbLineDistKm": 10567.277602879296,
-      "RhumbLineDisplay": true,
-      "geoOG_rotationX": 140,
-      "geoOG_rotationY": 73,
-      "verification": {
-        "directScheduled": "no"
-      },
-      "corridor": {
-        "available": false
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "AtoB": {
+          "datasetId": "PER-LHR-v1",
+          "kind": "median",
+          "nFlights": 6,
+          "kPoints": 200,
+          "dateFrom": "2026-02-13",
+          "dateTo": "2026-02-18",
+          "flights": [
+            "QFA9"
+          ]
+        },
+        "BtoA": {
+          "datasetId": "LHR-PER-v1",
+          "kind": "median",
+          "nFlights": 5,
+          "kPoints": 200,
+          "dateFrom": "2026-02-13",
+          "dateTo": "2026-02-18",
+          "flights": [
+            "QFA10"
+          ]
+        }
       }
     }
-  ]
+  },
+  {
+    "id": "LAX-DXB",
+    "airportAName": "Los Angeles / Tom Bradley International Airport",
+    "airportACode": "LAX",
+    "airportACountry": "US",
+    "airportACountryFull": "United States of America (the)",
+    "airportALat": 33.942501,
+    "airportALon": -118.407997,
+    "airportBName": "Dubai International Airport",
+    "airportBCode": "DXB",
+    "airportBCountry": "AE",
+    "airportBCountryFull": "United Arab Emirates (the)",
+    "airportBLat": 25.2527999878,
+    "airportBLon": 55.3643989563,
+    "GreatCircleDistKm": 13400.095543708267,
+    "RhumbLineDistKm": 16802.602071247315,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": 30,
+    "geoOG_rotationY": -85,
+    "verification": {
+      "directScheduled": "yes"
+    },
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "AtoB": {
+          "datasetId": "LAX-DXB-v1",
+          "kind": "median",
+          "nFlights": 6,
+          "kPoints": 200,
+          "dateFrom": "2026-02-14",
+          "dateTo": "2026-02-19",
+          "flights": [
+            "UAE216"
+          ]
+        },
+        "BtoA": {
+          "datasetId": "DXB-LAX-v1",
+          "kind": "median",
+          "nFlights": 7,
+          "kPoints": 200,
+          "dateFrom": "2026-02-14",
+          "dateTo": "2026-02-20",
+          "flights": [
+            "UAE83M"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "JNB-ATL",
+    "airportAName": "OR Tambo International Airport",
+    "airportACode": "JNB",
+    "airportACountry": "ZA",
+    "airportACountryFull": "South Africa",
+    "airportALat": -26.1392,
+    "airportALon": 28.246,
+    "airportBName": "Hartsfield Jackson Atlanta International Airport",
+    "airportBCode": "ATL",
+    "airportBCountry": "US",
+    "airportBCountryFull": "United States of America (the)",
+    "airportBLat": 33.6367,
+    "airportBLon": -84.428101,
+    "GreatCircleDistKm": 13582.607065230082,
+    "RhumbLineDistKm": 13644.406414340207,
+    "RhumbLineDisplay": false,
+    "geoOG_rotationX": 28,
+    "geoOG_rotationY": -4,
+    "verification": {
+      "directScheduled": "yes"
+    },
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "AtoB": {
+          "datasetId": "JNB-ATL-v1",
+          "kind": "median",
+          "nFlights": 4,
+          "kPoints": 200,
+          "dateFrom": "2026-02-14",
+          "dateTo": "2026-02-18",
+          "flights": [
+            "DAL201"
+          ]
+        },
+        "BtoA": {
+          "datasetId": "ATL-JNB-v1",
+          "kind": "median",
+          "nFlights": 4,
+          "kPoints": 200,
+          "dateFrom": "2026-02-14",
+          "dateTo": "2026-02-20",
+          "flights": [
+            "DAL200"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "SYD-SCL",
+    "airportAName": "Sydney Kingsford Smith International Airport",
+    "airportACode": "SYD",
+    "airportACountry": "AU",
+    "airportACountryFull": "Australia",
+    "airportALat": -33.94609832763672,
+    "airportALon": 151.177001953125,
+    "airportBName": "Comodoro Arturo Merino Benítez International Airport",
+    "airportBCode": "SCL",
+    "airportBCountry": "CL",
+    "airportBCountryFull": "Chile",
+    "airportBLat": -33.393001556396484,
+    "airportBLon": -70.78579711914062,
+    "GreatCircleDistKm": 11340.36000010754,
+    "RhumbLineDistKm": 12774.290835372924,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": 140,
+    "geoOG_rotationY": 55,
+    "verification": {
+      "directScheduled": "yes"
+    },
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "BtoA": {
+          "datasetId": "SCL-SYD-v1",
+          "kind": "median",
+          "nFlights": 4,
+          "kPoints": 200,
+          "dateFrom": "2026-02-14",
+          "dateTo": "2026-02-17",
+          "flights": [
+            "QFA28",
+            "LAN809"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "TTE-UIO",
+    "airportAName": "Sultan Babullah Airport",
+    "airportACode": "TTE",
+    "airportACountry": "ID",
+    "airportACountryFull": "Indonesia",
+    "airportALat": 0.831012,
+    "airportALon": 127.381611,
+    "airportBName": "Mariscal Sucre International Airport",
+    "airportBCode": "UIO",
+    "airportBCountry": "EC",
+    "airportBCountryFull": "Ecuador",
+    "airportBLat": -0.125399,
+    "airportBLon": -78.354306,
+    "GreatCircleDistKm": 17152.451179488857,
+    "RhumbLineDistKm": 17153.212402577898,
+    "RhumbLineDisplay": false,
+    "geoOG_rotationX": null,
+    "geoOG_rotationY": null,
+    "verification": {
+      "directScheduled": "no"
+    },
+    "corridor": {
+      "available": false
+    }
+  },
+  {
+    "id": "SVO-YVR",
+    "airportAName": "Sheremetyevo International Airport",
+    "airportACode": "SVO",
+    "airportACountry": "RU",
+    "airportACountryFull": "Russian Federation (the)",
+    "airportALat": 55.972599,
+    "airportALon": 37.4146,
+    "airportBName": "Vancouver International Airport",
+    "airportBCode": "YVR",
+    "airportBCountry": "CA",
+    "airportBCountryFull": "Canada",
+    "airportBLat": 49.193901062,
+    "airportBLon": -123.183998108,
+    "GreatCircleDistKm": 8183.629719443062,
+    "RhumbLineDistKm": 10848.726132599575,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": 43,
+    "geoOG_rotationY": -75,
+    "verification": {
+      "directScheduled": "no"
+    },
+    "corridor": {
+      "available": false
+    }
+  },
+  {
+    "id": "HBA-USH",
+    "airportAName": "Hobart International Airport",
+    "airportACode": "HBA",
+    "airportACountry": "AU",
+    "airportACountryFull": "Australia",
+    "airportALat": -42.836101532,
+    "airportALon": 147.509994507,
+    "airportBName": "Malvinas Argentinas Airport",
+    "airportBCode": "USH",
+    "airportBCountry": "AR",
+    "airportBCountryFull": "Argentina",
+    "airportBLat": -54.8433,
+    "airportBLon": -68.2958,
+    "GreatCircleDistKm": 8637.236249161773,
+    "RhumbLineDistKm": 10567.277602879296,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": 140,
+    "geoOG_rotationY": 73,
+    "verification": {
+      "directScheduled": "no"
+    },
+    "corridor": {
+      "available": false
+    }
+  },
+  {
+    "id": "JNB-GRU",
+    "airportAName": "O.R. Tambo International Airport",
+    "airportACode": "JNB",
+    "airportACountry": "ZA",
+    "airportACountryFull": "South Africa",
+    "airportALat": -26.1392,
+    "airportALon": 28.246,
+    "airportBName": "São Paulo–Guarulhos International Airport",
+    "airportBCode": "GRU",
+    "airportBCountry": "BR",
+    "airportBCountryFull": "Brazil",
+    "airportBLat": -23.4356,
+    "airportBLon": -46.4731,
+    "GreatCircleDistKm": 7439.227127,
+    "RhumbLineDistKm": 7547.921694,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": 9,
+    "geoOG_rotationY": 25,
+    "verification": {
+      "directScheduled": "yes"
+    },
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "AtoB": {
+          "datasetId": "JNB-GRU-v1",
+          "kind": "median",
+          "nFlights": 6,
+          "kPoints": 200,
+          "dateFrom": "2026-02-15",
+          "dateTo": "2026-02-20",
+          "flights": [
+            "SAA222",
+            "TAM8059"
+          ]
+        },
+        "BtoA": {
+          "datasetId": "GRU-JNB-v1",
+          "kind": "median",
+          "nFlights": 2,
+          "kPoints": 200,
+          "dateFrom": "2026-02-15",
+          "dateTo": "2026-02-17",
+          "flights": [
+            "TAM8058"
+          ]
+        }
+      }
+    }
+  }
+]

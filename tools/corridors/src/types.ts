@@ -29,6 +29,9 @@ export interface CorridorDatasetRef {
 
   /** Number of resampled points per polyline */
   kPoints: number;
+
+  /** Unique callsigns of flights used */
+  flights?: string[];
 }
 
 /**
@@ -129,6 +132,9 @@ export interface CorridorDataset {
 
   /** Number of resampled points per polyline */
   kPoints: number;
+
+  /** Unique callsigns of flights used */
+  flights?: string[];
 
   /** Median polyline: array of [lon, lat] pairs */
   median: [number, number][];
