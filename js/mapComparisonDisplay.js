@@ -423,14 +423,22 @@ class MapComparisonDisplay {
 
 
     clearAirportLocations(chartObject) {
+      // Dispose and nullify each series so they are recreated fresh.
+      // data.setAll([]) does not clear items added via pushDataItem(),
+      // so we must dispose the entire series to avoid stale accumulation.
       if (chartObject.pointSeries) {
-          //console.log(">>>>>>>>>>>#### pointSeries IS initialized in chartObject");
-          chartObject.pointSeries.data.setAll([])
-          //console.log(">>>>>>>>>>>####clearAirportLocations after cleardown, chartObject.pointSeries: ", chartObject.pointSeries)
+          chartObject.pointSeries.dispose();
+          chartObject.pointSeries = null;
+      }
+
+      if (chartObject.GClineSeries) {
+        chartObject.GClineSeries.dispose();
+        chartObject.GClineSeries = null;
       }
 
       if (chartObject.RLlineSeries) {
-        chartObject.RLlineSeries.data.setAll([]);
+        chartObject.RLlineSeries.dispose();
+        chartObject.RLlineSeries = null;
       }
     }
 
@@ -444,11 +452,11 @@ class MapComparisonDisplay {
         if (!chartObject) continue;
 
         if (show) {
-          // Redraw rhumb lines with tooltips
+          // Recreate RLlineSeries and redraw rhumb lines with tooltips
+          this.updateRoutes(chartObject, "rhumb-line");
+
           if (this.currentAirportPair && this.rhumbLinePoints.length > 0) {
             const pair = this.currentAirportPair;
-            const location1 = { longitude: pair.airportALon, latitude: pair.airportALat };
-            const location2 = { longitude: pair.airportBLon, latitude: pair.airportBLat };
 
             // Get city data items from the existing point series
             const items = chartObject.pointSeries?.dataItems;
@@ -463,9 +471,10 @@ class MapComparisonDisplay {
             }
           }
         } else {
-          // Clear rhumb line data
+          // Dispose rhumb line series to fully clear it
           if (chartObject.RLlineSeries) {
-            chartObject.RLlineSeries.data.setAll([]);
+            chartObject.RLlineSeries.dispose();
+            chartObject.RLlineSeries = null;
           }
         }
       }
@@ -518,9 +527,15 @@ class MapComparisonDisplay {
       let lineSeries;
       if (!chart.GClineSeries) {
           chart.GClineSeries = chart.localChart.series.push(am5map.MapLineSeries.new(chart.localChart._root, { calculateDistance: true }));
+          let gcTooltip = am5.Tooltip.new(chart.localChart._root, {});
+          gcTooltip.label.setAll({ maxWidth: 300, oversizedBehavior: "wrap" });
+          chart.GClineSeries.mapLines.template.set("tooltip", gcTooltip);
       }
       if (!chart.RLlineSeries) {
           chart.RLlineSeries = chart.localChart.series.push(am5map.MapLineSeries.new(chart.localChart._root, { calculateDistance: true }));
+          let rlTooltip = am5.Tooltip.new(chart.localChart._root, {});
+          rlTooltip.label.setAll({ maxWidth: 300, oversizedBehavior: "wrap" });
+          chart.RLlineSeries.mapLines.template.set("tooltip", rlTooltip);
       }
   
       // Determine which line series to use
