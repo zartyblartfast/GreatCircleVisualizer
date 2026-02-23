@@ -408,5 +408,106 @@
         }
       }
     }
+  },
+  {
+    "id": "SYD-DFW",
+    "airportAName": "Sydney Kingsford Smith International Airport",
+    "airportACode": "SYD",
+    "airportACountry": "AU",
+    "airportACountryFull": "Australia",
+    "airportALat": -33.94609832763672,
+    "airportALon": 151.177001953125,
+    "airportBName": "Dallas/Fort Worth International Airport",
+    "airportBCode": "DFW",
+    "airportBCountry": "US",
+    "airportBCountryFull": "United States",
+    "airportBLat": 32.896801,
+    "airportBLon": -97.038002,
+    "GreatCircleDistKm": 13808.174902,
+    "RhumbLineDistKm": 13863.654423,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": -150,
+    "geoOG_rotationY": 0,
+    "verification": {
+      "directScheduled": "yes"
+    },
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "AtoB": {
+          "datasetId": "SYD-DFW-v1",
+          "kind": "median",
+          "nFlights": 8,
+          "kPoints": 200,
+          "dateFrom": "2026-02-17",
+          "dateTo": "2026-02-22",
+          "flights": [
+            "QFA7",
+            "FJI890"
+          ]
+        },
+        "BtoA": {
+          "datasetId": "DFW-SYD-v1",
+          "kind": "median",
+          "nFlights": 6,
+          "kPoints": 200,
+          "dateFrom": "2026-02-17",
+          "dateTo": "2026-02-22",
+          "flights": [
+            "QFA8"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "SEA-KEF",
+    "airportAName": "Seattle-Tacoma International Airport",
+    "airportACode": "SEA",
+    "airportACountry": "US",
+    "airportACountryFull": "United States",
+    "airportALat": 47.449001,
+    "airportALon": -122.309998,
+    "airportBName": "Keflavík International Airport",
+    "airportBCode": "KEF",
+    "airportBCountry": "IS",
+    "airportBCountryFull": "Iceland",
+    "airportBLat": 63.985001,
+    "airportBLon": -22.6056,
+    "GreatCircleDistKm": 5811.323771,
+    "RhumbLineDistKm": 6397.843037,
+    "RhumbLineDisplay": true,
+    "geoOG_rotationX": 72,
+    "geoOG_rotationY": -56,
+    "verification": {
+      "directScheduled": "yes"
+    },
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "AtoB": {
+          "datasetId": "SEA-KEF-v1",
+          "kind": "median",
+          "nFlights": 6,
+          "kPoints": 200,
+          "dateFrom": "2026-02-16",
+          "dateTo": "2026-02-21",
+          "flights": [
+            "ICE680"
+          ]
+        },
+        "BtoA": {
+          "datasetId": "KEF-SEA-v1",
+          "kind": "median",
+          "nFlights": 6,
+          "kPoints": 200,
+          "dateFrom": "2026-02-16",
+          "dateTo": "2026-02-21",
+          "flights": [
+            "ICE681"
+          ]
+        }
+      }
+    }
   }
 ]

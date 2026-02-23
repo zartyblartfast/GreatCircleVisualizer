@@ -39,7 +39,7 @@ const DAYS_BACK = parseInt(process.env.DAYS_BACK || "1", 10);
 const MIN_TRACKS = parseInt(process.env.MIN_TRACKS || "3", 10);
 const RATE_DELAY_MS = parseInt(process.env.RATE_DELAY_MS || "25000", 10);
 const BASE_URL = "https://opensky-network.org/api";
-const CREDENTIALS_PATH = join(PROJECT_ROOT, "data", "corridors", "credentials2.json");
+const CREDENTIALS_PATH = join(PROJECT_ROOT, "data", "corridors", "credentials3.json");
 
 // Credit tracking
 let creditsRemaining: number | null = null;
@@ -78,7 +78,8 @@ let tokenExpiresAt = 0;
 const IATA_TO_ICAO: Record<string, string> = {
   JFK: "KJFK", SIN: "WSSS", PER: "YPPH", LHR: "EGLL", LAX: "KLAX",
   DXB: "OMDB", JNB: "FAOR", ATL: "KATL", SYD: "YSSY", SCL: "SCEL",
-  NRT: "RJAA", HND: "RJTT", GRU: "SBGR", AKL: "NZAA",
+  NRT: "RJAA", HND: "RJTT", GRU: "SBGR", AKL: "NZAA", DFW: "KDFW",
+  SEA: "KSEA", KEF: "BIKF",
 };
 
 // ---------------------------------------------------------------------------
