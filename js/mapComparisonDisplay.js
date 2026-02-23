@@ -13,6 +13,7 @@ class MapComparisonDisplay {
         this.RLlineSeries = null; // Initialize to null
         this.rhumbLinePoints = []; 
         this.planeSeriesArray = null;
+        this.showRhumbLines = true;
     
         // Initialize the data properties to null
         this.suggestionPairs = null;
@@ -317,7 +318,9 @@ class MapComparisonDisplay {
   
       this.calculateAndStoreRhumbLinePoints(location1, location2)
 
-      this.addRhumbLineMethod(this.rhumbLinePoints, chartObject.RLlineSeries, city1, city2, pair.GreatCircleDistKm, pair.RhumbLineDistKm)
+      if (this.showRhumbLines) {
+        this.addRhumbLineMethod(this.rhumbLinePoints, chartObject.RLlineSeries, city1, city2, pair.GreatCircleDistKm, pair.RhumbLineDistKm)
+      }
 
       this.updateRoutes(chartObject, "rhumb-line");
 
@@ -428,6 +431,43 @@ class MapComparisonDisplay {
 
       if (chartObject.RLlineSeries) {
         chartObject.RLlineSeries.data.setAll([]);
+      }
+    }
+
+    toggleRhumbLines(show) {
+      this.showRhumbLines = show;
+
+      // Apply to both charts
+      const divIds = ['chartdiv_orthographic_c', 'chartdiv_projection_c'];
+      for (const divId of divIds) {
+        const chartObject = this.initializedRoots[divId];
+        if (!chartObject) continue;
+
+        if (show) {
+          // Redraw rhumb lines with tooltips
+          if (this.currentAirportPair && this.rhumbLinePoints.length > 0) {
+            const pair = this.currentAirportPair;
+            const location1 = { longitude: pair.airportALon, latitude: pair.airportALat };
+            const location2 = { longitude: pair.airportBLon, latitude: pair.airportBLat };
+
+            // Get city data items from the existing point series
+            const items = chartObject.pointSeries?.dataItems;
+            if (items && items.length >= 2) {
+              const city1 = items[0];
+              const city2 = items[1];
+              this.addRhumbLineMethod(
+                this.rhumbLinePoints, chartObject.RLlineSeries,
+                city1, city2,
+                pair.GreatCircleDistKm, pair.RhumbLineDistKm
+              );
+            }
+          }
+        } else {
+          // Clear rhumb line data
+          if (chartObject.RLlineSeries) {
+            chartObject.RLlineSeries.data.setAll([]);
+          }
+        }
       }
     }
 

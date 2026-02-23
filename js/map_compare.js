@@ -117,3 +117,7 @@ document.getElementById("selector-next-oc-2").addEventListener("click", function
     mapComparison.setIndex(1, "oc-2"); 
 });
 
+document.getElementById("toggle-rhumb").addEventListener("change", function() {
+    mapComparison.toggleRhumbLines(this.checked);
+});
+
