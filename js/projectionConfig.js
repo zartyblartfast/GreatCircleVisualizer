@@ -95,6 +95,16 @@ export function applyProjectionConfig(chart, d3Name, rotationXOverride = null) {
 // Apply orthographic (globe) projection using amCharts wrapper — NOT D3.
 // Returns the amCharts projection object for save/restore.
 export function applyOrthographic(chart) {
+    // Neutralize the old projection's D3 rotation before installing orthographic.
+    // Without this, amCharts' internal center-preservation (prev.invert → projection → translate)
+    // produces a vertical offset that shifts the globe down.
+    const oldProjection = chart.get("projection");
+    if (oldProjection && oldProjection.rotate) {
+        oldProjection.rotate([0, 0, 0]);
+    }
+    chart.set("rotationX", 0);
+    chart.set("rotationY", 0);
+
     const projection = am5map.geoOrthographic();
     chart.set("projection", projection);
     chart.set("panX", "rotateX");
@@ -108,6 +118,7 @@ export function applyOrthographic(chart) {
     chart.set("homeGeoPoint", { latitude: 0, longitude: 0 });
     chart.set("homeRotationX", 0);
     chart.set("homeRotationY", 0);
-    chart.goHome();
+    // goHome() removed – it animated the globe to a vertically offset position
+    // due to amCharts center-preservation producing a bad translate value.
     return projection;
 }
