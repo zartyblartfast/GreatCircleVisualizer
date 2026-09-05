@@ -11,9 +11,9 @@ mapComparison.populateProjectionDropdown();
 
 // Initialize the maps by calling createMap function for both orthographic and projection maps
 // Assumed div IDs are 'chartdiv_orthographic_c' and 'chartdiv_projection_c', update as per your actual HTML
-// Also assumed projection names "geoOrthographic" and "geoMercator", update as necessary
+// Also assumed projection names "geoOrthographic" and "geoEqualEarth", update as necessary
 const orthoMapInit = mapComparison.createMap('geoOrthographic', 'chartdiv_orthographic_c');
-const projMapInit = mapComparison.createMap('geoMercator', 'chartdiv_projection_c');
+const projMapInit = mapComparison.createMap('geoEqualEarth', 'chartdiv_projection_c');
 
 // You can await these promises if needed or handle errors
 Promise.all([orthoMapInit, projMapInit])

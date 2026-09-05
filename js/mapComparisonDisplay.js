@@ -7,7 +7,7 @@ class MapComparisonDisplay {
         this.orthoGraphicMap = null;  // Object to store orthographic map instance
         this.projectionMap = null;   // Object to store projection map instance
         this.currentAirportPair = null;
-        this.currentProjection = 'mercator';  // default projection
+        this.currentProjection = 'geoEqualEarth';  // default projection
         this.initializedRoots = {}; 
         this.GClineSeries = null; // Initialize to null
         this.RLlineSeries = null; // Initialize to null

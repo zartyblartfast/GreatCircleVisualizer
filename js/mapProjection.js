@@ -2,7 +2,7 @@
 
 import { loadProjectionConfig, getConfigCache, applyProjectionConfig } from './projectionConfig.js';
 
-export let currentProjectionName = "geoMercator";
+export let currentProjectionName = "geoEqualEarth";
 
 export function updateProjectionName(newName) {
     currentProjectionName = newName;
@@ -30,8 +30,8 @@ export async function setupProjectionDropdown(chart) {
         option.text = sorted[i].name;
         option.value = sorted[i].d3Name;
 
-        // Set the default selection to Mercator
-        if (sorted[i].d3Name === 'geoMercator') {
+        // Set the dropdown to the configured default projection
+        if (sorted[i].d3Name === currentProjectionName) {
             option.selected = true;
         }
 

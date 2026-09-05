@@ -111,7 +111,7 @@ chart = root.container.children.push(am5map.MapChart.new(root, {
     //panX: "none",
     panY: "translateY",
     rotationY: 0,
-    projection: am5map.geoMercator(),
+    projection: am5map.geoEqualEarth(),
     minZoomLevel: 1.0,
     maxZoomLevel: 1.25
 }));
@@ -206,7 +206,7 @@ document.getElementById('make-maps-button').addEventListener('click', function()
         //panY: "translateY",
         panY: "none",
         rotationY: 0,
-        projection: am5map.geoMercator(),
+        projection: am5map.geoEqualEarth(),
         minZoomLevel: 1.0,
         maxZoomLevel: 1.0,
         maxPanOut: 0
