@@ -19,8 +19,8 @@
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
-  /*background-color: #6593f5;*/
-  background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027);
+  /* Default custom/user-added tag colour. Expanded tags override this with the shared blue highlight. */
+  background: linear-gradient(45deg, #3f5f6f, #54788a, #1f3a44);
   /*background-color: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027); */
   /*background: linear-gradient(45deg, #b3ccdd, #6593f5, #0f2027); */
   box-sizing: border-box;
