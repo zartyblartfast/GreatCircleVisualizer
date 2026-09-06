@@ -7,6 +7,42 @@ import {
 let selectedAirportACode = '';
 let selectedAirportBCode = '';
 
+function getAirportSearchParts(item) {
+  const label = String(item.label || item.value || item || '');
+  const codeMatch = label.match(/\(([A-Z0-9]+)\)$/i);
+  const code = codeMatch ? codeMatch[1].toLowerCase() : '';
+  const name = label.replace(/\s*\([^)]+\)$/, '').toLowerCase();
+  return { label, name, code };
+}
+
+export function getAirportSearchRank(item, query) {
+  const normalizedQuery = String(query || '').trim().toLowerCase();
+  if (!normalizedQuery) return 0;
+
+  const { label, name, code } = getAirportSearchParts(item);
+  if (code === normalizedQuery) return 0;
+  if (code.startsWith(normalizedQuery)) return 1;
+  if (name.startsWith(normalizedQuery)) return 2;
+  if (name.split(/\s+/).some(word => word.startsWith(normalizedQuery))) return 3;
+  if (name.includes(normalizedQuery)) return 4;
+  if (label.toLowerCase().includes(normalizedQuery)) return 5;
+  return 6;
+}
+
+export function sortAirportSuggestions(a, b, query) {
+  const rankA = getAirportSearchRank(a, query);
+  const rankB = getAirportSearchRank(b, query);
+  if (rankA !== rankB) return rankA - rankB;
+
+  const partsA = getAirportSearchParts(a);
+  const partsB = getAirportSearchParts(b);
+  return partsA.name.localeCompare(partsB.name) || partsA.code.localeCompare(partsB.code);
+}
+
+function createAirportSuggestionSorter(inputElement) {
+  return (a, b) => sortAirportSuggestions(a, b, inputElement.value);
+}
+
 export function setSelectedAirportACode(code) {
   selectedAirportACode = code;
 }
@@ -39,8 +75,16 @@ export async function initializeAirportSearch() {
     lon: airport.longitude
   })));
 
-  let awesompleteA = new Awesomplete(airportAInput, { minChars: 0 });
-  let awesompleteB = new Awesomplete(airportBInput, { minChars: 0 });
+  let awesompleteA = new Awesomplete(airportAInput, {
+    minChars: 0,
+    maxItems: 40,
+    sort: createAirportSuggestionSorter(airportAInput)
+  });
+  let awesompleteB = new Awesomplete(airportBInput, {
+    minChars: 0,
+    maxItems: 40,
+    sort: createAirportSuggestionSorter(airportBInput)
+  });
 
   awesompleteA.input.addEventListener('awesomplete-selectcomplete', (event) => {
     airportList = getAirportList();

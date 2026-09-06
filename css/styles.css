@@ -195,6 +195,8 @@ header {
 .awesomplete ul {
   position: relative;
   width: 125%!important;
+  max-height: 260px;
+  overflow-y: auto;
   z-index: 9999;
 }
 
