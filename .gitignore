@@ -11,6 +11,8 @@
 ./yarn.lock
 ./data/projections copy.json
 node_modules
+test-results/
+playwright-report/
 tools/corridors/dist
 data/tracks
 .env.json

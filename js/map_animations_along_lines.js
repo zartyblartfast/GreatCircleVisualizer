@@ -7,6 +7,7 @@ import {
 import { setupProjectionDropdown, updateProjection, currentProjectionName } from './mapProjection.js';
 import { loadProjectionConfig, applyProjectionConfig, applyOrthographic } from './projectionConfig.js';
 import { initCorridorSeries, showCorridor, hideCorridor } from './corridorRenderer.js';
+import { recordMainChartCreated, recordMainChartDisposed } from './mapDiagnostics.js';
 
 "use strict";
 
@@ -105,27 +106,27 @@ function initializeMap() {
     setupProjectionDropdown(chart); // now async, returns promise
 }
 
-// Initialize map on page load
-chart = root.container.children.push(am5map.MapChart.new(root, {
-    panX: "rotateX",
-    //panX: "none",
-    panY: "translateY",
-    rotationY: 0,
-    projection: am5map.geoEqualEarth(),
-    minZoomLevel: 1.0,
-    maxZoomLevel: 1.25
-}));
-
-//console.log("Chart after initialization:", chart);
-
 // Preload projection config before initializing map
 await loadProjectionConfig();
-initializeMap();
+
+function createMainChart() {
+    chart = root.container.children.push(am5map.MapChart.new(root, {
+        panX: "rotateX",
+        panY: "translateY",
+        rotationY: 0,
+        projection: am5map.geoEqualEarth(),
+        minZoomLevel: 1.0,
+        maxZoomLevel: 1.25
+    }));
+    recordMainChartCreated(chart);
+    initializeMap();
+}
 
 // --- HTML Globe Toggle ---
 var globeToggle = document.getElementById('globe-toggle');
 var globeToggleLabel = document.getElementById('globe-toggle-label');
 globeToggle.addEventListener('change', function() {
+    if (!chart) return;
     var projectionSelect = document.getElementById('projectionSelect');
     if (globeToggle.checked) {
         // Switch TO Globe
@@ -190,32 +191,16 @@ document.getElementById('make-maps-button').addEventListener('click', function()
     // Clear the planeSeriesArray
     planeSeriesArray = [];
 
-    pointSeries.data.setAll([]);
-    lineSeries.data.setAll([]);
-
-    // Ensure all references to the old chart are removed
+    // Dispose the old chart only when the user explicitly updates routes after
+    // an existing chart has been created. On startup this is the sole creation.
     if (chart) {
-        // Dispose of the existing chart
         chart.dispose();
+        recordMainChartDisposed(chart);
+        chart = null;
     }
+    linesMap.clear();
 
-    // Create a new chart
-    chart = root.container.children.push(am5map.MapChart.new(root, {
-        //panX: "rotateX",
-        panX: "none",
-        //panY: "translateY",
-        panY: "none",
-        rotationY: 0,
-        projection: am5map.geoEqualEarth(),
-        minZoomLevel: 1.0,
-        maxZoomLevel: 1.0,
-        maxPanOut: 0
-    }));
-    
-    //console.log("Chart after initialization (2):", chart);
-
-    // Re-initialize map after button click
-    initializeMap();
+    createMainChart();
 
     // Make stuff animate on load
     chart.appear(1000, 100);

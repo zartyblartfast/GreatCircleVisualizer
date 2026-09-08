@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "test:ui": "playwright test"
+  },
   "dependencies": {
     "@babel/parser": "^7.22.7",
     "@babel/traverse": "^7.22.8",
@@ -12,6 +15,7 @@
     "skott": "^0.28.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "dependency-cruiser": "^13.1.1"
   }
 }
