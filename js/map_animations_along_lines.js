@@ -19,11 +19,16 @@ var globalLocationPair = window.globalLocationPair;
 var linesMap = new Map();
 //console.log('1. linesMap:', linesMap);
 
-// Create root element
-var root = am5.Root.new("chartdiv1");
+// A root owns amCharts' canvas layers and private projection state. Projection
+// changes recreate it so no fit/translation state can leak into the next map.
+var root;
 
-// Set themes
-root.setThemes([am5themes_Animated.new(root)]);
+function createRoot() {
+    root = am5.Root.new("chartdiv1");
+    root.setThemes([am5themes_Animated.new(root)]);
+}
+
+createRoot();
 
 var chart;
 var backgroundSeries;
@@ -34,10 +39,14 @@ var pointSeries;
 var rhumbLineSeries;
 var planeSeriesArray = [];
 
-function initializeMap() {
-    //console.log("Inside initializeMap()")
-    // Update the projection and get the projection function
-    updateProjection(chart, currentProjectionName);
+function initializeMap(useGlobeProjection = false) {
+    // Create the target projection before map geometry exists. This avoids an
+    // intermediate D3 projection whose fit state could affect the globe.
+    if (useGlobeProjection) {
+        applyOrthographic(chart);
+    } else {
+        updateProjection(chart, currentProjectionName);
+    }
 
     var backgroundSeries = chart.series.unshift(
         am5map.MapPolygonSeries.new(root, {})
@@ -102,14 +111,16 @@ function initializeMap() {
     // Create corridor line series (for median flight path overlay)
     initCorridorSeries(root, chart);
 
-    // Setup projection dropdown
-    setupProjectionDropdown(chart); // now async, returns promise
 }
 
-// Preload projection config before initializing map
-await loadProjectionConfig();
+// Start loading projection config without blocking event listener registration.
+// The startup suggestions module clicks the update button after loading suggestions;
+// this listener must already exist by then, even if projection config is still loading.
+const projectionConfigReady = loadProjectionConfig();
 
-function createMainChart() {
+async function createMainChart(useGlobeProjection = false) {
+    await projectionConfigReady;
+
     chart = root.container.children.push(am5map.MapChart.new(root, {
         panX: "rotateX",
         panY: "translateY",
@@ -119,24 +130,60 @@ function createMainChart() {
         maxZoomLevel: 1.25
     }));
     recordMainChartCreated(chart);
-    initializeMap();
+    initializeMap(useGlobeProjection);
 }
+
+function getExpandedPairId() {
+    return document.querySelector('.tag.expanded')?.id || null;
+}
+
+function restoreExpandedPair(pairId) {
+    if (!pairId) return;
+    document.dispatchEvent(new CustomEvent('pairExpandCollapse', {
+        detail: { pairId, expanded: true }
+    }));
+}
+
+async function recreateMainChart(useGlobeProjection) {
+    const expandedPairId = getExpandedPairId();
+    stopAnimationsAndClearData(planeSeriesArray);
+    planeSeriesArray = [];
+    if (chart) recordMainChartDisposed(chart);
+    chart = null;
+    linesMap.clear();
+    root.dispose();
+    document.getElementById('chartdiv1').replaceChildren();
+    createRoot();
+    await createMainChart(useGlobeProjection);
+    restoreExpandedPair(expandedPairId);
+}
+
+async function rebuildMainChartForProjection() {
+    if (!chart) return;
+    await recreateMainChart(false);
+    chart.appear(300, 0);
+}
+
+// Bind once. Chart roots are recreated, but this DOM control is not.
+setupProjectionDropdown(null, rebuildMainChartForProjection);
 
 // --- HTML Globe Toggle ---
 var globeToggle = document.getElementById('globe-toggle');
 var globeToggleLabel = document.getElementById('globe-toggle-label');
-globeToggle.addEventListener('change', function() {
+globeToggle.addEventListener('change', async function() {
     if (!chart) return;
     var projectionSelect = document.getElementById('projectionSelect');
     if (globeToggle.checked) {
-        // Switch TO Globe
+        // Build the globe on a fresh root so the preceding D3 projection cannot
+        // leak its fit/translation state into the orthographic chart.
+        await recreateMainChart(true);
+        globeToggle.checked = true;
         globeToggleLabel.textContent = 'Globe';
-        applyOrthographic(chart);
         projectionSelect.disabled = true;
     } else {
-        // Switch BACK to Map
+        // Build a fresh map root; do not mutate the orthographic chart.
         globeToggleLabel.textContent = 'Map';
-        applyProjectionConfig(chart, currentProjectionName);
+        await recreateMainChart(false);
         projectionSelect.disabled = false;
     }
 });
@@ -174,7 +221,7 @@ document.addEventListener('pairExpandCollapse', function(event) {
 
 
 // Event listener for the "Make maps" button
-document.getElementById('make-maps-button').addEventListener('click', function() {
+document.getElementById('make-maps-button').addEventListener('click', async function() {
 
     //console.log('Make maps button clicked, reinitialising map...');
     
@@ -200,7 +247,7 @@ document.getElementById('make-maps-button').addEventListener('click', function()
     }
     linesMap.clear();
 
-    createMainChart();
+    await createMainChart();
 
     // Make stuff animate on load
     chart.appear(1000, 100);

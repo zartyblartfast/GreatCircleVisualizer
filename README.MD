@@ -8,6 +8,8 @@ The Great Circle Mapper is a web application designed to help users visualize th
 - Add pairs of airports to visualize the great circle path between them.
 - View suggested pairs of airports.
 - Data is persisted in the browser's local storage, so your added pairs will still be there when you come back!
+- Switch between a range of map projections and an orthographic Globe view.
+- Expand a route to highlight its Great Circle; where available, view real-flight median corridor overlays.
 
 ## Usage
 
@@ -18,6 +20,25 @@ To use the Great Circle Mapper, simply select two airports from the dropdown men
 This project is structured as a modular JavaScript application. The main dependencies between modules are illustrated in the following diagram:
 
 ![Dependency graph](assets/graph.svg)
+
+### Technical documentation
+
+- [Map projection and globe lifecycle](docs/map-projection-lifecycle.md) — rendering architecture, state-preservation rules, and centering regressions.
+- [Flight corridor data](docs/flight-corridor-data.md) — acquisition, processing, provenance, and frontend rendering of real-flight median routes.
+
+## Testing
+
+Run the browser UI and map-lifecycle regressions:
+
+```bash
+npm run test:ui -- --reporter=line
+```
+
+Run the flight-corridor processing tests:
+
+```bash
+npm test --prefix tools/corridors
+```
 
 ## Future Improvements
 

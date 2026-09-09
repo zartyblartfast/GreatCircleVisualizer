@@ -14,7 +14,7 @@ export function updateProjection(chart, d3Name) {
 }
 
 
-export async function setupProjectionDropdown(chart) {
+export async function setupProjectionDropdown(chart, onProjectionChange = null) {
     var projectionSelect = document.getElementById('projectionSelect');
     projectionSelect.innerHTML = "";
 
@@ -38,10 +38,13 @@ export async function setupProjectionDropdown(chart) {
         projectionSelect.add(option);
     }
 
-    projectionSelect.addEventListener('change', function() {
+    projectionSelect.onchange = async function() {
         const selectedD3Name = projectionSelect.value;
-
-        updateProjection(chart, selectedD3Name);
         updateProjectionName(selectedD3Name);
-    });
+        if (onProjectionChange) {
+            await onProjectionChange(selectedD3Name);
+        } else {
+            updateProjection(chart, selectedD3Name);
+        }
+    };
 }

@@ -34,6 +34,26 @@ test('initial startup creates one visible main map', async ({ page }) => {
   expect(consoleErrors).toEqual([]);
 });
 
+test('initial startup creates one visible main map when projection config is slow', async ({ page }) => {
+  const consoleErrors = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+
+  await page.route('**/data/projections.json', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 2_000));
+    await route.continue();
+  });
+
+  await page.goto(`${APP_URL}&slowProjectionConfig=1`, { waitUntil: 'networkidle' });
+  await waitForMainMap(page);
+
+  const state = await page.evaluate(() => window.__gcvDiagnostics.mainMap());
+  expect(state.creationCount).toBe(1);
+  expect(state.rendered).toBe(true);
+  expect(consoleErrors).toEqual([]);
+});
+
 test('main map remains visible over repeated cold reloads', async ({ browser }) => {
   for (let attempt = 0; attempt < 10; attempt += 1) {
     const context = await browser.newContext({ viewport: { width: 1440, height: 1200 } });

@@ -65,7 +65,8 @@ export function applyProjectionConfig(chart, d3Name, rotationXOverride = null) {
     chart.set("wheelY", "none");
     chart.set("wheelX", "none");
     chart.set("maxPanOut", 0);
-    chart.set("zoomLevel", 1);
+    chart.set("minZoomLevel", config.homeZoomLevel || 1);
+    chart.set("zoomLevel", config.homeZoomLevel || 1);
 
     // --- Apply config from JSON ---
     chart.set("panX", config.panX);
@@ -84,9 +85,12 @@ export function applyProjectionConfig(chart, d3Name, rotationXOverride = null) {
         chart.set("homeRotationY", config.rotationY);
         setTimeout(() => { chart.goHome(); }, 100);
     } else {
-        chart.set("homeGeoPoint", { latitude: 0, longitude: 0 });
+        chart.set("homeGeoPoint", config.homeGeoPoint || { latitude: 0, longitude: 0 });
         chart.set("homeRotationX", 0);
         chart.set("homeRotationY", 0);
+        if (config.homeGeoPoint) {
+            setTimeout(() => { chart.goHome(); }, 100);
+        }
     }
 
     return true;
