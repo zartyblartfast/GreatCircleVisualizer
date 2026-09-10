@@ -358,3 +358,43 @@ td, th { border: 1px solid #000; }
   height: 600px;
 }
 
+/* Keep the desktop two-column layout above the minimum combined width.
+   Below it, stack the controls above a fluid map instead of overflowing. */
+@media (max-width: 1120px) {
+  :root {
+    --tag-width: 100%;
+  }
+
+  .main-container {
+    flex-direction: column;
+  }
+
+  .grid-wrapper,
+  .location-pair-tags-container {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .container {
+    grid-template-columns: var(--column-width) var(--column-width) 24px;
+  }
+
+  .tag {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  #chartdiv1 {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
