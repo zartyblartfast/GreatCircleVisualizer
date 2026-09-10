@@ -103,3 +103,50 @@ test('updating flight paths replaces the rendered main map once', async ({ page 
   expect(state.disposalCount).toBe(1);
   expect(state.rendered).toBe(true);
 });
+
+test('latest rapid transition wins and leaves one live map root', async ({ page }) => {
+  const consoleErrors = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+
+  await page.goto(`${APP_URL}&rapid=1`, { waitUntil: 'networkidle' });
+  await waitForMainMap(page);
+
+  await page.evaluate(() => {
+    const projectionSelect = document.getElementById('projectionSelect');
+    const globeToggle = document.getElementById('globe-toggle');
+    const selectProjection = (name) => {
+      projectionSelect.value = name;
+      projectionSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+
+    selectProjection('geoMercator');
+    selectProjection('geoAiry');
+
+    globeToggle.checked = true;
+    globeToggle.dispatchEvent(new Event('change', { bubbles: true }));
+    globeToggle.checked = false;
+    globeToggle.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+
+  await expect.poll(() => page.evaluate(() => ({
+    projection: document.getElementById('projectionSelect').value,
+    globe: document.getElementById('globe-toggle').checked,
+    controlsEnabled: [
+      document.getElementById('projectionSelect'),
+      document.getElementById('globe-toggle'),
+      document.getElementById('make-maps-button')
+    ].every((control) => !control.disabled),
+    rootCount: window.am5.registry.rootElements.filter((root) => root.dom?.id === 'chartdiv1').length,
+    creationCount: window.__gcvDiagnostics.mainMap().creationCount
+  })), { timeout: 15_000 }).toEqual({
+    projection: 'geoAiry',
+    globe: false,
+    controlsEnabled: true,
+    rootCount: 1,
+    creationCount: 2
+  });
+
+  expect(consoleErrors).toEqual([]);
+});

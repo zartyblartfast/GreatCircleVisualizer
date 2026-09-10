@@ -24,11 +24,12 @@ var linesMap = new Map();
 var root;
 
 function createRoot() {
-    root = am5.Root.new("chartdiv1");
-    root.setThemes([am5themes_Animated.new(root)]);
+    const newRoot = am5.Root.new("chartdiv1");
+    newRoot.setThemes([am5themes_Animated.new(newRoot)]);
+    return newRoot;
 }
 
-createRoot();
+root = createRoot();
 
 var chart;
 var backgroundSeries;
@@ -39,13 +40,16 @@ var pointSeries;
 var rhumbLineSeries;
 var planeSeriesArray = [];
 
-function initializeMap(useGlobeProjection = false) {
+function initializeMap(mapRoot, mapChart, useGlobeProjection = false, isCurrent = () => true, projectionName = currentProjectionName) {
+    const root = mapRoot;
+    const chart = mapChart;
+
     // Create the target projection before map geometry exists. This avoids an
     // intermediate D3 projection whose fit state could affect the globe.
     if (useGlobeProjection) {
         applyOrthographic(chart);
     } else {
-        updateProjection(chart, currentProjectionName);
+        updateProjection(chart, projectionName, isCurrent);
     }
 
     var backgroundSeries = chart.series.unshift(
@@ -118,10 +122,11 @@ function initializeMap(useGlobeProjection = false) {
 // this listener must already exist by then, even if projection config is still loading.
 const projectionConfigReady = loadProjectionConfig();
 
-async function createMainChart(useGlobeProjection = false) {
+async function createMainChart(rootForTransition, useGlobeProjection = false, projectionName = currentProjectionName, isCurrent = () => true) {
     await projectionConfigReady;
+    if (!isCurrent()) return null;
 
-    chart = root.container.children.push(am5map.MapChart.new(root, {
+    const chartForTransition = rootForTransition.container.children.push(am5map.MapChart.new(rootForTransition, {
         panX: "rotateX",
         panY: "translateY",
         rotationY: 0,
@@ -129,8 +134,9 @@ async function createMainChart(useGlobeProjection = false) {
         minZoomLevel: 1.0,
         maxZoomLevel: 1.25
     }));
-    recordMainChartCreated(chart);
-    initializeMap(useGlobeProjection);
+    recordMainChartCreated(chartForTransition);
+    initializeMap(rootForTransition, chartForTransition, useGlobeProjection, isCurrent, projectionName);
+    return chartForTransition;
 }
 
 function getExpandedPairId() {
@@ -144,24 +150,70 @@ function restoreExpandedPair(pairId) {
     }));
 }
 
-async function recreateMainChart(useGlobeProjection) {
-    const expandedPairId = getExpandedPairId();
-    stopAnimationsAndClearData(planeSeriesArray);
-    planeSeriesArray = [];
-    if (chart) recordMainChartDisposed(chart);
-    chart = null;
-    linesMap.clear();
-    root.dispose();
-    document.getElementById('chartdiv1').replaceChildren();
-    createRoot();
-    await createMainChart(useGlobeProjection);
-    restoreExpandedPair(expandedPairId);
+let transitionId = 0;
+
+function isCurrentTransition(id) {
+    return id === transitionId;
 }
 
-async function rebuildMainChartForProjection() {
-    if (!chart) return;
-    await recreateMainChart(false);
-    chart.appear(300, 0);
+function setTransitionControlsDisabled(disabled, useGlobeProjection = globeToggle.checked) {
+    document.getElementById('make-maps-button').disabled = disabled;
+    globeToggle.disabled = disabled;
+    document.getElementById('projectionSelect').disabled = disabled || useGlobeProjection;
+}
+
+async function recreateMainChart(useGlobeProjection, projectionName = currentProjectionName) {
+    const id = ++transitionId;
+    const expandedPairId = getExpandedPairId();
+    const previousRoot = root;
+    const previousChart = chart;
+    setTransitionControlsDisabled(true, useGlobeProjection);
+
+    try {
+        stopAnimationsAndClearData(planeSeriesArray);
+        planeSeriesArray = [];
+        if (previousChart) recordMainChartDisposed(previousChart);
+        chart = null;
+        root = null;
+        linesMap.clear();
+        if (previousRoot) previousRoot.dispose();
+        document.getElementById('chartdiv1').replaceChildren();
+
+        await projectionConfigReady;
+        if (!isCurrentTransition(id)) return false;
+
+        const nextRoot = createRoot();
+        const nextChart = await createMainChart(
+            nextRoot,
+            useGlobeProjection,
+            projectionName,
+            () => isCurrentTransition(id)
+        );
+
+        if (!isCurrentTransition(id)) {
+            if (nextChart) recordMainChartDisposed(nextChart);
+            nextRoot.dispose();
+            return false;
+        }
+
+        root = nextRoot;
+        chart = nextChart;
+        restoreExpandedPair(expandedPairId);
+        return true;
+    } catch (error) {
+        console.error('Main map transition failed:', error);
+        return false;
+    } finally {
+        if (isCurrentTransition(id)) {
+            globeToggle.checked = useGlobeProjection;
+            globeToggleLabel.textContent = useGlobeProjection ? 'Globe' : 'Map';
+            setTransitionControlsDisabled(false, useGlobeProjection);
+        }
+    }
+}
+
+async function rebuildMainChartForProjection(projectionName) {
+    if (await recreateMainChart(false, projectionName)) chart.appear(300, 0);
 }
 
 // Bind once. Chart roots are recreated, but this DOM control is not.
@@ -171,20 +223,13 @@ setupProjectionDropdown(null, rebuildMainChartForProjection);
 var globeToggle = document.getElementById('globe-toggle');
 var globeToggleLabel = document.getElementById('globe-toggle-label');
 globeToggle.addEventListener('change', async function() {
-    if (!chart) return;
-    var projectionSelect = document.getElementById('projectionSelect');
     if (globeToggle.checked) {
         // Build the globe on a fresh root so the preceding D3 projection cannot
         // leak its fit/translation state into the orthographic chart.
-        await recreateMainChart(true);
-        globeToggle.checked = true;
-        globeToggleLabel.textContent = 'Globe';
-        projectionSelect.disabled = true;
+        await recreateMainChart(true, currentProjectionName);
     } else {
         // Build a fresh map root; do not mutate the orthographic chart.
-        globeToggleLabel.textContent = 'Map';
-        await recreateMainChart(false);
-        projectionSelect.disabled = false;
+        await recreateMainChart(false, currentProjectionName);
     }
 });
 
@@ -225,21 +270,11 @@ document.getElementById('make-maps-button').addEventListener('click', async func
 
     //console.log('Make maps button clicked, reinitialising map...');
     
-    var projectionSelect = document.getElementById('projectionSelect'); // Assuming the ID of the dropdown element is 'projectionSelect'
-    projectionSelect.disabled = false; // Enable the dropdown
-
-    // Reset globe toggle to Map mode
-    document.getElementById('globe-toggle').checked = false;
-    document.getElementById('globe-toggle-label').textContent = 'Map';
-
-    // Stop animations and clear the data from each series in the planeSeriesArray
-    stopAnimationsAndClearData(planeSeriesArray);
-
     // Use the same complete root-recreation lifecycle as other map transitions.
-    await recreateMainChart(false);
+    if (await recreateMainChart(false, currentProjectionName) && chart) {
+        chart.appear(1000, 100);
+    }
 
-    // Make stuff animate on load
-    chart.appear(1000, 100);
 });
 
 document.addEventListener('DOMContentLoaded', function() {

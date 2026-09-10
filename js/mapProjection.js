@@ -9,8 +9,8 @@ export function updateProjectionName(newName) {
 }
 
 // Function to update the map projection using the unified config
-export function updateProjection(chart, d3Name) {
-    applyProjectionConfig(chart, d3Name);
+export function updateProjection(chart, d3Name, isCurrent = () => true) {
+    applyProjectionConfig(chart, d3Name, null, isCurrent);
 }
 
 

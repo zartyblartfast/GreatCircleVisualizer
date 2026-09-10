@@ -29,7 +29,7 @@ export function getConfigById(id) {
 // Full state reset + apply config from JSON for a given d3Name.
 // This is THE single function all code paths should call when switching projections.
 // It ensures no properties leak from a previous projection.
-export function applyProjectionConfig(chart, d3Name, rotationXOverride = null) {
+export function applyProjectionConfig(chart, d3Name, rotationXOverride = null, isCurrent = () => true) {
     const config = getConfigByD3Name(d3Name);
     if (!config) {
         console.error(`projectionConfig: no config found for "${d3Name}"`);
@@ -83,13 +83,17 @@ export function applyProjectionConfig(chart, d3Name, rotationXOverride = null) {
         }
         chart.set("homeRotationX", config.rotationX);
         chart.set("homeRotationY", config.rotationY);
-        setTimeout(() => { chart.goHome(); }, 100);
+        setTimeout(() => {
+            if (isCurrent()) chart.goHome();
+        }, 100);
     } else {
         chart.set("homeGeoPoint", config.homeGeoPoint || { latitude: 0, longitude: 0 });
         chart.set("homeRotationX", 0);
         chart.set("homeRotationY", 0);
         if (config.homeGeoPoint) {
-            setTimeout(() => { chart.goHome(); }, 100);
+            setTimeout(() => {
+                if (isCurrent()) chart.goHome();
+            }, 100);
         }
     }
 
