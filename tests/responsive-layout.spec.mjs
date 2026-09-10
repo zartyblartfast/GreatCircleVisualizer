@@ -24,6 +24,7 @@ async function layoutState(page) {
       controlWidth: document.querySelector('.grid-wrapper').getBoundingClientRect().width,
       tagsWidth: document.querySelector('.location-pair-tags-container').getBoundingClientRect().width,
       map: { x: mapRect.x, width: mapRect.width },
+      mapTouchAction: getComputedStyle(map).touchAction,
       fields: {
         countryB: rect('#country-b-dropdown'),
         countryInfo: rect('.country-b-info'),
@@ -43,20 +44,24 @@ test('wide layout remains side-by-side without horizontal overflow', async ({ pa
   const state = await layoutState(page);
   expect(state.flexDirection).toBe('row');
   expect(state.hasHorizontalOverflow).toBe(false);
+  expect(state.mapTouchAction).toBe('auto');
 });
 
 test('narrow layout stacks controls and map without horizontal overflow', async ({ page }) => {
-  await page.setViewportSize({ width: 1024, height: 1200 });
-  await page.goto('/index.html?diagnostics=1&responsive=narrow', { waitUntil: 'networkidle' });
-  await waitForMainMap(page);
+  for (const width of [1024, 768, 600, 480]) {
+    await page.setViewportSize({ width, height: 1200 });
+    await page.goto(`/index.html?diagnostics=1&responsive=narrow-${width}`, { waitUntil: 'networkidle' });
+    await waitForMainMap(page);
 
-  const state = await layoutState(page);
-  expect(state.flexDirection).toBe('column');
-  expect(state.hasHorizontalOverflow).toBe(false);
-  expect(Math.abs(state.tagsWidth - state.controlWidth)).toBeLessThanOrEqual(1);
-  expect(state.map.width).toBeLessThanOrEqual(state.viewportWidth);
-  expect(state.fields.countryInfo.x - state.fields.countryB.right).toBeGreaterThanOrEqual(0);
-  expect(state.fields.countryInfo.x - state.fields.countryB.right).toBeLessThanOrEqual(15);
-  expect(state.fields.airportInfo.x - state.fields.airportB.right).toBeGreaterThanOrEqual(0);
-  expect(state.fields.airportInfo.x - state.fields.airportB.right).toBeLessThanOrEqual(15);
+    const state = await layoutState(page);
+    expect(state.flexDirection, `flex direction at ${width}px`).toBe('column');
+    expect(state.hasHorizontalOverflow, `overflow at ${width}px`).toBe(false);
+    expect(Math.abs(state.tagsWidth - state.controlWidth), `tag width at ${width}px`).toBeLessThanOrEqual(1);
+    expect(state.map.width, `map width at ${width}px`).toBeLessThanOrEqual(state.viewportWidth);
+    expect(state.mapTouchAction, `map touch action at ${width}px`).toBe('pan-y');
+    expect(state.fields.countryInfo.x - state.fields.countryB.right, `country icon at ${width}px`).toBeGreaterThanOrEqual(0);
+    expect(state.fields.countryInfo.x - state.fields.countryB.right, `country icon at ${width}px`).toBeLessThanOrEqual(15);
+    expect(state.fields.airportInfo.x - state.fields.airportB.right, `airport icon at ${width}px`).toBeGreaterThanOrEqual(0);
+    expect(state.fields.airportInfo.x - state.fields.airportB.right, `airport icon at ${width}px`).toBeLessThanOrEqual(15);
+  }
 });

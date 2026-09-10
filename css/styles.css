@@ -404,6 +404,7 @@ td, th { border: 1px solid #000; }
     width: 100%;
     min-width: 0;
     max-width: 100%;
+    touch-action: pan-y;
   }
 }
 
