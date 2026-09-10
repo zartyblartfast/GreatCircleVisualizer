@@ -81,10 +81,24 @@ test('updating flight paths replaces the rendered main map once', async ({ page 
   await page.goto(APP_URL, { waitUntil: 'networkidle' });
   await waitForMainMap(page);
 
+  await page.evaluate(() => {
+    window.__rootBeforeFlightPathUpdate = window.am5.registry.rootElements.find(
+      (root) => root.dom?.id === 'chartdiv1'
+    );
+  });
+
   await page.getByRole('button', { name: 'Update Flight Paths' }).click();
   await waitForMainMap(page);
 
-  const state = await page.evaluate(() => window.__gcvDiagnostics.mainMap());
+  const result = await page.evaluate(() => ({
+    sameRoot: window.am5.registry.rootElements.find((root) => root.dom?.id === 'chartdiv1') === window.__rootBeforeFlightPathUpdate,
+    rootCount: window.am5.registry.rootElements.filter((root) => root.dom?.id === 'chartdiv1').length,
+    state: window.__gcvDiagnostics.mainMap()
+  }));
+
+  expect(result.sameRoot).toBe(false);
+  expect(result.rootCount).toBe(1);
+  const state = result.state;
   expect(state.creationCount).toBe(2);
   expect(state.disposalCount).toBe(1);
   expect(state.rendered).toBe(true);

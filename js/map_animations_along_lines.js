@@ -235,19 +235,8 @@ document.getElementById('make-maps-button').addEventListener('click', async func
     // Stop animations and clear the data from each series in the planeSeriesArray
     stopAnimationsAndClearData(planeSeriesArray);
 
-    // Clear the planeSeriesArray
-    planeSeriesArray = [];
-
-    // Dispose the old chart only when the user explicitly updates routes after
-    // an existing chart has been created. On startup this is the sole creation.
-    if (chart) {
-        chart.dispose();
-        recordMainChartDisposed(chart);
-        chart = null;
-    }
-    linesMap.clear();
-
-    await createMainChart();
+    // Use the same complete root-recreation lifecycle as other map transitions.
+    await recreateMainChart(false);
 
     // Make stuff animate on load
     chart.appear(1000, 100);
