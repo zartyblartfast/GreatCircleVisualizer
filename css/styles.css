@@ -406,5 +406,9 @@ td, th { border: 1px solid #000; }
     max-width: 100%;
     touch-action: pan-y;
   }
+
+  #chartdiv1 canvas {
+    touch-action: pan-y;
+  }
 }
 
