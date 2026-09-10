@@ -31,10 +31,10 @@
   width: var(--tag-width);
   max-width: var(--tag-width);
   padding: 5px 10px;
-  max-height: 30px; 
   overflow: hidden;
-  /* transition: all 0.8s ease-in-out; */
-  transition: max-height 0.8s ease-in-out, width 0.2s ease-in-out;
+  transition:
+    background 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .tag .main-content {
@@ -95,22 +95,52 @@
 }
 
 .tag .additional-info {
-  display: none;
-}
+  display: block;
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transform: translateY(-4px);
+  order: 1;
+  contain: inline-size;
 
-.tag.expanded {
-     max-height: 500px;
-  }
+  transition:
+    max-height 700ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 400ms ease,
+    transform 700ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 700ms;
+}
 
 .tag.expanded .tag-delete {
   order: 2;
 }
 
 .tag.expanded .additional-info {
-  display: block;
-  order: 1;
+  max-height: 1000px;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
   white-space: normal;
+
+  transition:
+    max-height 700ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 400ms ease 80ms,
+    transform 700ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s;
+}
+
+.tag-content,
+.tag-content .airport-name {
+  min-width: 0;
   overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag,
+  .tag .additional-info {
+    transition-duration: 0.01ms;
+    transition-delay: 0ms;
+  }
 }
 
 .tag.suggested {
