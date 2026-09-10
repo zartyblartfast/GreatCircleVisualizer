@@ -21,6 +21,8 @@ async function layoutState(page) {
       viewportWidth: window.innerWidth,
       scrollWidth: document.documentElement.scrollWidth,
       flexDirection: mainStyle.flexDirection,
+      controlWidth: document.querySelector('.grid-wrapper').getBoundingClientRect().width,
+      tagsWidth: document.querySelector('.location-pair-tags-container').getBoundingClientRect().width,
       map: { x: mapRect.x, width: mapRect.width },
       fields: {
         countryB: rect('#country-b-dropdown'),
@@ -51,6 +53,7 @@ test('narrow layout stacks controls and map without horizontal overflow', async 
   const state = await layoutState(page);
   expect(state.flexDirection).toBe('column');
   expect(state.hasHorizontalOverflow).toBe(false);
+  expect(Math.abs(state.tagsWidth - state.controlWidth)).toBeLessThanOrEqual(1);
   expect(state.map.width).toBeLessThanOrEqual(state.viewportWidth);
   expect(state.fields.countryInfo.x - state.fields.countryB.right).toBeGreaterThanOrEqual(0);
   expect(state.fields.countryInfo.x - state.fields.countryB.right).toBeLessThanOrEqual(15);

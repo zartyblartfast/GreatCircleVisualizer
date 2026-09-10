@@ -376,7 +376,16 @@ td, th { border: 1px solid #000; }
   }
 
   .container {
-    grid-template-columns: var(--column-width) var(--column-width) 24px;
+    grid-template-columns: var(--column-width) var(--column-width) minmax(24px, 1fr);
+  }
+
+  .country-b-info,
+  .airport-b-info {
+    justify-self: start;
+  }
+
+  .location-pair-tags-container {
+    grid-column: 1 / -1;
   }
 
   .tag {
