@@ -124,6 +124,8 @@ PAIR=LAX-DXB npm run fetch-tracks
 |---|---|---|
 | `PAIR` | (all) | Only process this pair ID |
 | `DAYS_BACK` | `1` | Days of history to query |
+| `START_DATE` | (unset) | Inclusive UTC start date (`YYYY-MM-DD`); use with `END_DATE` |
+| `END_DATE` | (unset) | Inclusive UTC end date (`YYYY-MM-DD`); use with `START_DATE` |
 | `MIN_TRACKS` | `3` | Skip direction if ≥ this many tracks exist |
 | `RATE_DELAY_MS` | `25000` | Delay between API calls (ms) |
 

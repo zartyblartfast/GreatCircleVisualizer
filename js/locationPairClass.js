@@ -129,8 +129,9 @@ export class LocationPair {
       // Flight route indicator icon (plane) for pairs with corridor data
       if (pair.corridor && pair.corridor.available) {
         const corridorIcon = document.createElement('span');
-        corridorIcon.classList.add('corridor-icon');
+        corridorIcon.classList.add('corridor-icon', 'corridor-toggleable');
         corridorIcon.textContent = '✈';
+        corridorIcon.dataset.corridorVisible = 'true';
 
         // Build tooltip text with direction key
         const datasets = pair.corridor.datasets || {};
@@ -144,6 +145,16 @@ export class LocationPair {
           lines.push(`── Green dashed: ${codeB} → ${codeA}`);
         }
         corridorIcon.setAttribute('title', lines.join('\n'));
+
+        corridorIcon.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const visible = corridorIcon.dataset.corridorVisible !== 'true';
+          corridorIcon.dataset.corridorVisible = String(visible);
+          corridorIcon.classList.toggle('corridor-hidden', !visible);
+          document.dispatchEvent(new CustomEvent('corridorVisibilityToggle', {
+            detail: { pairId: pair.id, visible }
+          }));
+        });
 
         mainContent.appendChild(corridorIcon);
       } else if (pair.isSuggested) {

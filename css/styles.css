@@ -31,7 +31,7 @@ header {
 
 :root {
   --column-width: 150px; 
-  --field-width: 145px; 
+  --field-width: 130px;
   --field-height: 25px;
   --tag-width: calc(var(--field-width) * 2 - 20 );
 }
@@ -72,7 +72,7 @@ header {
 */
 .container {
   display: grid;
-  grid-template-columns: var(--column-width) var(--column-width) auto;  /* Add third column for icons */
+  grid-template-columns: 170px 170px auto;  /* Match the action-button columns */
   grid-template-rows: auto auto auto auto auto auto auto auto auto auto; 
   gap: 2px 2px;
   grid-auto-flow: row;
@@ -111,8 +111,8 @@ header {
 
 
 /* Set grid-areas for new info icons */
-.country-b-info { grid-area: country-b-info; }
-.airport-b-info { grid-area: airport-b-info; }
+.country-b-info { grid-area: country-b-info; transform: translateX(-20px); }
+.airport-b-info { grid-area: airport-b-info; transform: translateX(-20px); }
 
 .add-tags-header-container {
   grid-area: add-tags-header-container;
@@ -161,6 +161,9 @@ header {
 
 .location-a-label,
 .location-b-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-decoration: none;
   font-family: sans-serif;
   font-weight: 600;
@@ -171,6 +174,14 @@ header {
 
 .country-a-dropdown { grid-area: country-a-dropdown; }
 .country-b-dropdown { grid-area: country-b-dropdown; }
+
+.country-a-dropdown,
+.country-b-dropdown,
+.airport-a-filter-search,
+.airport-b-filter-search {
+  display: flex;
+  justify-content: center;
+}
 
 .country-a-dropdown select,
 .country-b-dropdown select {
@@ -202,16 +213,16 @@ header {
 
 .add-button-container { 
   grid-area: add-button-container; 
-  width: var(--field-width); 
+  width: 170px;
 }
 .suggestions-button-container { 
   grid-area: suggestions-button-container; 
-  width: var(--field-width); 
+  width: 170px;
 }
 .make-maps-button-container {
   grid-area: make-maps-button-container; 
   /*width: var(--tag-width); */
-  width: 296px;
+  width: 342px;
   grid-column: span 2;
 }
 .info-message-container { 
@@ -376,7 +387,7 @@ td, th { border: 1px solid #000; }
   }
 
   .container {
-    grid-template-columns: var(--column-width) var(--column-width) minmax(24px, 1fr);
+    grid-template-columns: 170px 170px minmax(24px, 1fr);
   }
 
   .country-b-info,

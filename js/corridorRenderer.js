@@ -68,8 +68,9 @@ export function initCorridorSeries(root, chart) {
  * Fetches datasets on demand and caches results.
  *
  * @param {string} pairId  e.g. "LAX-DXB"
+ * @param {object} corridor  Directional dataset metadata from the pair
  */
-export async function showCorridor(pairId) {
+export async function showCorridor(pairId, corridor = null) {
     hideCorridor();
 
     if (!atobSeries || !btoaSeries) return;
@@ -82,10 +83,15 @@ export async function showCorridor(pairId) {
     const originCode = pairId.substring(0, hyphenIdx);
     const destCode = pairId.substring(hyphenIdx + 1);
 
-    // Fetch both directions in parallel
+    const datasets = corridor?.datasets || {};
+    const atobDataset = datasets.AtoB?.datasetId;
+    const btoaDataset = datasets.BtoA?.datasetId;
+
+    // Fetch only directions declared by the pair metadata. Some routes have
+    // corridor data in one direction only, so do not manufacture 404s.
     const [atobData, btoaData] = await Promise.all([
-        fetchDataset(originCode, destCode),
-        fetchDataset(destCode, originCode)
+        atobDataset ? fetchDatasetById(atobDataset) : Promise.resolve(null),
+        btoaDataset ? fetchDatasetById(btoaDataset) : Promise.resolve(null)
     ]);
 
     if (atobData) {
@@ -123,29 +129,26 @@ function clearSeries(series) {
 // ---------------------------------------------------------------------------
 
 /**
- * Fetch a corridor dataset JSON. Returns cached result or null if not available.
+ * Fetch a corridor dataset using the ID declared in suggestion metadata.
+ * Returns cached result or null if not available.
  */
-async function fetchDataset(origin, dest) {
-    const key = `${origin}-${dest}`;
-
-    if (cache.has(key)) {
-        return cache.get(key);
+async function fetchDatasetById(datasetId) {
+    if (cache.has(datasetId)) {
+        return cache.get(datasetId);
     }
 
     try {
-        const url = `./data/corridors/${key}-v1.json`;
-        const response = await fetch(url);
-
+        const response = await fetch(`./data/corridors/${datasetId}.json`);
         if (!response.ok) {
-            cache.set(key, null);
+            cache.set(datasetId, null);
             return null;
         }
 
         const data = await response.json();
-        cache.set(key, data);
+        cache.set(datasetId, data);
         return data;
     } catch {
-        cache.set(key, null);
+        cache.set(datasetId, null);
         return null;
     }
 }

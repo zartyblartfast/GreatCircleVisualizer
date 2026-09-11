@@ -87,7 +87,7 @@ test('updating flight paths replaces the rendered main map once', async ({ page 
     );
   });
 
-  await page.getByRole('button', { name: 'Update Flight Paths' }).click();
+  await page.getByRole('button', { name: 'Update Map' }).click();
   await waitForMainMap(page);
 
   const result = await page.evaluate(() => ({

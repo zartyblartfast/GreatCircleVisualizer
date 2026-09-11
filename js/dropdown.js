@@ -9,12 +9,12 @@ window.addEventListener('DOMContentLoaded', async () => {
       <strong>Getting Started:</strong>
       <ul>
         <li>Each <span style="font-weight: bold;">"Airport Pair Tag"</span> is represented by a Great Circle line on the maps.</li>
-        <li><span style="color: green;">Suggested Airport Pair Tags</span> are automatically generated for your convenience.</li>
+        <li><span style="color: green;">Example Airport Pair Tags</span> are automatically generated for your convenience.</li>
       </ul>
       <strong>Next Steps:</strong>
       <ul>
         <li>If you wish to plot custom Great Circle routes, simply add your chosen <span style="font-weight: bold;">Airport A & B</span> pair.</li>
-        <li>Afterwards, click the <span style="color: red;">[Update Flight Paths]</span> button to refresh the map display.</li>
+        <li>Afterwards, click the <span style="color: red;">[Update Map]</span> button to refresh the map display.</li>
       </ul>
     `,
     placement: 'right',
@@ -40,20 +40,20 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
   
   tippy('#suggestions-button-icon', {
-    content: '<div style="font-weight: bold;">Suggested Airport Pair Tags</div><ul><li><span style="font-weight: bold;">Automatic Display:</span> Suggestions appear every time you open the page.</li><li><span style="font-weight: bold;">Deleted Suggestions:</span> Click to recreate any deleted suggested tags.</li></ul>',
+    content: '<div style="font-weight: bold;">Example Airport Pair Tags</div><ul><li><span style="font-weight: bold;">Automatic Display:</span> Example routes appear every time you open the page.</li><li><span style="font-weight: bold;">Deleted Examples:</span> Click to restore any deleted example tags.</li></ul>',
     allowHTML: true,
     placement: 'right'
   });
   
 
   tippy('#make-maps-button', {
-    content: '<div style="font-weight: bold;">Update Great Circle Paths</div><ul><li><span style="font-weight: bold;">After Adding/Removing Airport Pair Tags:</span> Update the paths on the map.</li><li><span style="font-weight: bold;">Suggested Airport Pair Tags:</span> Can also be added or removed before updating.</li></ul><p style="color: red;">Click this button to finalize your selections and update the maps!</p>',
+    content: '<div style="font-weight: bold;">Update Map</div><ul><li><span style="font-weight: bold;">After Adding/Removing Airport Pair Tags:</span> Redraw the routes on the map.</li><li><span style="font-weight: bold;">Example Airport Pair Tags:</span> Can also be added or removed before updating.</li></ul><p style="color: red;">Click this button to apply your selections and redraw the map!</p>',
     allowHTML: true,
     placement: 'right'
   });
 
   tippy('#tags-header-icon', {
-    content: '<div style="font-weight: bold;">Airport Pair Tags</div><ul><li><span style="font-weight: bold;">[Add] button:</span> Add your own selected airport pairs.</li><li><span style="font-weight: bold;">[Suggestions] button:</span> Adds "suggested airport pairs".</li><li><span style="font-weight: bold;">Click on an [Airport Pair Tag]:</span> To expand it and view more information.</li><li><span style="font-weight: bold;">Highlighted Great Circle route:</span> Appears on the maps.</li></ul><p>Your own selected airport tags will be saved for your next visit.</p><p style="color: red;">To remove any airport pair tags, click the "x" and then click the <span style="font-weight: bold;">[Update Flight Paths]</span> button.</p>',
+    content: '<div style="font-weight: bold;">Airport Pair Tags</div><ul><li><span style="font-weight: bold;">[Add] button:</span> Add your own selected airport pairs.</li><li><span style="font-weight: bold;">[Example Routes] button:</span> Adds the built-in example airport pairs.</li><li><span style="font-weight: bold;">Click on an [Airport Pair Tag]:</span> To expand it and view more information.</li><li><span style="font-weight: bold;">Highlighted Great Circle route:</span> Appears on the maps.</li></ul><p>Your own selected airport tags will be saved for your next visit.</p><p style="color: red;">To remove any airport pair tags, click the "x" and then click the <span style="font-weight: bold;">[Update Map]</span> button.</p>',
     allowHTML: true,
     placement: 'right'
   });

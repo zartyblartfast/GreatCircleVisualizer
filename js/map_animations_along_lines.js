@@ -247,7 +247,8 @@ document.addEventListener('pairExpandCollapse', function(event) {
             // Only fetch corridors for pairs that have corridor data
             const pair = globalLocationPair.locationPairs.find(p => p.id === pairId);
             if (pair && pair.corridor && pair.corridor.available) {
-                showCorridor(pairId);
+                setCorridorIconState(pairId, true);
+                showCorridor(pairId, pair.corridor);
             }
         } else {
             lineReference._settings.mapLine.set("stroke", am5.color("#000000"));
@@ -264,8 +265,27 @@ document.addEventListener('pairExpandCollapse', function(event) {
     }
 });
 
+function setCorridorIconState(pairId, visible) {
+    const icon = document.querySelector(`#${CSS.escape(pairId)} .corridor-toggleable`);
+    if (!icon) return;
 
-// Event listener for the "Make maps" button
+    icon.dataset.corridorVisible = String(visible);
+    icon.classList.toggle('corridor-hidden', !visible);
+}
+
+document.addEventListener('corridorVisibilityToggle', function(event) {
+    const { pairId, visible } = event.detail;
+    const pair = globalLocationPair.locationPairs.find(p => p.id === pairId);
+    if (!pair || !pair.corridor || !pair.corridor.available) return;
+
+    if (visible) {
+        setCorridorIconState(pairId, true);
+        showCorridor(pairId, pair.corridor);
+    } else {
+        setCorridorIconState(pairId, false);
+        hideCorridor();
+    }
+});
 document.getElementById('make-maps-button').addEventListener('click', async function() {
 
     //console.log('Make maps button clicked, reinitialising map...');

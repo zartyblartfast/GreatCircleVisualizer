@@ -12,6 +12,8 @@
 // Environment variables:
 //   PAIR              Only process this pair id (e.g. "LAX-DXB"). Default: all.
 //   DAYS_BACK         Days of history to query (default 1, max 7).
+//   START_DATE        Inclusive UTC date (YYYY-MM-DD); use with END_DATE.
+//   END_DATE          Inclusive UTC date (YYYY-MM-DD); use with START_DATE.
 //   MIN_TRACKS        Skip a direction if it already has ≥ this many tracks (default 3).
 //   RATE_DELAY_MS     Delay between API calls in ms (default 5000).
 //   OPENSKY_CLIENT_ID / OPENSKY_CLIENT_SECRET  (or credentials.json)
@@ -36,10 +38,17 @@ const TRACKS_DIR = join(PROJECT_ROOT, "data", "tracks");
 // ---------------------------------------------------------------------------
 const PAIR_FILTER = process.env.PAIR || "";
 const DAYS_BACK = parseInt(process.env.DAYS_BACK || "1", 10);
+const START_DATE = process.env.START_DATE || "";
+const END_DATE = process.env.END_DATE || "";
 const MIN_TRACKS = parseInt(process.env.MIN_TRACKS || "3", 10);
 const RATE_DELAY_MS = parseInt(process.env.RATE_DELAY_MS || "25000", 10);
 const BASE_URL = "https://opensky-network.org/api";
-const CREDENTIALS_PATH = join(PROJECT_ROOT, "data", "corridors", "credentials3.json");
+const CREDENTIALS_PATHS = [
+  "credentials.json",
+  "credentials2.json",
+  "credentials3.json",
+  "credentials4.json",
+].map((filename) => join(PROJECT_ROOT, "data", "corridors", filename));
 
 // Credit tracking
 let creditsRemaining: number | null = null;
@@ -49,9 +58,11 @@ let creditsChecked = false;
 // Credentials
 // ---------------------------------------------------------------------------
 function loadCredentials(): { clientId: string; clientSecret: string } {
-  if (existsSync(CREDENTIALS_PATH)) {
+  for (const credentialsPath of CREDENTIALS_PATHS) {
+    if (!existsSync(credentialsPath)) continue;
+
     try {
-      const raw = readFileSync(CREDENTIALS_PATH, "utf-8");
+      const raw = readFileSync(credentialsPath, "utf-8");
       const creds = JSON.parse(raw) as { clientId?: string; clientSecret?: string };
       if (creds.clientId && creds.clientSecret) {
         return { clientId: creds.clientId, clientSecret: creds.clientSecret };
@@ -108,6 +119,17 @@ interface OpenSkyTrack {
 
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+function parseUtcDate(value: string, name: string): number {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    throw new Error(`${name} must use YYYY-MM-DD format`);
+  }
+  const timestamp = Date.parse(`${value}T00:00:00Z`);
+  if (!Number.isFinite(timestamp)) {
+    throw new Error(`${name} is not a valid calendar date`);
+  }
+  return Math.floor(timestamp / 1000);
 }
 
 async function ensureToken(): Promise<void> {
@@ -339,8 +361,26 @@ async function main(): Promise<void> {
   if (!existsSync(TRACKS_DIR)) mkdirSync(TRACKS_DIR, { recursive: true });
 
   const now = Math.floor(Date.now() / 1000);
-  const begin = now - DAYS_BACK * 86400;
-  console.log(`  Window: ${new Date(begin * 1000).toISOString().slice(0, 10)} → ${new Date(now * 1000).toISOString().slice(0, 10)}`);
+  let begin: number;
+  let end: number;
+  if (START_DATE || END_DATE) {
+    if (!START_DATE || !END_DATE) {
+      throw new Error("START_DATE and END_DATE must be supplied together");
+    }
+    begin = parseUtcDate(START_DATE, "START_DATE");
+    end = parseUtcDate(END_DATE, "END_DATE") + 86400;
+    if (begin >= end) {
+      throw new Error("START_DATE must be on or before END_DATE");
+    }
+    end = Math.min(end, now);
+    if (begin >= end) {
+      throw new Error("The requested date range is entirely in the future");
+    }
+  } else {
+    begin = now - DAYS_BACK * 86400;
+    end = now;
+  }
+  console.log(`  Window: ${new Date(begin * 1000).toISOString().slice(0, 10)} → ${new Date((end - 1) * 1000).toISOString().slice(0, 10)}`);
 
   let totalNew = 0;
   let totalSkipped = 0;
@@ -375,8 +415,8 @@ async function main(): Promise<void> {
       let chunkStart = begin;
       let totalArrivals = 0;
 
-      while (chunkStart < now) {
-        const chunkEnd = Math.min(chunkStart + 86400, now);
+      while (chunkStart < end) {
+        const chunkEnd = Math.min(chunkStart + 86400, end);
         const dateLabel = new Date(chunkStart * 1000).toISOString().slice(0, 10);
 
         console.log(`    [${dateLabel}] Arrivals at ${destIcao}...`);
@@ -396,8 +436,8 @@ async function main(): Promise<void> {
       if (flightMap.size === 0 && totalArrivals < 20) {
         console.log(`    ⚠ Destination ${destIcao} has poor coverage (${totalArrivals} total arrivals). Trying departures from ${originIcao}...`);
         chunkStart = begin;
-        while (chunkStart < now) {
-          const chunkEnd = Math.min(chunkStart + 86400, now);
+        while (chunkStart < end) {
+          const chunkEnd = Math.min(chunkStart + 86400, end);
           const dateLabel = new Date(chunkStart * 1000).toISOString().slice(0, 10);
 
           console.log(`    [${dateLabel}] Departures from ${originIcao}...`);
