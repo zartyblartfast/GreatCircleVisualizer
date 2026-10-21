@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Great Circle Routes &amp; Rhumb Lines: A Practical Guide | GreatCircleVisualizer</title>
+  <meta name="description" content="Learn to map airport routes, compare great circles and rhumb lines, and explore Mercator and globe views with a worked Perth–London example.">
+  <link rel="canonical" href="https://greatcirclevisualizer.com/guide/">
+  <meta property="og:title" content="Great Circle Routes &amp; Rhumb Lines: A Practical Guide">
+  <meta property="og:description" content="Map airport routes, compare projections and understand selected real-flight overlays with a worked Perth–London example.">
+  <meta property="og:url" content="https://greatcirclevisualizer.com/guide/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://greatcirclevisualizer.com/guide/images/perth-london-comparison.png">
+  <meta property="og:image:alt" content="Perth–London great circle and rhumb line shown on an orthographic globe and a Mercator map.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Great Circle Routes &amp; Rhumb Lines: A Practical Guide">
+  <meta name="twitter:description" content="Map airport routes, compare projections and understand selected real-flight overlays with a worked Perth–London example.">
+  <meta name="twitter:image" content="https://greatcirclevisualizer.com/guide/images/perth-london-comparison.png">
+  <meta name="twitter:image:alt" content="Perth–London great circle and rhumb line on a globe and Mercator map.">
+  <link rel="icon" type="image/svg+xml" href="/assets/JoelM-biodegradable.svg">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to guide</a>
+  <header class="site-header">
+    <a class="brand" href="/">Great Circle Visualizer</a>
+    <a class="app-link" href="/">Open the interactive map <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="content">
+    <p class="eyebrow">HOW IT WORKS</p>
+    <h1>Great circle routes, rhumb lines and flight paths</h1>
+    <p class="lead">Why can the shortest route look curved on a map? Use Great Circle Visualizer to explore routes between airports, compare map projections and see how selected historical flight tracks differ from a geometric shortest path.</p>
+    <nav class="contents" aria-label="On this page">
+      <strong>In this guide</strong>
+      <ul>
+        <li><a href="#quick-start">Plot an airport route</a></li>
+        <li><a href="#great-circle-rhumb">Great circle vs rhumb line</a></li>
+        <li><a href="#worked-example">Try Perth–London</a></li>
+        <li><a href="#projections">Read the map and globe</a></li>
+        <li><a href="#real-flights">Understand real-flight overlays</a></li>
+        <li><a href="#faq">Questions and limitations</a></li>
+      </ul>
+    </nav>
+
+    <section id="quick-start">
+      <h2>How to plot a route between airports</h2>
+      <ol class="steps">
+        <li><strong><a href="/">Open the app</a>.</strong> The first panel is “Map Projections &amp; Great Circle Visualization”. Suggested airport pairs are available to explore straight away.</li>
+        <li><strong>Choose Airport A and Airport B.</strong> Start typing an airport name or city and select the matching result. Optionally narrow each search using its country dropdown.</li>
+        <li><strong>Click “Add”, then “Update Flight Paths”.</strong> The pair appears in the airport pair tags and its great circle is drawn on the map.</li>
+        <li><strong>Expand a pair tag.</strong> Read the airport coordinates, great circle distance and rhumb line distance in kilometres. The selected route is highlighted in red.</li>
+        <li><strong>Change the view.</strong> Use the projection dropdown or Map/Globe switch. Drag the globe to view the route from another angle; changing the projection changes its appearance, not the endpoints.</li>
+      </ol>
+      <p>To compare the two route types side by side, open “Compare Great Circles and Rhumb Lines”. Choose an airport pair from that panel’s list, select a projection and use the Rhumb Line switch to show or hide the black line. That comparison list is separate from the custom pairs you add to the main map.</p>
+    </section>
+
+    <section id="great-circle-rhumb">
+      <h2>Great circle vs rhumb line: shortest route or constant bearing?</h2>
+      <p>A <strong>great circle</strong> is a circle whose centre is the centre of a sphere. The shorter great-circle arc between two non-antipodal points gives the shortest surface route on that sphere. A great circle route usually changes its bearing along the way. <a class="citation" href="#source-1">[1]</a></p>
+      <p>A <strong>rhumb line</strong>, also called a loxodrome, crosses meridians at a constant angle: its bearing relative to true north stays constant. It is generally longer than the great circle route, although the two coincide along a meridian or along the equator when following the same shorter arc. <a class="citation" href="#source-1">[1]</a></p>
+      <p>The app’s comparison panel draws the great circle in <strong class="great-circle">red</strong> and the rhumb line in <strong>black</strong>. “Straight on the screen” is not the same as “shortest on Earth”: the projection matters.</p>
+    </section>
+
+    <section id="worked-example">
+      <h2>A worked example: Perth to London Heathrow</h2>
+      <p>In the main map, find the suggested <strong>PER–LHR</strong> tag and expand it. If you removed it, use “Suggestions” to restore suggested pairs. The route connects Perth International Airport in Australia with London Heathrow in the United Kingdom.</p>
+      <div class="table-scroll">
+        <table>
+          <caption>Values displayed by the app for the suggested PER–LHR pair</caption>
+          <thead><tr><th scope="col">Route measure</th><th scope="col">Distance</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Great circle</th><td>14,508.3 km</td></tr>
+            <tr><th scope="row">Rhumb line</th><td>14,767.8 km</td></tr>
+            <tr><th scope="row">Rhumb line compared with great circle</th><td>+1.79%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The rhumb line is about <strong>259 km longer</strong>. These are geometric airport-to-airport distances, not measurements of a particular flight. The percentage uses the unrounded distances: (rhumb line − great circle) ÷ great circle × 100.</p>
+      <p>Now open the comparison panel, choose <strong>PER–LHR</strong> and select <strong>Mercator</strong>. Compare the red and black paths on the globe at left and the flat map at right.</p>
+      <figure>
+        <a href="images/perth-london-comparison.png" aria-label="View full-size Perth–London route comparison">
+          <img src="images/perth-london-comparison.png" alt="Perth–London route in the app: a red great circle and black rhumb line on an orthographic globe at left and a Mercator map at right. The black rhumb line is straight on Mercator." width="1406" height="500" decoding="async">
+        </a>
+        <figcaption>Screenshot from the app’s PER–LHR comparison, with Mercator selected. Red: great circle; black: rhumb line. <a href="images/perth-london-comparison.png">View full-size illustration</a>.</figcaption>
+      </figure>
+      <p>In the expanded main-map tag, this pair also has historical flight overlays. The bundled Perth → London dataset summarises six tracks and London → Perth five tracks, covering 13–18 February 2026. That date range describes this example dataset—not today’s flight activity.</p>
+    </section>
+
+    <section id="projections">
+      <h2>Why flight paths look different on Mercator and a globe</h2>
+      <p><strong>Mercator</strong> displays constant-bearing rhumb lines as straight lines in its normal aspect. Most great circle routes appear curved. Its scale distortion increases towards the poles, so judging a route’s distance from its drawn length can be misleading. <a class="citation" href="#source-2">[2]</a></p>
+      <p>The app’s <strong>orthographic globe view</strong> shows one hemisphere at a time. Rotate it to bring your route into view and compare it with the flat map. A great circle can appear straight when viewed edge-on, but it need not appear straight from every viewing angle.</p>
+      <p>Try switching to Equal Earth and other projections. You are viewing the same route through different transformations. Use the app’s numerical distances rather than measuring pixels or assuming every projection preserves distances.</p>
+    </section>
+
+    <section id="real-flights">
+      <h2>Great circle routes are not necessarily actual flight paths</h2>
+      <p>The red great circle is a geometric reference, not a prediction of an aircraft’s route. A flight may deviate because of winds, weather, airspace restrictions, air traffic routing or departure and arrival procedures. The shortest surface distance is not automatically the quickest or most practical journey.</p>
+      <p>Selected suggested pairs have <strong>gold aircraft icons</strong> and historical flight-route data. Expand one to display available directions: <strong>blue dashed</strong> for Airport A → B and <strong>green dashed</strong> for B → A. A grey aircraft icon does not indicate an available overlay; missing data does not by itself establish whether an airline operates the route.</p>
+      <p>These overlays are <strong>median polylines derived from sampled ADS-B tracks</strong>, not live aircraft positions and not necessarily a path flown by any single aircraft. The expanded card lists source flight counts, callsigns, dates and OpenSky Network attribution. OpenSky supplies aircraft tracking observations rather than a commercial timetable. <a class="citation" href="#source-3">[3]</a></p>
+      <aside class="note" aria-labelledby="coverage-heading">
+        <h3 id="coverage-heading">Important: gaps are not observations</h3>
+        <p>Tracking coverage can be incomplete, especially over oceans. The app’s offline processing anchors tracks to airport endpoints and interpolates between available points before calculating a median. Some drawn segments therefore represent a geometric reconstruction, not continuously observed aircraft positions. Directional coverage and sample sizes vary; historical tracks cannot guarantee a future route.</p>
+      </aside>
+    </section>
+
+    <section id="faq">
+      <h2>Questions and limitations</h2>
+      <h3>Can I use this as a flight distance calculator?</h3>
+      <p>Yes, for exploring approximate great circle and rhumb line distances between airports. It does not calculate an airline’s flown mileage, ticket price, flight time or operational flight plan. The spherical model is an approximation to Earth’s ellipsoidal shape, and other calculators may use different coordinates or Earth models. <a class="citation" href="#source-1">[1]</a></p>
+      <h3>Why does a route cross the edge of the map?</h3>
+      <p>A flat world map has a seam, often near the antimeridian. A route crossing that seam can appear split. Switch projection or rotate the globe to understand its continuous path on the sphere.</p>
+      <h3>Does a suggested route mean there is a scheduled flight?</h3>
+      <p>No. Suggested pairs are examples for exploring geometry. A route’s presence, or the absence of flight-track data, is not a current service announcement. Check directly with airlines for schedules.</p>
+      <h3>Can I compare any custom pair in the side-by-side panel?</h3>
+      <p>The main map supports custom airport pairs. The side-by-side comparison currently uses its own predefined list; adding a pair to the main map does not automatically add it there.</p>
+      <h3>Is this suitable for navigation?</h3>
+      <p>No. This is an educational visualizer, not certified navigation, dispatch or flight-planning software. It does not account for terrain, current weather, airspace availability, aircraft performance or navigation-chart requirements.</p>
+    </section>
+
+    <section class="sources" aria-labelledby="sources-heading">
+      <h2 id="sources-heading">Sources and further reading</h2>
+      <ol>
+        <li id="source-1"><a href="https://movable-type.co.uk/scripts/latlong.html">Chris Veness, Movable Type Scripts: spherical distance, bearings and rhumb lines</a>.</li>
+        <li id="source-2"><a href="https://doc.esri.com/en/arcgis-pro/latest/help/mapping/properties/mercator.html">Esri: Mercator projection properties and distortion</a>.</li>
+        <li id="source-3"><a href="https://openskynetwork.github.io/opensky-api/">OpenSky Network API documentation</a>. Data attribution: Matthias Schäfer, Martin Strohmeier, Vincent Lenders, Ivan Martinovic and Matthias Wilhelm, “Bringing Up OpenSky: A Large-scale ADS-B Sensor Network for Research”, IPSN, pp. 83–94, April 2014.</li>
+      </ol>
+      <p>App-specific methods and limitations: <a href="https://github.com/zartyblartfast/GreatCircleVisualizer/blob/master/docs/flight-corridor-data.md">flight corridor processing documentation</a>. Example values and illustration were checked against the application’s bundled PER–LHR data.</p>
+    </section>
+    <footer><p>Ready to explore? <a href="/">Open Great Circle Visualizer</a>.</p></footer>
+  </main>
+</body>
+</html>
