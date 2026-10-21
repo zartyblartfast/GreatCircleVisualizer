@@ -44,7 +44,7 @@ test('sitemap and robots list only the intended canonical pages', async ({ reque
   for (const url of urls) expect((await request.get(new URL(url).pathname)).status()).toBe(200);
   const robots = await request.get('/robots.txt');
   expect(robots.status()).toBe(200);
-  expect(await robots.text()).toBe('User-agent: *\nAllow: /\n\nSitemap: https://greatcirclevisualizer.com/sitemap.xml\n');
+  expect((await robots.text()).replace(/\r\n/g, '\n')).toBe('User-agent: *\nAllow: /\n\nSitemap: https://greatcirclevisualizer.com/sitemap.xml\n');
 });
 
 test('guide worked example matches the actual app card and independent formulas', async ({ page, request }) => {

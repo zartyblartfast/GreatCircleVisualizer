@@ -47,7 +47,7 @@
       <ol class="steps">
         <li><strong><a href="/">Open the app</a>.</strong> The first panel is “Map Projections &amp; Great Circle Visualization”. Suggested airport pairs are available to explore straight away.</li>
         <li><strong>Choose Airport A and Airport B.</strong> Start typing an airport name or city and select the matching result. Optionally narrow each search using its country dropdown.</li>
-        <li><strong>Click “Add”, then “Update Flight Paths”.</strong> The pair appears in the airport pair tags and its great circle is drawn on the map.</li>
+        <li><strong>Click “Add”, then “Update Map”.</strong> The pair appears in the airport pair tags and its great circle is drawn on the map.</li>
         <li><strong>Expand a pair tag.</strong> Read the airport coordinates, great circle distance and rhumb line distance in kilometres. The selected route is highlighted in red.</li>
         <li><strong>Change the view.</strong> Use the projection dropdown or Map/Globe switch. Drag the globe to view the route from another angle; changing the projection changes its appearance, not the endpoints.</li>
       </ol>
@@ -63,7 +63,7 @@
 
     <section id="worked-example">
       <h2>A worked example: Perth to London Heathrow</h2>
-      <p>In the main map, find the suggested <strong>PER–LHR</strong> tag and expand it. If you removed it, use “Suggestions” to restore suggested pairs. The route connects Perth International Airport in Australia with London Heathrow in the United Kingdom.</p>
+      <p>In the main map, find the suggested <strong>PER–LHR</strong> tag and expand it. If you removed it, use “Example Routes” to restore suggested pairs. The route connects Perth International Airport in Australia with London Heathrow in the United Kingdom.</p>
       <div class="table-scroll">
         <table>
           <caption>Values displayed by the app for the suggested PER–LHR pair</caption>
@@ -96,7 +96,7 @@
     <section id="real-flights">
       <h2>Great circle routes are not necessarily actual flight paths</h2>
       <p>The red great circle is a geometric reference, not a prediction of an aircraft’s route. A flight may deviate because of winds, weather, airspace restrictions, air traffic routing or departure and arrival procedures. The shortest surface distance is not automatically the quickest or most practical journey.</p>
-      <p>Selected suggested pairs have <strong>gold aircraft icons</strong> and historical flight-route data. Expand one to display available directions: <strong>blue dashed</strong> for Airport A → B and <strong>green dashed</strong> for B → A. A grey aircraft icon does not indicate an available overlay; missing data does not by itself establish whether an airline operates the route.</p>
+      <p>Selected suggested pairs have <strong>gold aircraft icons</strong> and historical flight-route data. Expand one to display available directions: <strong>blue dashed</strong> for Airport A → B and <strong>green dashed</strong> for B → A. Click its gold aircraft icon to hide or show those overlays independently of the tag’s expansion. A grey aircraft icon does not indicate an available overlay; missing data does not by itself establish whether an airline operates the route.</p>
       <p>These overlays are <strong>median polylines derived from sampled ADS-B tracks</strong>, not live aircraft positions and not necessarily a path flown by any single aircraft. The expanded card lists source flight counts, callsigns, dates and OpenSky Network attribution. OpenSky supplies aircraft tracking observations rather than a commercial timetable. <a class="citation" href="#source-3">[3]</a></p>
       <aside class="note" aria-labelledby="coverage-heading">
         <h3 id="coverage-heading">Important: gaps are not observations</h3>
