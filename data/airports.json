@@ -1248,6 +1248,14 @@
       "iata_code": "NZSP"
     },
     {
+      "name": "Union Glacier Blue-Ice Runway",
+      "latitude": -79.77778,
+      "longitude": -83.32083,
+      "iso_country": "AQ",
+      "country": "Antarctica",
+      "iata_code": "UGL"
+    },
+    {
       "name": "Girdwood-Alyeska Airport",
       "latitude": 60.968774,
       "longitude": -149.119792,

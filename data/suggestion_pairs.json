@@ -509,5 +509,49 @@
         }
       }
     }
+  },
+  {
+    "id": "PUQ-UGL",
+    "airportAName": "President Carlos Ibañez del Campo International Airport",
+    "airportACode": "PUQ",
+    "airportACountry": "CL",
+    "airportACountryFull": "Chile",
+    "airportALat": -53.002602,
+    "airportALon": -70.854599,
+    "airportBName": "Union Glacier Blue-Ice Runway",
+    "airportBCode": "UGL",
+    "airportBCountry": "AQ",
+    "airportBCountryFull": "Antarctica",
+    "airportBLat": -79.77778,
+    "airportBLon": -83.32083,
+    "GreatCircleDistKm": 3012.681913288367,
+    "RhumbLineDistKm": 3017.487804345311,
+    "RhumbLineDisplay": false,
+    "geoOG_rotationX": 77,
+    "geoOG_rotationY": 66,
+    "verification": {
+      "directScheduled": "yes",
+      "verifyLinks": {
+        "schedule": "https://antarctic-logistics.com/services/air-transport/flight-schedule/"
+      },
+      "notes": "Seasonal passenger and logistics service operated between Punta Arenas and Union Glacier."
+    },
+    "corridor": {
+      "available": true,
+      "datasets": {
+        "AtoB": {
+          "datasetId": "PUQ-UGL-v1",
+          "kind": "median",
+          "source": "Observed MZB701 flight track",
+          "nFlights": 1,
+          "kPoints": 76,
+          "dateFrom": "2026-11-05",
+          "dateTo": "2026-11-05",
+          "flights": [
+            "MZB701"
+          ]
+        }
+      }
+    }
   }
 ]
